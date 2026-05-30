@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="co.booknook.app">
+
+    <application
+        android:name=".BookibaApplication"
+        android:allowBackup="true"
+        android:label="Bookiba"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Bookiba.Splash">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Bookiba.Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.action.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

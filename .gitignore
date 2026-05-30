@@ -1,0 +1,71 @@
+# Android
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Gradle
+gradle-8.7/
+gradle.zip
+*.zip
+
+# Android local files
+local.properties
+keystore.properties
+*.jks
+*.keystore
+
+# Module build outputs
+**/build/
+
+# IntelliJ IDEA
+*.iws
+*.ipr
+out/
+.idea/
+
+# Kotlin
+*.class
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V4
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backend
+backend/.gradle/
+backend/build/
+backend/*.zip
+
+# Environment / secrets
+.env
+*.env
+local.properties
+secrets.properties
+
+# Logs
+*.log
+logs/
+
+# KSP
+**/.ksp/
+
+# Hilt
+**/generated/hilt/
+
+# Test reports
+**/test-results/
+**/reports/
