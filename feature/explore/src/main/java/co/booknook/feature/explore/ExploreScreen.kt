@@ -27,7 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.collectAsState
 import coil.compose.AsyncImage
 
 private val Cream = Color(0xFFF5F0E8)
@@ -53,7 +53,7 @@ fun ExploreScreen(
     onGenreClick: (String) -> Unit,
     viewModel: ExploreViewModel = hiltViewModel()
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsState()
     val focusManager = LocalFocusManager.current
 
     LazyVerticalGrid(

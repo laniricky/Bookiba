@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -37,7 +38,7 @@ fun CheckoutScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Outlined.ArrowBack, contentDescription = "Back", tint = DarkBrown)
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = DarkBrown)
                     }
                     Text("Checkout", color = DarkBrown, fontSize = 22.sp, fontWeight = FontWeight.Bold)
                 }
@@ -82,14 +83,14 @@ fun CheckoutScreen(
                     PaymentOptionRow(
                         title = "M-Pesa",
                         subtitle = "Pay via phone number",
-                        icon = Icons.Outlined.PhoneAndroid,
+                        icon = Icons.Outlined.Phone,
                         selected = selectedPayment == "mpesa",
                         onClick = { selectedPayment = "mpesa" }
                     )
                     PaymentOptionRow(
                         title = "Credit/Debit Card",
                         subtitle = "Visa, Mastercard",
-                        icon = Icons.Outlined.CreditCard,
+                        icon = Icons.Outlined.ShoppingCart,
                         selected = selectedPayment == "card",
                         onClick = { selectedPayment = "card" }
                     )

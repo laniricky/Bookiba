@@ -189,7 +189,7 @@ private fun CartItemRow(item: CartItem, onQuantityChange: (Int) -> Unit, onRemov
         }
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             IconButton(onClick = { if (item.quantity > 1) onQuantityChange(item.quantity - 1) else onRemove() }, modifier = Modifier.size(32.dp)) {
-                Icon(Icons.Outlined.Remove, contentDescription = "Decrease", tint = DarkBrown, modifier = Modifier.size(18.dp))
+                Icon(Icons.Outlined.Clear, contentDescription = "Decrease", tint = DarkBrown, modifier = Modifier.size(18.dp))
             }
             Text("${item.quantity}", color = DarkBrown, fontSize = 15.sp, fontWeight = FontWeight.Bold)
             IconButton(onClick = { onQuantityChange(item.quantity + 1) }, modifier = Modifier.size(32.dp)) {

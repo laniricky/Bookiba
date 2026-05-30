@@ -13,7 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.collectAsState
 import coil.compose.AsyncImage
 import co.booknook.core.domain.model.Book
 
@@ -45,7 +45,7 @@ fun BookDetailScreen(
     onBuyNow: (String) -> Unit,
     viewModel: BookDetailViewModel = hiltViewModel()
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize().background(SoftWhite)) {
         state.book?.let { book ->
@@ -101,8 +101,8 @@ fun BookDetailScreen(
                         modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
                         horizontalArrangement = Arrangement.spacedBy(24.dp)
                     ) {
-                        if (book.edition != null) {
-                            InfoChip(label = book.edition, icon = "📅")
+                        book.edition?.let {
+                            InfoChip(label = it, icon = "📅")
                         }
                         book.condition?.let { InfoChip(label = it, icon = "✓") }
                     }
@@ -195,6 +195,7 @@ fun BookDetailScreen(
     }
 }
 
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 private fun BookImageGallery(
     imageUrls: List<String>,
@@ -229,7 +230,7 @@ private fun BookImageGallery(
 
         // Back button
         IconButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart).padding(8.dp)) {
-            Icon(Icons.Outlined.ArrowBack, contentDescription = "Back", tint = Color.White)
+            Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back", tint = Color.White)
         }
 
         // Actions

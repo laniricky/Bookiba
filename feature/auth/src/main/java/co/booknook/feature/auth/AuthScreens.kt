@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.collectAsState
 
 private val Cream = Color(0xFFF5F0E8)
 private val DarkBrown = Color(0xFF1A1512)
@@ -41,7 +41,7 @@ fun AuthFlow(
     onDismiss: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsState()
     var screen by remember { mutableStateOf(AuthScreen.LOGIN) }
 
     LaunchedEffect(state.isAuthenticated) {
@@ -138,7 +138,7 @@ private fun BookibaTextField(
             {
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
                     Icon(
-                        imageVector = if (passwordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
+                        imageVector = Icons.Outlined.Lock,
                         contentDescription = null,
                         tint = WarmBrown
                     )

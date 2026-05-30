@@ -52,6 +52,18 @@ android {
 dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:network"))
+    implementation(project(":feature:auth"))
+    implementation(project(":feature:home"))
+    implementation(project(":feature:explore"))
+    implementation(project(":feature:reels"))
+    implementation(project(":feature:bookdetails"))
+    implementation(project(":feature:cart"))
+    implementation(project(":feature:checkout"))
+    implementation(project(":feature:orders"))
+    implementation(project(":feature:profile"))
+    implementation(project(":feature:wishlist"))
+    implementation(project(":feature:onboarding"))
+    implementation(project(":core:data"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

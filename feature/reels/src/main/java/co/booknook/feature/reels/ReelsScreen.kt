@@ -28,19 +28,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.collectAsState
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 
 private val Cream = Color(0xFFF5F0E8)
 private val WarmBrown = Color(0xFF8B7355)
 
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 fun ReelsScreen(
     onBookClick: (String) -> Unit,
     viewModel: ReelsViewModel = hiltViewModel()
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsState()
     val pagerState = rememberPagerState(pageCount = { state.reels.size })
 
     // Sync pager page → viewModel
@@ -122,7 +123,7 @@ private fun ReelPage(
                 onClick = onLike
             )
             ReelActionButton(
-                icon = Icons.Outlined.ChatBubbleOutline,
+                icon = Icons.Outlined.Email,
                 label = formatCount(reel.commentCount),
                 tint = Color.White,
                 onClick = {}
@@ -185,7 +186,7 @@ private fun ReelPage(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(Icons.Filled.MusicNote, contentDescription = null, tint = Color.White, modifier = Modifier.size(14.dp))
+                Icon(Icons.Filled.PlayArrow, contentDescription = null, tint = Color.White, modifier = Modifier.size(14.dp))
                 Text(reel.audioLabel, color = Color.White, fontSize = 12.sp)
             }
 
@@ -202,7 +203,7 @@ private fun ReelPage(
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Outlined.Book, contentDescription = null, tint = Cream, modifier = Modifier.size(14.dp))
+                        Icon(Icons.Outlined.ShoppingCart, contentDescription = null, tint = Cream, modifier = Modifier.size(14.dp))
                         Text(title, color = Cream, fontSize = 12.sp, fontWeight = FontWeight.Medium, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     }
                 }

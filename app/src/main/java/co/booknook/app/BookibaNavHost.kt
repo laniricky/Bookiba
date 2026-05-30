@@ -56,7 +56,7 @@ data class BottomNavItem(
 private val bottomNavItems = listOf(
     BottomNavItem(Routes.HOME, "Home", Icons.Filled.Home, Icons.Outlined.Home),
     BottomNavItem(Routes.EXPLORE, "Explore", Icons.Filled.Search, Icons.Outlined.Search),
-    BottomNavItem(Routes.REELS, "Reels", Icons.Filled.PlayCircle, Icons.Outlined.PlayCircle),
+    BottomNavItem(Routes.REELS, "Reels", Icons.Filled.PlayArrow, Icons.Outlined.PlayArrow),
     BottomNavItem(Routes.WISHLIST, "Wishlist", Icons.Filled.Favorite, Icons.Outlined.FavoriteBorder),
     BottomNavItem(Routes.CART, "Cart", Icons.Filled.ShoppingCart, Icons.Outlined.ShoppingCart),
     BottomNavItem(Routes.PROFILE, "Profile", Icons.Filled.Person, Icons.Outlined.Person)
@@ -119,27 +119,27 @@ fun BookibaNavHost() {
 
             composable(Routes.HOME) {
                 HomeScreen(
-                    onBookClick = { navController.navigate(Routes.bookDetail(it)) },
+                    onBookClick = { bookId -> navController.navigate(Routes.bookDetail(bookId)) },
                     onSearchClick = { navController.navigate(Routes.EXPLORE) }
                 )
             }
 
             composable(Routes.EXPLORE) {
                 ExploreScreen(
-                    onBookClick = { navController.navigate(Routes.bookDetail(it)) },
+                    onBookClick = { bookId -> navController.navigate(Routes.bookDetail(bookId)) },
                     onGenreClick = { /* navigate to genre */ }
                 )
             }
 
             composable(Routes.REELS) {
                 ReelsScreen(
-                    onBookClick = { navController.navigate(Routes.bookDetail(it)) }
+                    onBookClick = { bookId -> navController.navigate(Routes.bookDetail(bookId)) }
                 )
             }
 
             composable(Routes.WISHLIST) {
                 WishlistScreen(
-                    onBookClick = { navController.navigate(Routes.bookDetail(it)) },
+                    onBookClick = { bookId -> navController.navigate(Routes.bookDetail(bookId)) },
                     onRemove = { /* remove logic */ }
                 )
             }
@@ -147,7 +147,7 @@ fun BookibaNavHost() {
             composable(Routes.CART) {
                 CartScreen(
                     onCheckout = { navController.navigate(Routes.CHECKOUT) },
-                    onBookClick = { navController.navigate(Routes.bookDetail(it)) }
+                    onBookClick = { bookId -> navController.navigate(Routes.bookDetail(bookId)) }
                 )
             }
 

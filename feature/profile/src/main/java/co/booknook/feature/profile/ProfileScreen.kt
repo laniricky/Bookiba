@@ -120,12 +120,12 @@ fun ProfileScreen(
         HorizontalDivider(color = Cream, modifier = Modifier.padding(horizontal = 20.dp))
 
         // Menu items
-        ProfileMenuItem(icon = Icons.Outlined.Receipt, label = "Order History", onClick = onOrdersClick)
+        ProfileMenuItem(icon = Icons.Outlined.List, label = "Order History", onClick = onOrdersClick)
         ProfileMenuItem(icon = Icons.Outlined.Star, label = "My Reviews", onClick = {})
         ProfileMenuItem(icon = Icons.Outlined.LocationOn, label = "Addresses", onClick = {})
-        ProfileMenuItem(icon = Icons.Outlined.CreditCard, label = "Payment Methods", onClick = {})
-        ProfileMenuItem(icon = Icons.Outlined.Help, label = "Help & Support", onClick = {})
-        ProfileMenuItem(icon = Icons.Outlined.Logout, label = "Logout", onClick = onLogout, tint = Color.Red.copy(alpha = 0.7f))
+        ProfileMenuItem(icon = Icons.Outlined.ShoppingCart, label = "Payment Methods", onClick = {})
+        ProfileMenuItem(icon = Icons.Outlined.Info, label = "Help & Support", onClick = {})
+        ProfileMenuItem(icon = Icons.Outlined.ExitToApp, label = "Logout", onClick = onLogout, tint = Color.Red.copy(alpha = 0.7f))
     }
 }
 
@@ -166,6 +166,6 @@ private fun ProfileMenuItem(icon: ImageVector, label: String, onClick: () -> Uni
     ) {
         Icon(icon, contentDescription = label, tint = tint, modifier = Modifier.size(22.dp))
         Text(label, color = tint, fontSize = 15.sp, fontWeight = FontWeight.Medium, modifier = Modifier.weight(1f))
-        Icon(Icons.Outlined.ChevronRight, contentDescription = null, tint = WarmBrown.copy(alpha = 0.5f), modifier = Modifier.size(18.dp))
+        Icon(Icons.Outlined.ArrowForward, contentDescription = null, tint = WarmBrown.copy(alpha = 0.5f), modifier = Modifier.size(18.dp))
     }
 }

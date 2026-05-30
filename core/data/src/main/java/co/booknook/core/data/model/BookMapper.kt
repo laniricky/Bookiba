@@ -25,7 +25,7 @@ fun BookEntity.toDomain(): Book {
         title = title,
         author = author,
         description = description,
-        price = price,
+        priceKsh = price.toLong(),
         condition = condition,
         coverUrl = coverImageUrl,
         category = "General", // Fallback since it's not in DB entity
@@ -39,7 +39,7 @@ fun NetworkBook.toDomain(): Book {
         title = title,
         author = author,
         description = description,
-        price = price,
+        priceKsh = price.toLong(),
         condition = condition,
         coverUrl = coverUrl,
         category = "General", // Fallback since it's not in Network API currently

@@ -25,7 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.collectAsState
 import coil.compose.AsyncImage
 import co.booknook.core.domain.model.Book
 
@@ -41,7 +41,7 @@ fun HomeScreen(
     onSearchClick: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsState()
 
     Box(
         modifier = Modifier

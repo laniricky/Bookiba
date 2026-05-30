@@ -58,6 +58,7 @@ private val pages = listOf(
     )
 )
 
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 fun OnboardingScreen(onFinished: () -> Unit) {
     val pagerState = rememberPagerState(pageCount = { pages.size })
