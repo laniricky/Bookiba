@@ -11,9 +11,11 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import kotlinx.serialization.json.Json
 import org.slf4j.event.Level
+import co.booknook.security.configureSecurity
+import co.booknook.routing.configureRouting
 
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
+    embeddedServer(Netty, port = 8081, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
 }
 
@@ -41,6 +43,6 @@ fun Application.module() {
     }
 
     co.booknook.database.DatabaseFactory.init()
-    co.booknook.security.configureSecurity()
-    co.booknook.routing.configureRouting()
+    configureSecurity()
+    configureRouting()
 }

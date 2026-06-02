@@ -5,6 +5,8 @@
     <application
         android:name=".BookibaApplication"
         android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
         android:label="Bookiba"
         android:supportsRtl="true"
         android:theme="@style/Theme.Bookiba.Splash">

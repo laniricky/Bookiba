@@ -55,7 +55,7 @@ object NetworkModule {
     ): Retrofit {
         val contentType = "application/json".toMediaType()
         return Retrofit.Builder()
-            .baseUrl("https://api.bookiba.co/v1/") // Placeholder base URL
+            .baseUrl("http://10.100.8.139:8081/api/v1/") // Pointing to local backend
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory(contentType))
             .build()

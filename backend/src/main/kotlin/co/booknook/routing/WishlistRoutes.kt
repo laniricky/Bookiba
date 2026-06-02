@@ -75,7 +75,9 @@ fun Route.wishlistRoutes() {
 
                 transaction {
                     Wishlists.deleteWhere {
-                        (Wishlists.userId eq userId) and (Wishlists.bookId eq bookId)
+                        org.jetbrains.exposed.sql.SqlExpressionBuilder.run {
+                            (Wishlists.userId eq userId) and (Wishlists.bookId eq bookId)
+                        }
                     }
                 }
 

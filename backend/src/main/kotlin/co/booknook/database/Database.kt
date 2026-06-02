@@ -9,13 +9,11 @@ import org.jetbrains.exposed.sql.transactions.transaction
 object DatabaseFactory {
     fun init() {
         val config = HikariConfig().apply {
-            driverClassName = "org.postgresql.Driver"
-            jdbcUrl = System.getenv("JDBC_URL") ?: "jdbc:postgresql://localhost:5432/bookiba"
-            username = System.getenv("DB_USER") ?: "postgres"
-            password = System.getenv("DB_PASSWORD") ?: "postgres"
-            maximumPoolSize = 10
+            driverClassName = "org.sqlite.JDBC"
+            jdbcUrl = System.getenv("JDBC_URL") ?: "jdbc:sqlite:../database.sqlite"
+            maximumPoolSize = 1
             isAutoCommit = false
-            transactionIsolation = "TRANSACTION_REPEATABLE_READ"
+            transactionIsolation = "TRANSACTION_SERIALIZABLE"
             validate()
         }
         val dataSource = HikariDataSource(config)

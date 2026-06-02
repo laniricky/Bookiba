@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bookiba
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  php-admin:
+    image: php:8.2-apache
+    volumes:
+      - ./admin-web:/var/www/html
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    # We need to install the pgsql extension for PHP to talk to Postgres
+    command: >
+      bash -c "apt-get update && apt-get install -y libpq-dev && docker-php-ext-install pdo pdo_pgsql && apache2-foreground"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

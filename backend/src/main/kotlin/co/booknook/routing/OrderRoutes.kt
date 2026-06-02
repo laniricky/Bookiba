@@ -75,10 +75,10 @@ fun Route.orderRoutes() {
 
                     request.items.forEach { item ->
                         OrderItems.insert {
-                            it[orderId] = orderId
-                            it[bookId] = item.bookId
-                            it[quantity] = item.quantity
-                            it[priceKsh] = bookPrices[item.bookId] ?: 0L
+                            it[OrderItems.orderId] = orderId
+                            it[OrderItems.bookId] = item.bookId
+                            it[OrderItems.quantity] = item.quantity
+                            it[OrderItems.priceKsh] = bookPrices[item.bookId] ?: 0L
                         }
                     }
                 }
