@@ -32,7 +32,7 @@ $where_sql = $where ? "WHERE " . implode(' AND ', $where) : "";
 
 $stmt = $pdo->prepare("
     SELECT o.*, u.name as customer_name, u.email as customer_email,
-           COUNT(DISTINCT oi.id) as item_count,
+           COUNT(DISTINCT oi.book_id) as item_count,
            SUM(oi.quantity) as total_qty
     FROM orders o
     JOIN users u ON o.user_id = u.id
