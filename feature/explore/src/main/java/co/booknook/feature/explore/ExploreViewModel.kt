@@ -3,6 +3,7 @@ package co.booknook.feature.explore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.booknook.core.domain.model.Book
+import co.booknook.core.domain.repository.BookRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -38,7 +39,9 @@ private fun defaultGenres() = listOf(
 )
 
 @HiltViewModel
-class ExploreViewModel @Inject constructor() : ViewModel() {
+class ExploreViewModel @Inject constructor(
+    private val bookRepository: BookRepository
+) : ViewModel() {
 
     private val _state = MutableStateFlow(ExploreUiState())
     val state: StateFlow<ExploreUiState> = _state.asStateFlow()
@@ -60,8 +63,12 @@ class ExploreViewModel @Inject constructor() : ViewModel() {
                         _state.update { it.copy(searchResults = emptyList(), isSearching = false) }
                     } else {
                         _state.update { it.copy(isSearching = true) }
-                        // TODO: wire to actual search use case
-                        _state.update { it.copy(isSearching = false) }
+                        try {
+                            val results = bookRepository.searchBooks(query)
+                            _state.update { it.copy(isSearching = false, searchResults = results) }
+                        } catch (e: Exception) {
+                            _state.update { it.copy(isSearching = false, error = e.message) }
+                        }
                     }
                 }
         }

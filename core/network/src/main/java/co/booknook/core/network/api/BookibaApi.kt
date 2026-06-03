@@ -1,27 +1,30 @@
 package co.booknook.core.network.api
 
-import co.booknook.core.network.model.NetworkBook
+import co.booknook.core.network.model.*
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface BookibaApi {
 
-    @GET("books/featured")
-    suspend fun getFeaturedBooks(): List<NetworkBook>
+    @GET("home.php")
+    suspend fun getHome(): NetworkHomeResponse
 
-    @GET("books")
+    @GET("books.php")
     suspend fun getBooks(
-        @Query("query") query: String? = null,
-        @Query("category") category: String? = null,
-        @Query("page") page: Int = 1
-    ): List<NetworkBook>
+        @Query("q") query: String? = null,
+        @Query("category") category: String? = null
+    ): NetworkBooksResponse
 
-    @GET("books/{id}")
+    @GET("books.php")
     suspend fun getBookDetails(
-        @Path("id") bookId: String
-    ): NetworkBook
+        @Query("id") bookId: String
+    ): NetworkSingleBookResponse
 
-    @GET("reels")
-    suspend fun getReels(): List<String> // Placeholder for Reel model list
+    @POST("checkout.php")
+    suspend fun checkout(
+        @Body request: NetworkCheckoutRequest
+    ): NetworkCheckoutResponse
 }

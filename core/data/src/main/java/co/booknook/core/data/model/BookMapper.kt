@@ -9,12 +9,12 @@ fun NetworkBook.toEntity(): BookEntity {
         id = id,
         title = title,
         author = author,
-        description = description,
-        price = price,
-        condition = condition,
-        coverImageUrl = coverUrl,
+        description = description ?: "",
+        price = priceKsh, // Changed from price to priceKsh
+        condition = condition ?: "Good",
+        coverImageUrl = coverUrl ?: "",
         isAvailable = true,
-        sellerId = sellerId,
+        sellerId = sellerId ?: "",
         createdAt = System.currentTimeMillis()
     )
 }
@@ -38,11 +38,11 @@ fun NetworkBook.toDomain(): Book {
         id = id,
         title = title,
         author = author,
-        description = description,
-        priceKsh = price.toLong(),
-        condition = condition,
-        coverUrl = coverUrl,
-        category = "General", // Fallback since it's not in Network API currently
-        sellerId = sellerId
+        description = description ?: "",
+        priceKsh = priceKsh.toLong(),
+        condition = condition ?: "Good",
+        coverUrl = coverUrl ?: "",
+        category = category ?: "General",
+        sellerId = sellerId ?: ""
     )
 }
