@@ -62,32 +62,18 @@ foreach ($statuses as $row) {
 </head>
 <body>
 
-    <!-- STICKY SIDEBAR -->
-    <div class="sidebar-container">
-        <aside class="sidebar">
-            <div class="sidebar-logo">
-                <span style="font-size:28px">📚</span> Bookiba
-            </div>
-            <nav>
-                <a href="index.php"><span class="icon">🏠</span> Home Feed</a>
-                <a href="orders.php"><span class="icon">🔔</span> Activity</a>
-                <a href="analytics.php" class="active"><span class="icon">📈</span> Insights</a>
-            </nav>
-            <div class="user-profile-mini">
-                <div class="user-avatar">A</div>
-                <div>
-                    <div style="font-weight:700; font-size:14px; color:var(--dark-brown)">Admin</div>
-                    <div style="font-size:12px; color:var(--warm-brown)">@bookiba_hq</div>
-                </div>
-            </div>
-        </aside>
-    </div>
+    <?php include 'includes/sidebar.php'; ?>
 
     <!-- MAIN CONTENT -->
-    <main class="main-content">
-        <div class="page-title">
-            Insights
-            <button class="btn btn-outline" style="font-size: 13px; padding: 8px 16px;" onclick="window.print()">Export</button>
+    <main class="main-content" style="grid-column: 2 / -1;">
+        <?php include 'includes/header.php'; ?>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <h1 style="font-size: 24px; font-weight: 700;">Insights</h1>
+            <button class="btn btn-outline" style="display:flex; align-items:center; gap:8px;" onclick="window.print()">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                Export
+            </button>
         </div>
 
         <!-- STATS OVERVIEW -->
