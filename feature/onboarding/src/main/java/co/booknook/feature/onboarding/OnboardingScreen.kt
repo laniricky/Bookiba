@@ -32,29 +32,34 @@ private val SoftWhite = Color(0xFFFEFCF9)
 data class OnboardingPage(
     val title: String,
     val subtitle: String,
-    val accent: String
+    val accent: String,
+    val imageRes: Int
 )
 
 private val pages = listOf(
     OnboardingPage(
         title = "Discover\nhidden gems.",
         subtitle = "Carefully thrifted books\nwith stories to tell.",
-        accent = "Browse thousands of curated rare finds"
+        accent = "Browse thousands of curated rare finds",
+        imageRes = R.drawable.img_onboarding_discover
     ),
     OnboardingPage(
         title = "Discover\nRare Books.",
         subtitle = "One-of-a-kind editions from\naround the world.",
-        accent = "Every book has a story before you"
+        accent = "Every book has a story before you",
+        imageRes = R.drawable.img_onboarding_rare
     ),
     OnboardingPage(
         title = "Save &\nBuild Shelves.",
         subtitle = "Create your own personal\nlibrary of saved books.",
-        accent = "Wishlist, favorites, and reading shelves"
+        accent = "Wishlist, favorites, and reading shelves",
+        imageRes = R.drawable.img_onboarding_shelves
     ),
     OnboardingPage(
         title = "Stay in\nthe Loop.",
         subtitle = "Get notified when rare books\nyou love drop in.",
-        accent = "Never miss a rare find again"
+        accent = "Never miss a rare find again",
+        imageRes = R.drawable.img_onboarding_notify
     )
 )
 
@@ -93,6 +98,18 @@ fun OnboardingScreen(onFinished: () -> Unit) {
                 fontWeight = FontWeight.Medium
             )
         }
+
+        // Top Logo
+        Text(
+            text = "Bookiba",
+            color = DarkBrown,
+            fontSize = 18.sp,
+            letterSpacing = 6.sp,
+            fontWeight = FontWeight.Light,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 56.dp)
+        )
 
         // Bottom controls
         Column(
@@ -162,15 +179,23 @@ private fun OnboardingPageContent(page: OnboardingPage, visible: Boolean) {
                 )
             )
     ) {
-        // Decorative circle background
+        // Decorative circle with Illustration
         Box(
             modifier = Modifier
                 .size(340.dp)
                 .align(Alignment.TopCenter)
                 .offset(y = 60.dp)
                 .clip(CircleShape)
-                .background(Color(0xFFEDE4D6))
-        )
+                .background(Color(0xFFEDE4D6)),
+            contentAlignment = Alignment.Center
+        ) {
+            androidx.compose.foundation.Image(
+                painter = androidx.compose.ui.res.painterResource(id = page.imageRes),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = androidx.compose.ui.layout.ContentScale.Crop
+            )
+        }
 
         AnimatedVisibility(
             visible = visible,
