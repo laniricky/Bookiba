@@ -79,7 +79,7 @@ fun CartScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("🛒", fontSize = 48.sp)
+                            Icon(Icons.Outlined.ShoppingCart, contentDescription = null, tint = WarmBrown, modifier = Modifier.size(48.dp))
                             Spacer(Modifier.height(12.dp))
                             Text("Your stack is empty", color = DarkBrown, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
                             Text("Add some books to get started", color = WarmBrown, fontSize = 13.sp, modifier = Modifier.padding(top = 6.dp))

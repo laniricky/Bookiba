@@ -1,19 +1,26 @@
 <?php
 require __DIR__ . '/../../admin-web/db.php';
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: http://10.0.2.2');
+header('Access-Control-Allow-Methods: GET, OPTIONS');
+header('Access-Control-Allow-Headers: Authorization');
 
-$id = $_GET['id'] ?? null;
-$q = $_GET['q'] ?? '';
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { exit(0); }
+
+$id       = $_GET['id']       ?? null;
+$q        = $_GET['q']        ?? '';
 $category = $_GET['category'] ?? '';
+$page     = max(1, (int)($_GET['page'] ?? 1));
+$limit    = min(50, max(1, (int)($_GET['limit'] ?? 20)));
+$offset   = ($page - 1) * $limit;
 
 try {
     if ($id) {
-        // Get single book details
+        // Single book details
         $stmt = $pdo->prepare("SELECT * FROM books WHERE id = ?");
         $stmt->execute([$id]);
         $book = $stmt->fetch(PDO::FETCH_ASSOC);
-        
+
         if ($book) {
             echo json_encode(['ok' => true, 'data' => $book]);
         } else {
@@ -21,28 +28,47 @@ try {
             echo json_encode(['ok' => false, 'error' => 'Book not found']);
         }
     } else {
-        // List/Search books
-        $where = [];
+        // List / search with pagination
+        $where  = [];
         $params = [];
-        
+
         if ($q) {
-            $where[] = "(title LIKE ? OR author LIKE ?)";
+            $where[]  = "(title LIKE ? OR author LIKE ?)";
             $params[] = "%$q%";
             $params[] = "%$q%";
         }
-        
+
         if ($category) {
-            $where[] = "category = ?";
+            $where[]  = "category = ?";
             $params[] = $category;
         }
-        
+
         $whereSql = $where ? "WHERE " . implode(' AND ', $where) : "";
-        
-        $stmt = $pdo->prepare("SELECT id, title, author, price_ksh, cover_url, category FROM books $whereSql ORDER BY created_at DESC LIMIT 50");
+
+        // Total count for the client to know if more pages exist
+        $countStmt = $pdo->prepare("SELECT COUNT(*) FROM books $whereSql");
+        $countStmt->execute($params);
+        $total = (int)$countStmt->fetchColumn();
+
+        $params[] = $limit;
+        $params[] = $offset;
+        $stmt = $pdo->prepare(
+            "SELECT id, title, author, price_ksh, cover_url, category
+             FROM books $whereSql
+             ORDER BY created_at DESC
+             LIMIT ? OFFSET ?"
+        );
         $stmt->execute($params);
         $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        echo json_encode(['ok' => true, 'data' => $books]);
+
+        echo json_encode([
+            'ok'       => true,
+            'data'     => $books,
+            'page'     => $page,
+            'limit'    => $limit,
+            'total'    => $total,
+            'has_more' => ($offset + count($books)) < $total
+        ]);
     }
 
 } catch (Exception $e) {

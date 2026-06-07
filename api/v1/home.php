@@ -1,7 +1,12 @@
 <?php
 require __DIR__ . '/../../admin-web/db.php';
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *'); // For local dev
+header('Access-Control-Allow-Origin: http://10.0.2.2');
+header('Access-Control-Allow-Methods: GET, OPTIONS');
+header('Access-Control-Allow-Headers: Authorization');
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { exit(0); }
+
 
 try {
     // 1. Featured Books

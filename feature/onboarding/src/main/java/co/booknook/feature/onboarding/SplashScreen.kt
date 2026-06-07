@@ -59,20 +59,23 @@ fun SplashScreen(onSplashFinished: () -> Unit) {
                 .alpha(alpha)
                 .padding(horizontal = 40.dp)
         ) {
+            // Vector Logo
+            androidx.compose.material3.Icon(
+                painter = androidx.compose.ui.res.painterResource(id = co.booknook.core.designsystem.R.drawable.ic_bookiba_logo),
+                contentDescription = "Bookiba Logo",
+                tint = Color.Unspecified, // Uses the original colors from XML
+                modifier = Modifier.size(80.dp)
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+
             // Logo text
             Text(
-                text = "book",
+                text = "Bookiba",
                 color = Cream,
-                fontSize = 18.sp,
+                fontSize = 24.sp,
                 fontWeight = FontWeight.Light,
-                letterSpacing = 6.sp
-            )
-            Text(
-                text = "nook",
-                color = WarmBrown,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Light,
-                letterSpacing = 6.sp
+                letterSpacing = 8.sp
             )
 
             Spacer(modifier = Modifier.height(48.dp))
@@ -101,7 +104,7 @@ fun SplashScreen(onSplashFinished: () -> Unit) {
 
         // Bottom branding
         Text(
-            text = "booknook.co",
+            text = "bookiba.co.ke",
             color = WarmBrown.copy(alpha = 0.5f),
             fontSize = 11.sp,
             letterSpacing = 3.sp,

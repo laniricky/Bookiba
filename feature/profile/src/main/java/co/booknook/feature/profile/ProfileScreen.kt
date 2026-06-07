@@ -18,14 +18,15 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.ShoppingCart
+import androidx.compose.material.icons.outlined.MenuBook
 private val Cream = Color(0xFFF5F0E8)
 private val DarkBrown = Color(0xFF1A1512)
 private val WarmBrown = Color(0xFF8B7355)
 private val SoftWhite = Color(0xFFFEFCF9)
 private val AccentGreen = Color(0xFF2D6A4F)
-
-data class ShelfItem(val label: String, val count: Int, val emoji: String)
+data class ShelfItem(val label: String, val count: Int, val icon: ImageVector)
 data class ProfileState(
     val name: String = "Amina",
     val bio: String = "Book lover · Vintage finder · Collecting stories.",
@@ -33,11 +34,13 @@ data class ProfileState(
     val wishlistCount: Int = 47,
     val reviewsCount: Int = 12,
     val shelves: List<ShelfItem> = listOf(
-        ShelfItem("Wishlist", 47, "❤️"),
-        ShelfItem("Purchased", 24, "📦"),
-        ShelfItem("Reading", 5, "📖"),
-        ShelfItem("Favorites", 12, "⭐")
-    )
+        ShelfItem("Wishlist", 47, Icons.Outlined.FavoriteBorder),
+        ShelfItem("Purchased", 24, Icons.Outlined.ShoppingCart),
+        ShelfItem("Reading", 5, Icons.Outlined.MenuBook),
+        ShelfItem("Favorites", 12, Icons.Outlined.StarBorder)
+    ),
+    val isLoading: Boolean = false,
+    val error: String? = null
 )
 
 @Composable
@@ -45,8 +48,10 @@ fun ProfileScreen(
     onOrdersClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onLogout: () -> Unit,
-    state: ProfileState = ProfileState()
+    viewModel: ProfileViewModel = androidx.hilt.navigation.compose.hiltViewModel()
 ) {
+    val state by viewModel.state.collectAsState()
+
     Column(modifier = Modifier.fillMaxSize().background(SoftWhite)) {
         // Top bar
         Row(
@@ -58,6 +63,13 @@ fun ProfileScreen(
             IconButton(onClick = onSettingsClick) {
                 Icon(Icons.Outlined.Settings, contentDescription = "Settings", tint = DarkBrown)
             }
+        }
+
+        if (state.isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = WarmBrown)
+            }
+            return
         }
 
         // Avatar + info
@@ -125,7 +137,15 @@ fun ProfileScreen(
         ProfileMenuItem(icon = Icons.Outlined.LocationOn, label = "Addresses", onClick = {})
         ProfileMenuItem(icon = Icons.Outlined.ShoppingCart, label = "Payment Methods", onClick = {})
         ProfileMenuItem(icon = Icons.Outlined.Info, label = "Help & Support", onClick = {})
-        ProfileMenuItem(icon = Icons.Outlined.ExitToApp, label = "Logout", onClick = onLogout, tint = Color.Red.copy(alpha = 0.7f))
+        ProfileMenuItem(
+            icon = Icons.Outlined.ExitToApp,
+            label = "Logout",
+            onClick = {
+                viewModel.logout()
+                onLogout()
+            },
+            tint = Color.Red.copy(alpha = 0.7f)
+        )
     }
 }
 
@@ -148,7 +168,7 @@ private fun ShelfCard(shelf: ShelfItem) {
             modifier = Modifier.padding(14.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(shelf.emoji, fontSize = 20.sp)
+            Icon(shelf.icon, contentDescription = null, tint = DarkBrown, modifier = Modifier.size(24.dp))
             Column {
                 Text(shelf.label, color = DarkBrown, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
                 Text("${shelf.count} books", color = WarmBrown, fontSize = 12.sp)

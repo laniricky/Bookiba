@@ -26,7 +26,11 @@ data class NetworkStory(
 @Serializable
 data class NetworkBooksResponse(
     @SerialName("ok") val ok: Boolean,
-    @SerialName("data") val data: List<NetworkBook> = emptyList()
+    @SerialName("data") val data: List<NetworkBook> = emptyList(),
+    @SerialName("page") val page: Int = 1,
+    @SerialName("limit") val limit: Int = 20,
+    @SerialName("total") val total: Int = 0,
+    @SerialName("has_more") val hasMore: Boolean = false
 )
 
 @Serializable
@@ -54,3 +58,47 @@ data class NetworkCheckoutResponse(
     @SerialName("message") val message: String? = null,
     @SerialName("error") val error: String? = null
 )
+
+// ── Auth ─────────────────────────────────────────────────────────────────────
+
+@Serializable
+data class NetworkAuthRequest(
+    @SerialName("action") val action: String,        // "login" or "register"
+    @SerialName("email") val email: String,
+    @SerialName("password") val password: String,
+    @SerialName("name") val name: String? = null     // register only
+)
+
+@Serializable
+data class NetworkUserInfo(
+    @SerialName("id") val id: Int,
+    @SerialName("name") val name: String,
+    @SerialName("email") val email: String
+)
+
+@Serializable
+data class NetworkAuthResponse(
+    @SerialName("ok") val ok: Boolean,
+    @SerialName("token") val token: String? = null,
+    @SerialName("user") val user: NetworkUserInfo? = null,
+    @SerialName("error") val error: String? = null
+)
+
+// ── Profile ──────────────────────────────────────────────────────────────────
+
+@Serializable
+data class NetworkUserProfileResponse(
+    @SerialName("ok") val ok: Boolean,
+    @SerialName("data") val data: NetworkUserProfileData? = null,
+    @SerialName("error") val error: String? = null
+)
+
+@Serializable
+data class NetworkUserProfileData(
+    @SerialName("name") val name: String,
+    @SerialName("email") val email: String,
+    @SerialName("ordersCount") val ordersCount: Int,
+    @SerialName("wishlistCount") val wishlistCount: Int,
+    @SerialName("reviewsCount") val reviewsCount: Int
+)
+

@@ -95,11 +95,8 @@ private fun AuthContainer(content: @Composable ColumnScope.() -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.height(64.dp))
-        // Book nook logo mark
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("book", color = DarkBrown, fontSize = 14.sp, letterSpacing = 4.sp, fontWeight = FontWeight.Light)
-            Text("nook", color = WarmBrown, fontSize = 14.sp, letterSpacing = 4.sp, fontWeight = FontWeight.Light)
-        }
+        // Bookiba logo mark
+        Text("Bookiba", color = DarkBrown, fontSize = 20.sp, letterSpacing = 6.sp, fontWeight = FontWeight.Light)
         Spacer(Modifier.height(40.dp))
         content()
     }
@@ -228,7 +225,7 @@ fun SignUpScreen(
 
     AuthContainer {
         Text("Join the shelves.", color = DarkBrown, fontSize = 30.sp, fontWeight = FontWeight.Bold)
-        Text("Create your book nook account.", color = WarmBrown, fontSize = 15.sp, fontStyle = FontStyle.Italic, modifier = Modifier.padding(top = 6.dp, bottom = 32.dp))
+        Text("Create your Bookiba account.", color = WarmBrown, fontSize = 15.sp, fontStyle = FontStyle.Italic, modifier = Modifier.padding(top = 6.dp, bottom = 32.dp))
 
         BookibaTextField(value = name, onValueChange = { name = it }, label = "Full name")
         Spacer(Modifier.height(12.dp))

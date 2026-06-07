@@ -64,7 +64,7 @@ fun HomeScreen(
 
             // ── "Found Today" Section ────────────────────────────────
             item {
-                SectionHeader(title = "Found Today", onSeeAll = {})
+                SectionHeader(title = "Found Today", onSeeAll = onSearchClick)
             }
             item {
                 LazyRow(
@@ -81,7 +81,7 @@ fun HomeScreen(
             // ── Staff Pick ───────────────────────────────────────────
             state.staffPick?.let { pick ->
                 item {
-                    SectionHeader(title = "Staff Pick", onSeeAll = {})
+                    SectionHeader(title = "Staff Pick", onSeeAll = onSearchClick)
                     StaffPickCard(book = pick, onClick = { onBookClick(pick.id) })
                     Spacer(Modifier.height(24.dp))
                 }
@@ -89,7 +89,7 @@ fun HomeScreen(
 
             // ── New Arrivals ─────────────────────────────────────────
             item {
-                SectionHeader(title = "New Arrivals", onSeeAll = {})
+                SectionHeader(title = "New Arrivals", onSeeAll = onSearchClick)
             }
             item {
                 LazyRow(
@@ -125,17 +125,10 @@ private fun HomeTopBar(onNotificationsClick: () -> Unit) {
     ) {
         Column {
             Text(
-                text = "book",
+                text = "Bookiba",
                 color = DarkBrown,
-                fontSize = 13.sp,
-                letterSpacing = 3.sp,
-                fontWeight = FontWeight.Light
-            )
-            Text(
-                text = "nook",
-                color = WarmBrown,
-                fontSize = 13.sp,
-                letterSpacing = 3.sp,
+                fontSize = 16.sp,
+                letterSpacing = 4.sp,
                 fontWeight = FontWeight.Light
             )
         }

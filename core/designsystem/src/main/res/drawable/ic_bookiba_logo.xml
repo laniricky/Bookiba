@@ -1,0 +1,31 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="100dp"
+    android:height="100dp"
+    android:viewportWidth="500"
+    android:viewportHeight="500">
+    <!-- Pure symbol only — no background, fully transparent -->
+    <path
+        android:pathData="M 250,247 C 205,247 180,272 180,297 C 180,327 210,347 250,347 C 290,347 320,327 320,297 C 320,272 295,247 250,247 Z"
+        android:strokeColor="#D5B295"
+        android:strokeWidth="18"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M 250,152 C 310,152 310,247 250,247"
+        android:strokeColor="#D5B295"
+        android:strokeWidth="18"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M 250,152 L 250,312"
+        android:strokeColor="#D5B295"
+        android:strokeWidth="18"
+        android:strokeLineCap="butt"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M 250,152 L 231,152 L 250,171 Z"
+        android:fillColor="#D5B295" />
+    <path
+        android:pathData="M 190,179 Q 190,195 206,195 Q 190,195 190,211 Q 190,195 174,195 Q 190,195 190,179 Z"
+        android:fillColor="#D5B295" />
+</vector>

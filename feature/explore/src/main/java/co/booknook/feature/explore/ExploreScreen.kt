@@ -104,7 +104,10 @@ fun ExploreScreen(
             GenreCard(
                 genre = genre,
                 gradient = genreGradients[index % genreGradients.size],
-                onClick = { onGenreClick(genre.id) },
+                onClick = { 
+                    viewModel.onSearchQueryChange(genre.name)
+                    onGenreClick(genre.id) 
+                },
                 modifier = Modifier.padding(
                     start = if (index % 2 == 0) 16.dp else 6.dp,
                     end = if (index % 2 == 1) 16.dp else 6.dp,

@@ -76,7 +76,7 @@ $low_stock_count = count(array_filter($books, fn($b) => $b['inventory_count'] > 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products | The Book Nook</title>
+    <title>Products | Bookiba</title>
     <link rel="stylesheet" href="style.css">
     <style>
         .filter-strip { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 20px; }

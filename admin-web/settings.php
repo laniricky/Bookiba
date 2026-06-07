@@ -1,20 +1,68 @@
 <?php
 require 'db.php';
+require 'includes/auth_gate.php';
 $page = 'settings.php';
 
-// Handle form submission (mock)
+// ── Load current settings from DB ─────────────────────────────────────────────
+function getSetting(PDO $pdo, string $key, string $default = ''): string {
+    $stmt = $pdo->prepare("SELECT value FROM store_settings WHERE key = ?");
+    $stmt->execute([$key]);
+    $row = $stmt->fetch();
+    return $row ? $row['value'] : $default;
+}
+
+// ── Handle form save ──────────────────────────────────────────────────────────
 $success = false;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // In a real app, save to db or config file
+    $fields = [
+        'store_name'     => $_POST['store_name']     ?? '',
+        'support_email'  => $_POST['support_email']  ?? '',
+        'phone'          => $_POST['phone']           ?? '',
+        'timezone'       => $_POST['timezone']        ?? 'Africa/Nairobi',
+        'address'        => $_POST['address']         ?? '',
+        'currency'       => $_POST['currency']        ?? 'KES',
+        'tax_rate'       => $_POST['tax_rate']        ?? '16',
+        'notif_orders'   => isset($_POST['notif_orders'])   ? '1' : '0',
+        'notif_stock'    => isset($_POST['notif_stock'])    ? '1' : '0',
+        'notif_weekly'   => isset($_POST['notif_weekly'])   ? '1' : '0',
+        'admin_name'     => $_POST['admin_name']      ?? '',
+        'admin_email'    => $_POST['admin_email']     ?? '',
+    ];
+    // Handle optional password change
+    if (!empty($_POST['new_password'])) {
+        $fields['admin_pass_hash'] = password_hash($_POST['new_password'], PASSWORD_BCRYPT);
+    }
+
+    $stmt = $pdo->prepare("INSERT INTO store_settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value");
+    foreach ($fields as $k => $v) {
+        $stmt->execute([$k, $v]);
+    }
     $success = true;
 }
+
+// ── Fetch live values ─────────────────────────────────────────────────────────
+$s = [
+    'store_name'    => getSetting($pdo, 'store_name',    'Bookiba'),
+    'support_email' => getSetting($pdo, 'support_email', 'support@bookiba.co.ke'),
+    'phone'         => getSetting($pdo, 'phone',         '+254 700 123 456'),
+    'timezone'      => getSetting($pdo, 'timezone',      'Africa/Nairobi'),
+    'address'       => getSetting($pdo, 'address',       'Moi Avenue, CBD' . "\n" . 'Nairobi, Kenya'),
+    'currency'      => getSetting($pdo, 'currency',      'KES'),
+    'tax_rate'      => getSetting($pdo, 'tax_rate',      '16'),
+    'notif_orders'  => getSetting($pdo, 'notif_orders',  '1'),
+    'notif_stock'   => getSetting($pdo, 'notif_stock',   '1'),
+    'notif_weekly'  => getSetting($pdo, 'notif_weekly',  '0'),
+    'admin_name'    => getSetting($pdo, 'admin_name',    'Admin'),
+    'admin_email'   => getSetting($pdo, 'admin_email',   'admin@bookiba.co.ke'),
+];
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings | The Book Nook</title>
+    <title>Settings | Bookiba</title>
     <link rel="stylesheet" href="style.css">
     <style>
         .settings-layout { display: grid; grid-template-columns: 240px 1fr; gap: 40px; align-items: start; max-width: 1000px; margin: 0 auto; }
@@ -83,30 +131,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Store Name</label>
-                                <input type="text" name="store_name" value="The Book Nook" required>
+                                <input type="text" name="store_name" value="<?= htmlspecialchars($s['store_name']) ?>" required>
                             </div>
                             <div class="form-group">
                                 <label>Support Email</label>
-                                <input type="email" name="support_email" value="support@thebooknook.co.ke">
+                                <input type="email" name="support_email" value="<?= htmlspecialchars($s['support_email']) ?>">
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Phone Number</label>
-                                <input type="text" name="phone" value="+254 700 123 456">
+                                <input type="text" name="phone" value="<?= htmlspecialchars($s['phone']) ?>">
                             </div>
                             <div class="form-group">
                                 <label>Timezone</label>
                                 <select name="timezone">
-                                    <option value="Africa/Nairobi" selected>Africa/Nairobi (EAT)</option>
-                                    <option value="UTC">UTC</option>
+                                    <option value="Africa/Nairobi" <?= $s['timezone'] === 'Africa/Nairobi' ? 'selected' : '' ?>>Africa/Nairobi (EAT)</option>
+                                    <option value="UTC" <?= $s['timezone'] === 'UTC' ? 'selected' : '' ?>>UTC</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label>Physical Address</label>
-                            <textarea name="address" rows="3">Moi Avenue, CBD
-Nairobi, Kenya</textarea>
+                            <textarea name="address" rows="3"><?= htmlspecialchars($s['address']) ?></textarea>
                             <div class="hint">Leave blank if you operate purely online.</div>
                         </div>
                     </div>
@@ -120,13 +167,13 @@ Nairobi, Kenya</textarea>
                             <div class="form-group">
                                 <label>Base Currency</label>
                                 <select name="currency">
-                                    <option value="KES" selected>Kenyan Shilling (Ksh)</option>
-                                    <option value="USD">US Dollar ($)</option>
+                                    <option value="KES" <?= $s['currency'] === 'KES' ? 'selected' : '' ?>>Kenyan Shilling (Ksh)</option>
+                                    <option value="USD" <?= $s['currency'] === 'USD' ? 'selected' : '' ?>>US Dollar ($)</option>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label>Tax Rate (%)</label>
-                                <input type="number" name="tax_rate" value="16" min="0" max="100">
+                                <input type="number" name="tax_rate" value="<?= htmlspecialchars($s['tax_rate']) ?>" min="0" max="100">
                             </div>
                         </div>
 
@@ -151,21 +198,21 @@ Nairobi, Kenya</textarea>
                                 <div class="toggle-label">New Order Alerts</div>
                                 <div class="toggle-desc">Get an email whenever a customer places an order.</div>
                             </div>
-                            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                            <label class="switch"><input type="checkbox" name="notif_orders" <?= $s['notif_orders'] === '1' ? 'checked' : '' ?>><span class="slider"></span></label>
                         </div>
                         <div class="toggle-wrap">
                             <div>
                                 <div class="toggle-label">Low Stock Warnings</div>
                                 <div class="toggle-desc">Alert when a product drops below 10 units.</div>
                             </div>
-                            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                            <label class="switch"><input type="checkbox" name="notif_stock" <?= $s['notif_stock'] === '1' ? 'checked' : '' ?>><span class="slider"></span></label>
                         </div>
                         <div class="toggle-wrap">
                             <div>
                                 <div class="toggle-label">Weekly Summary</div>
                                 <div class="toggle-desc">Receive a report of sales and performance every Monday.</div>
                             </div>
-                            <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                            <label class="switch"><input type="checkbox" name="notif_weekly" <?= $s['notif_weekly'] === '1' ? 'checked' : '' ?>><span class="slider"></span></label>
                         </div>
                     </div>
 
@@ -175,20 +222,19 @@ Nairobi, Kenya</textarea>
                         <div class="settings-desc">Update your login details and avatar.</div>
 
                         <div style="display:flex; gap:20px; align-items:center; margin-bottom:24px;">
-                            <img src="https://ui-avatars.com/api/?name=Admin&background=365134&color=fff&size=128" style="width:64px; height:64px; border-radius:50%;">
-                            <div>
-                                <button type="button" class="btn btn-outline btn-sm">Change Avatar</button>
+                            <div style="width:64px; height:64px; border-radius:50%; background:#1A1512; display:flex; align-items:center; justify-content:center;">
+                                <span style="color:#F5F0E8; font-size:22px; font-weight:800;"><?= strtoupper(substr($s['admin_name'], 0, 1)) ?></span>
                             </div>
                         </div>
-                        
+
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Full Name</label>
-                                <input type="text" name="admin_name" value="Admin User" required>
+                                <input type="text" name="admin_name" value="<?= htmlspecialchars($s['admin_name']) ?>" required>
                             </div>
                             <div class="form-group">
                                 <label>Login Email</label>
-                                <input type="email" name="admin_email" value="admin@thebooknook.co.ke" required>
+                                <input type="email" name="admin_email" value="<?= htmlspecialchars($s['admin_email']) ?>" required>
                             </div>
                         </div>
                         <div class="form-group">

@@ -10,15 +10,22 @@ android {
     namespace = "co.booknook.core.network"
     compileSdk = 34
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         minSdk = 24
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "BASE_URL", "\"http://10.100.8.139:8080/api/v1/\"")
+        }
         release {
+            buildConfigField("String", "BASE_URL", "\"https://api.bookiba.co/v1/\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -34,6 +41,7 @@ android {
         jvmTarget = "17"
     }
 }
+
 
 dependencies {
     implementation(libs.androidx.core.ktx)

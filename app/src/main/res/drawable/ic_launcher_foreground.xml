@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="500"
+    android:viewportHeight="500">
+    <!-- Dark brown B symbol centered on the adaptive foreground layer -->
+    <path
+        android:pathData="M 250,247 C 205,247 180,272 180,297 C 180,327 210,347 250,347 C 290,347 320,327 320,297 C 320,272 295,247 250,247 Z"
+        android:strokeColor="#4A3225"
+        android:strokeWidth="18"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M 250,152 C 310,152 310,247 250,247"
+        android:strokeColor="#4A3225"
+        android:strokeWidth="18"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M 250,152 L 250,312"
+        android:strokeColor="#4A3225"
+        android:strokeWidth="18"
+        android:strokeLineCap="butt"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M 250,152 L 231,152 L 250,171 Z"
+        android:fillColor="#4A3225" />
+    <path
+        android:pathData="M 190,179 Q 190,195 206,195 Q 190,195 190,211 Q 190,195 174,195 Q 190,195 190,179 Z"
+        android:fillColor="#4A3225" />
+</vector>

@@ -47,7 +47,7 @@ define('MAX_STOCK', 50);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory | The Book Nook</title>
+    <title>Inventory | Bookiba</title>
     <link rel="stylesheet" href="style.css">
     <style>
         .inv-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }

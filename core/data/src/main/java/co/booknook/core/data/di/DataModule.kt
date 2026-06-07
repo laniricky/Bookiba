@@ -17,4 +17,10 @@ abstract class DataModule {
     abstract fun bindBookRepository(
         offlineFirstBookRepository: OfflineFirstBookRepository
     ): BookRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTokenProvider(
+        dataStoreTokenProvider: co.booknook.core.data.auth.DataStoreTokenProvider
+    ): co.booknook.core.network.di.NetworkModule.TokenProvider
 }

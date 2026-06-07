@@ -4,7 +4,6 @@ import co.booknook.core.network.model.*
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface BookibaApi {
@@ -15,7 +14,9 @@ interface BookibaApi {
     @GET("books.php")
     suspend fun getBooks(
         @Query("q") query: String? = null,
-        @Query("category") category: String? = null
+        @Query("category") category: String? = null,
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 20
     ): NetworkBooksResponse
 
     @GET("books.php")
@@ -27,4 +28,13 @@ interface BookibaApi {
     suspend fun checkout(
         @Body request: NetworkCheckoutRequest
     ): NetworkCheckoutResponse
+
+    @POST("auth.php")
+    suspend fun auth(
+        @Body request: NetworkAuthRequest
+    ): NetworkAuthResponse
+
+    @GET("user.php")
+    suspend fun getUserProfile(): NetworkUserProfileResponse
 }
+

@@ -15,9 +15,25 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
+/**
+ * Provides the base URL from BuildConfig so each build variant can point to
+ * the correct environment (emulator dev / staging / production).
+ *
+ * The token is provided by [TokenProvider] which is bound to the DataStore
+ * implementation in the :core:datastore module.
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+
+    /**
+     * Simple interface so the network module does not have a direct
+     * compile-time dependency on the datastore module.
+     */
+    interface TokenProvider {
+        /** Returns the current auth token, or an empty string if not logged in. */
+        fun getToken(): String
+    }
 
     @Provides
     @Singleton
@@ -28,34 +44,36 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAuthInterceptor(): AuthInterceptor = AuthInterceptor()
-
-    @Provides
-    @Singleton
-    fun provideOkHttpClient(
-        authInterceptor: AuthInterceptor
-    ): OkHttpClient {
-        val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY // Change to BASIC or NONE for production
-        }
-
-        return OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
-            .addInterceptor(authInterceptor)
+    fun provideOkHttpClient(tokenProvider: TokenProvider): OkHttpClient {
+        val builder = OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                // Re-read the token on every request so token changes take effect immediately
+                val token = tokenProvider.getToken()
+                val req = chain.request().newBuilder().apply {
+                    if (token.isNotBlank()) header("Authorization", "Bearer $token")
+                }.build()
+                chain.proceed(req)
+            }
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
-            .build()
+
+        // Only attach full-body logging in debug builds
+        if (co.booknook.core.network.BuildConfig.DEBUG) {
+            val logging = HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            }
+            builder.addInterceptor(logging)
+        }
+
+        return builder.build()
     }
 
     @Provides
     @Singleton
-    fun provideRetrofit(
-        okHttpClient: OkHttpClient,
-        json: Json
-    ): Retrofit {
+    fun provideRetrofit(okHttpClient: OkHttpClient, json: Json): Retrofit {
         val contentType = "application/json".toMediaType()
         return Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8080/api/v1/") // Pointing to local backend
+            .baseUrl(co.booknook.core.network.BuildConfig.BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory(contentType))
             .build()
@@ -63,9 +81,6 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideBookibaApi(
-        retrofit: Retrofit
-    ): BookibaApi {
-        return retrofit.create(BookibaApi::class.java)
-    }
+    fun provideBookibaApi(retrofit: Retrofit): BookibaApi =
+        retrofit.create(BookibaApi::class.java)
 }

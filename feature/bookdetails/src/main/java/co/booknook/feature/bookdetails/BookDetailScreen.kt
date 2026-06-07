@@ -14,6 +14,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -102,9 +104,9 @@ fun BookDetailScreen(
                         horizontalArrangement = Arrangement.spacedBy(24.dp)
                     ) {
                         book.edition?.let {
-                            InfoChip(label = it, icon = "📅")
+                            InfoChip(label = it, icon = Icons.Outlined.DateRange)
                         }
-                        book.condition?.let { InfoChip(label = it, icon = "✓") }
+                        book.condition?.let { InfoChip(label = it, icon = Icons.Outlined.CheckCircle) }
                     }
                 }
 
@@ -269,14 +271,14 @@ private fun BookImageGallery(
 }
 
 @Composable
-private fun InfoChip(label: String, icon: String) {
+private fun InfoChip(label: String, icon: androidx.compose.ui.graphics.vector.ImageVector) {
     Surface(shape = RoundedCornerShape(8.dp), color = Cream) {
         Row(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(icon, fontSize = 13.sp)
+            Icon(icon, contentDescription = null, tint = WarmBrown, modifier = Modifier.size(16.dp))
             Text(label, color = WarmBrown, fontSize = 12.sp, fontWeight = FontWeight.Medium)
         }
     }

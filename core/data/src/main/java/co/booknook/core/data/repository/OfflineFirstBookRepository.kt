@@ -16,42 +16,36 @@ class OfflineFirstBookRepository @Inject constructor(
     private val bookDao: BookDao
 ) : BookRepository {
 
-    override fun getFeaturedBooks(): Flow<List<Book>> = flow {
-        try {
+    private var cachedHomeResponse: co.booknook.core.network.model.NetworkHomeResponse? = null
+    private suspend fun fetchHomeData(): co.booknook.core.network.model.NetworkHomeResponse? {
+        if (cachedHomeResponse != null) return cachedHomeResponse
+        return try {
             val response = bookibaApi.getHome()
             if (response.ok) {
-                emit(response.data?.featured?.map { it.toDomain() } ?: emptyList())
-            } else {
-                emit(emptyList())
-            }
+                cachedHomeResponse = response
+                response
+            } else null
         } catch (e: Exception) {
-            emit(emptyList())
+            null
         }
+    }
+
+    override fun getFeaturedBooks(): Flow<List<Book>> = flow {
+        val response = fetchHomeData()
+        emit(response?.data?.featured?.map { it.toDomain() } ?: emptyList())
     }
 
     override fun getNewArrivals(): Flow<List<Book>> = flow {
-        try {
-            val response = bookibaApi.getHome()
-            if (response.ok) {
-                emit(response.data?.newArrivals?.map { it.toDomain() } ?: emptyList())
-            } else {
-                emit(emptyList())
-            }
-        } catch (e: Exception) {
-            emit(emptyList())
-        }
+        val response = fetchHomeData()
+        emit(response?.data?.newArrivals?.map { it.toDomain() } ?: emptyList())
     }
 
     override fun getStaffPicks(): Flow<List<Book>> = flow {
-        try {
-            val response = bookibaApi.getHome()
-            val staffPick = response.data?.staffPick
-            if (response.ok && staffPick != null) {
-                emit(listOf(staffPick.toDomain()))
-            } else {
-                emit(emptyList())
-            }
-        } catch (e: Exception) {
+        val response = fetchHomeData()
+        val staffPick = response?.data?.staffPick
+        if (staffPick != null) {
+            emit(listOf(staffPick.toDomain()))
+        } else {
             emit(emptyList())
         }
     }
@@ -92,11 +86,10 @@ class OfflineFirstBookRepository @Inject constructor(
         }
     }
 
-    override suspend fun checkout(items: List<Pair<String, Int>>, totalAmount: Double): Boolean {
+    override suspend fun checkout(items: List<Triple<String, Int, Double>>): Boolean {
         return try {
-            val cartItems = items.map { (id, quantity) ->
-                co.booknook.core.network.model.NetworkCartItem(bookId = id, quantity = quantity, price = totalAmount / items.size) 
-                // Note: accurate price requires price per item, simplified for now
+            val cartItems = items.map { (id, quantity, price) ->
+                co.booknook.core.network.model.NetworkCartItem(bookId = id, quantity = quantity, price = price) 
             }
             val request = co.booknook.core.network.model.NetworkCheckoutRequest(items = cartItems)
             val response = bookibaApi.checkout(request)

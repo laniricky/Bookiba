@@ -22,11 +22,14 @@ android {
 dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:domain"))
+    implementation(project(":core:network"))
+    implementation(project(":core:datastore"))
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.material3)
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.coil.compose)
+    implementation(libs.androidx.material.icons.extended)
     ksp(libs.hilt.compiler)
 }

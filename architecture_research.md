@@ -535,7 +535,7 @@ sequenceDiagram
     App->>Backend: POST /checkout/payment/mpesa (phone, amount)
     Backend->>Daraja: STK Push Request
     Daraja->>Phone: Display STK Push prompt
-    Phone->>User: "Enter M-Pesa PIN for KSh 2,900 to BookNook"
+    Phone->>User: "Enter M-Pesa PIN for KSh 2,900 to Bookiba"
     User->>Phone: Enter PIN
     Phone->>Daraja: Payment confirmed
     Daraja->>Backend: Callback (success/failure)

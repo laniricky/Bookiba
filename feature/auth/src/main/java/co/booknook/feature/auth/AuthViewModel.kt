@@ -28,7 +28,10 @@ sealed interface AuthEvent {
 }
 
 @HiltViewModel
-class AuthViewModel @Inject constructor() : ViewModel() {
+class AuthViewModel @Inject constructor(
+    private val api: co.booknook.core.network.api.BookibaApi,
+    private val dataStore: co.booknook.core.datastore.BookibaPreferencesDataSource
+) : ViewModel() {
 
     private val _state = MutableStateFlow(AuthUiState())
     val state: StateFlow<AuthUiState> = _state.asStateFlow()
@@ -46,17 +49,38 @@ class AuthViewModel @Inject constructor() : ViewModel() {
     private fun login(email: String, password: String) {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
-            // TODO: wire to AuthRepository / API
-            kotlinx.coroutines.delay(1000)
-            _state.update { it.copy(isLoading = false, isAuthenticated = true) }
+            try {
+                val req = co.booknook.core.network.model.NetworkAuthRequest(action = "login", email = email, password = password)
+                val res = api.auth(req)
+                val token = res.token
+                if (res.ok && token != null) {
+                    dataStore.saveAuthToken(token)
+                    _state.update { it.copy(isLoading = false, isAuthenticated = true) }
+                } else {
+                    _state.update { it.copy(isLoading = false, error = res.error ?: "Login failed") }
+                }
+            } catch (e: Exception) {
+                _state.update { it.copy(isLoading = false, error = e.message ?: "Network error") }
+            }
         }
     }
 
     private fun signUp(name: String, email: String, password: String) {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
-            kotlinx.coroutines.delay(1000)
-            _state.update { it.copy(isLoading = false, successMessage = "Check your email for a verification code") }
+            try {
+                val req = co.booknook.core.network.model.NetworkAuthRequest(action = "register", name = name, email = email, password = password)
+                val res = api.auth(req)
+                val token = res.token
+                if (res.ok && token != null) {
+                    dataStore.saveAuthToken(token)
+                    _state.update { it.copy(isLoading = false, isAuthenticated = true) }
+                } else {
+                    _state.update { it.copy(isLoading = false, error = res.error ?: "Signup failed") }
+                }
+            } catch (e: Exception) {
+                _state.update { it.copy(isLoading = false, error = e.message ?: "Network error") }
+            }
         }
     }
 

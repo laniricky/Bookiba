@@ -90,7 +90,7 @@ function timelineSteps($status) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orders | The Book Nook</title>
+    <title>Orders | Bookiba</title>
     <link rel="stylesheet" href="style.css">
     <style>
         body { overflow: hidden; }

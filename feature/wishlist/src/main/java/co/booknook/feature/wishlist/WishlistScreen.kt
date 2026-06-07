@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.MenuBook
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -54,7 +55,7 @@ fun WishlistScreen(
         if (state.books.isEmpty() && !state.isLoading) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("📚", fontSize = 48.sp)
+                    Icon(Icons.Outlined.MenuBook, contentDescription = null, tint = WarmBrown, modifier = Modifier.size(48.dp))
                     Spacer(Modifier.height(12.dp))
                     Text("Your wishlist is empty", color = DarkBrown, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
                     Text("Save books you love to find them later", color = WarmBrown, fontSize = 13.sp, modifier = Modifier.padding(top = 6.dp))
