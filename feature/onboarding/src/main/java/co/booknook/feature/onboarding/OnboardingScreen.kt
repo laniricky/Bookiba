@@ -10,6 +10,8 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -33,7 +35,7 @@ data class OnboardingPage(
     val title: String,
     val subtitle: String,
     val accent: String,
-    val imageRes: Int
+    val icon: androidx.compose.ui.graphics.vector.ImageVector
 )
 
 private val pages = listOf(
@@ -41,25 +43,25 @@ private val pages = listOf(
         title = "Discover\nhidden gems.",
         subtitle = "Carefully thrifted books\nwith stories to tell.",
         accent = "Browse thousands of curated rare finds",
-        imageRes = R.drawable.img_onboarding_discover
+        icon = Icons.Outlined.Search
     ),
     OnboardingPage(
         title = "Discover\nRare Books.",
         subtitle = "One-of-a-kind editions from\naround the world.",
         accent = "Every book has a story before you",
-        imageRes = R.drawable.img_onboarding_rare
+        icon = Icons.Outlined.Star
     ),
     OnboardingPage(
         title = "Save &\nBuild Shelves.",
         subtitle = "Create your own personal\nlibrary of saved books.",
         accent = "Wishlist, favorites, and reading shelves",
-        imageRes = R.drawable.img_onboarding_shelves
+        icon = Icons.Outlined.FavoriteBorder
     ),
     OnboardingPage(
         title = "Stay in\nthe Loop.",
         subtitle = "Get notified when rare books\nyou love drop in.",
         accent = "Never miss a rare find again",
-        imageRes = R.drawable.img_onboarding_notify
+        icon = Icons.Outlined.Notifications
     )
 )
 
@@ -84,21 +86,6 @@ fun OnboardingScreen(onFinished: () -> Unit) {
             OnboardingPageContent(page = pages[pageIndex], visible = visible)
         }
 
-        // Skip button
-        TextButton(
-            onClick = onFinished,
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(top = 48.dp, start = 16.dp)
-        ) {
-            Text(
-                text = "Skip",
-                color = WarmBrown,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium
-            )
-        }
-
         // Top Logo
         Text(
             text = "Bookiba",
@@ -107,9 +94,24 @@ fun OnboardingScreen(onFinished: () -> Unit) {
             letterSpacing = 6.sp,
             fontWeight = FontWeight.Light,
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 56.dp)
+                .align(Alignment.TopStart)
+                .padding(top = 24.dp, start = 16.dp)
         )
+
+        // Skip button
+        TextButton(
+            onClick = onFinished,
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(top = 64.dp, start = 4.dp) // adjusted start padding slightly to align with text visually
+        ) {
+            Text(
+                text = "Skip",
+                color = WarmBrown,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium
+            )
+        }
 
         // Bottom controls
         Column(
@@ -179,7 +181,7 @@ private fun OnboardingPageContent(page: OnboardingPage, visible: Boolean) {
                 )
             )
     ) {
-        // Decorative circle with Illustration
+        // Decorative circle with minimalist Icon
         Box(
             modifier = Modifier
                 .size(340.dp)
@@ -189,11 +191,11 @@ private fun OnboardingPageContent(page: OnboardingPage, visible: Boolean) {
                 .background(Color(0xFFEDE4D6)),
             contentAlignment = Alignment.Center
         ) {
-            androidx.compose.foundation.Image(
-                painter = androidx.compose.ui.res.painterResource(id = page.imageRes),
+            Icon(
+                imageVector = page.icon,
                 contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                modifier = Modifier.size(120.dp),
+                tint = WarmBrown
             )
         }
 
