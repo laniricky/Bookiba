@@ -19,6 +19,7 @@ fun Application.configureRouting() {
             bookRoutes()
             orderRoutes()
             wishlistRoutes()
+            userRoutes()
         }
     }
 }

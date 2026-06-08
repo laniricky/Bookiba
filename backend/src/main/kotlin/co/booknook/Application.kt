@@ -11,6 +11,9 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import kotlinx.serialization.json.Json
 import org.slf4j.event.Level
+import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.response.*
+import io.ktor.http.HttpStatusCode
 import co.booknook.security.configureSecurity
 import co.booknook.routing.configureRouting
 
@@ -31,6 +34,12 @@ fun Application.module() {
     
     install(CallLogging) {
         level = Level.INFO
+    }
+
+    install(StatusPages) {
+        exception<Throwable> { call, cause ->
+            call.respond(HttpStatusCode.InternalServerError, mapOf("error" to cause.localizedMessage))
+        }
     }
 
     install(CORS) {
