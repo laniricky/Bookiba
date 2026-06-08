@@ -59,7 +59,7 @@ private val pages = listOf(
         title = "Stay in\nthe Loop.",
         subtitle = "Get notified when rare books\nyou love drop in.",
         accent = "Never miss a rare find again",
-        imageRes = R.drawable.ic_onboarding_notify_art
+        imageRes = R.drawable.img_onboarding_treasure
     )
 )
 
