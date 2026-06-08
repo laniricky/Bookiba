@@ -10,7 +10,7 @@ object DatabaseFactory {
     fun init() {
         val config = HikariConfig().apply {
             driverClassName = "org.sqlite.JDBC"
-            jdbcUrl = System.getenv("JDBC_URL") ?: "jdbc:sqlite:../database.sqlite"
+            jdbcUrl = System.getenv("JDBC_URL") ?: "jdbc:sqlite:/data/bookiba.sqlite"
             maximumPoolSize = 1
             isAutoCommit = false
             transactionIsolation = "TRANSACTION_SERIALIZABLE"

@@ -10,6 +10,10 @@ fun Application.configureRouting() {
             call.respondText("📚 Bookiba API v1 is running!")
         }
 
+        get("/health") {
+            call.respondText("OK")
+        }
+
         route("/api/v1") {
             authRoutes()
             bookRoutes()
