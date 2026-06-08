@@ -12,10 +12,10 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Route.userRoutes() {
     route("/user") {
-        authenticate {
+        authenticate("auth-jwt") {
             get("/profile") {
                 val principal = call.principal<JWTPrincipal>()
-                val userId = principal?.payload?.getClaim("userId")?.asString()
+                val userId = principal?.payload?.getClaim("id")?.asString()
                     ?: return@get call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Invalid token"))
 
                 val user = transaction {
