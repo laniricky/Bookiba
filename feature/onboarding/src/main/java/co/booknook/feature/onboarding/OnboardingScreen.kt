@@ -10,8 +10,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -35,7 +33,7 @@ data class OnboardingPage(
     val title: String,
     val subtitle: String,
     val accent: String,
-    val icon: androidx.compose.ui.graphics.vector.ImageVector
+    val imageRes: Int
 )
 
 private val pages = listOf(
@@ -43,25 +41,25 @@ private val pages = listOf(
         title = "Discover\nhidden gems.",
         subtitle = "Carefully thrifted books\nwith stories to tell.",
         accent = "Browse thousands of curated rare finds",
-        icon = Icons.Outlined.Search
+        imageRes = R.drawable.img_onboarding_discover
     ),
     OnboardingPage(
         title = "Discover\nRare Books.",
         subtitle = "One-of-a-kind editions from\naround the world.",
         accent = "Every book has a story before you",
-        icon = Icons.Outlined.Star
+        imageRes = R.drawable.img_onboarding_rare
     ),
     OnboardingPage(
         title = "Save &\nBuild Shelves.",
         subtitle = "Create your own personal\nlibrary of saved books.",
         accent = "Wishlist, favorites, and reading shelves",
-        icon = Icons.Outlined.FavoriteBorder
+        imageRes = R.drawable.img_onboarding_shelves
     ),
     OnboardingPage(
         title = "Stay in\nthe Loop.",
         subtitle = "Get notified when rare books\nyou love drop in.",
         accent = "Never miss a rare find again",
-        icon = Icons.Outlined.Notifications
+        imageRes = R.drawable.ic_onboarding_notify_art
     )
 )
 
@@ -181,7 +179,7 @@ private fun OnboardingPageContent(page: OnboardingPage, visible: Boolean) {
                 )
             )
     ) {
-        // Decorative circle with minimalist Icon
+        // Decorative circle with Illustration
         Box(
             modifier = Modifier
                 .size(340.dp)
@@ -191,11 +189,11 @@ private fun OnboardingPageContent(page: OnboardingPage, visible: Boolean) {
                 .background(Color(0xFFEDE4D6)),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = page.icon,
+            androidx.compose.foundation.Image(
+                painter = androidx.compose.ui.res.painterResource(id = page.imageRes),
                 contentDescription = null,
-                modifier = Modifier.size(120.dp),
-                tint = WarmBrown
+                modifier = Modifier.fillMaxSize(),
+                contentScale = androidx.compose.ui.layout.ContentScale.Crop
             )
         }
 

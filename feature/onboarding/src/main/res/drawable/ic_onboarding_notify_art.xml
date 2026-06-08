@@ -1,0 +1,92 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="500dp"
+    android:height="500dp"
+    android:viewportWidth="500"
+    android:viewportHeight="500">
+
+    <!-- Background circle to match the theme (just in case, but we already have a background circle in Compose) -->
+    <!-- We will rely on Compose for the #EDE4D6 circle, so here we just draw the illustration -->
+
+    <!-- Floating Book (Behind envelope front) -->
+    <!-- Pages -->
+    <path
+        android:fillColor="#FDFBF7"
+        android:pathData="M160,180 L340,160 L350,290 L170,310 Z" />
+    
+    <!-- Book Cover Front -->
+    <path
+        android:fillColor="#8B7355"
+        android:pathData="M150,190 L330,170 L340,300 L160,320 Z" />
+    
+    <!-- Book Details (Spine/Banding) -->
+    <path
+        android:fillColor="#D6C8B0"
+        android:pathData="M165,200 L170,310 L175,310 L170,200 Z" />
+        
+    <path
+        android:fillColor="#C4A882"
+        android:pathData="M180,210 L310,195 L315,285 L185,300 Z" />
+
+    <!-- Abstract Book Text/Lines -->
+    <path
+        android:fillColor="#8B7355"
+        android:pathData="M200,230 L290,220 M200,245 L270,237 M200,260 L280,252"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:strokeColor="#8B7355" />
+
+    <!-- Envelope Back Flap -->
+    <path
+        android:fillColor="#C4A882"
+        android:pathData="M90,220 L250,140 L410,220 L410,230 L90,230 Z" />
+
+    <!-- Envelope Body (Front) -->
+    <path
+        android:fillColor="#D6C8B0"
+        android:pathData="M90,220 L90,380 L410,380 L410,220 L250,320 Z" />
+
+    <!-- Envelope Left/Right Shadows -->
+    <path
+        android:fillColor="#C4A882"
+        android:pathData="M90,220 L250,320 L90,380 Z" />
+        
+    <path
+        android:fillColor="#BFA07A"
+        android:pathData="M410,220 L250,320 L410,380 Z" />
+
+    <!-- Envelope Bottom Flap -->
+    <path
+        android:fillColor="#E3D5C1"
+        android:pathData="M90,380 L250,300 L410,380 Z" />
+
+    <!-- Wax Seal -->
+    <path
+        android:fillColor="#8B7355"
+        android:pathData="M250,320 m-25,0 a25,25 0 1,1 50,0 a25,25 0 1,1 -50,0" />
+        
+    <path
+        android:fillColor="#6E583E"
+        android:pathData="M250,320 m-18,0 a18,18 0 1,1 36,0 a18,18 0 1,1 -36,0" />
+
+    <!-- Magical Sparkles (Stars) -->
+    <!-- Star 1 (Top Right) -->
+    <path
+        android:fillColor="#C4A882"
+        android:pathData="M370,120 Q370,140 390,140 Q370,140 370,160 Q370,140 350,140 Q370,140 370,120 Z" />
+        
+    <!-- Star 2 (Top Left) -->
+    <path
+        android:fillColor="#8B7355"
+        android:pathData="M130,150 Q130,165 145,165 Q130,165 130,180 Q130,165 115,165 Q130,165 130,150 Z" />
+        
+    <!-- Star 3 (Bottom Right) -->
+    <path
+        android:fillColor="#8B7355"
+        android:pathData="M430,270 Q430,280 440,280 Q430,280 430,290 Q430,280 420,280 Q430,280 430,270 Z" />
+
+    <!-- Star 4 (Bottom Left) -->
+    <path
+        android:fillColor="#C4A882"
+        android:pathData="M60,280 Q60,295 75,295 Q60,295 60,310 Q60,295 45,295 Q60,295 60,280 Z" />
+
+</vector>
