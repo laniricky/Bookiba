@@ -28,6 +28,7 @@ private val SoftWhite = Color(0xFFFEFCF9)
 private val AccentGreen = Color(0xFF2D6A4F)
 data class ShelfItem(val label: String, val count: Int, val icon: ImageVector)
 data class ProfileState(
+    val isLoggedIn: Boolean = false,
     val name: String = "Amina",
     val bio: String = "Book lover · Vintage finder · Collecting stories.",
     val ordersCount: Int = 24,
@@ -48,6 +49,8 @@ fun ProfileScreen(
     onOrdersClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onLogout: () -> Unit,
+    onNavigateToLogin: () -> Unit,
+    onNavigateToSignup: () -> Unit,
     viewModel: ProfileViewModel = androidx.hilt.navigation.compose.hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -72,80 +75,144 @@ fun ProfileScreen(
             return
         }
 
-        // Avatar + info
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Box(
-                modifier = Modifier.size(80.dp).clip(CircleShape).background(WarmBrown),
-                contentAlignment = Alignment.Center
+        if (state.isLoggedIn) {
+            // Avatar + info
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(state.name.first().toString(), color = Cream, fontSize = 32.sp, fontWeight = FontWeight.Bold)
+                Box(
+                    modifier = Modifier.size(80.dp).clip(CircleShape).background(WarmBrown),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(state.name.firstOrNull()?.toString() ?: "U", color = Cream, fontSize = 32.sp, fontWeight = FontWeight.Bold)
+                }
+                Spacer(Modifier.height(12.dp))
+                Text(state.name, color = DarkBrown, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text(state.bio, color = WarmBrown, fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp))
+
+                Spacer(Modifier.height(20.dp))
+
+                // Stats row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    StatItem(count = state.ordersCount, label = "Orders")
+                    VerticalDivider(modifier = Modifier.height(40.dp), color = Cream)
+                    StatItem(count = state.wishlistCount, label = "Wishlist")
+                    VerticalDivider(modifier = Modifier.height(40.dp), color = Cream)
+                    StatItem(count = state.reviewsCount, label = "Reviews")
+                }
+            }
+
+            Spacer(Modifier.height(24.dp))
+            HorizontalDivider(color = Cream, modifier = Modifier.padding(horizontal = 20.dp))
+            Spacer(Modifier.height(16.dp))
+
+            // My Shelves
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text("My Shelves", color = DarkBrown, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text("See all", color = WarmBrown, fontSize = 13.sp)
             }
             Spacer(Modifier.height(12.dp))
-            Text(state.name, color = DarkBrown, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            Text(state.bio, color = WarmBrown, fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp))
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.height(220.dp)
+            ) {
+                items(state.shelves) { shelf ->
+                    ShelfCard(shelf = shelf)
+                }
+            }
 
             Spacer(Modifier.height(20.dp))
+            HorizontalDivider(color = Cream, modifier = Modifier.padding(horizontal = 20.dp))
 
-            // Stats row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                StatItem(count = state.ordersCount, label = "Orders")
-                VerticalDivider(modifier = Modifier.height(40.dp), color = Cream)
-                StatItem(count = state.wishlistCount, label = "Wishlist")
-                VerticalDivider(modifier = Modifier.height(40.dp), color = Cream)
-                StatItem(count = state.reviewsCount, label = "Reviews")
-            }
+            // Menu items
+            ProfileMenuItem(icon = Icons.Outlined.List, label = "Order History", onClick = onOrdersClick)
+            ProfileMenuItem(icon = Icons.Outlined.Star, label = "My Reviews", onClick = {})
+            ProfileMenuItem(icon = Icons.Outlined.LocationOn, label = "Addresses", onClick = {})
+            ProfileMenuItem(icon = Icons.Outlined.ShoppingCart, label = "Payment Methods", onClick = {})
+        } else {
+            GuestProfileContent(
+                onNavigateToLogin = onNavigateToLogin,
+                onNavigateToSignup = onNavigateToSignup
+            )
+            Spacer(Modifier.height(20.dp))
+            HorizontalDivider(color = Cream, modifier = Modifier.padding(horizontal = 20.dp))
         }
 
-        Spacer(Modifier.height(24.dp))
-        HorizontalDivider(color = Cream, modifier = Modifier.padding(horizontal = 20.dp))
-        Spacer(Modifier.height(16.dp))
+        ProfileMenuItem(icon = Icons.Outlined.Info, label = "Help & Support", onClick = {})
+        
+        if (state.isLoggedIn) {
+            ProfileMenuItem(
+                icon = Icons.Outlined.ExitToApp,
+                label = "Logout",
+                onClick = {
+                    viewModel.logout()
+                    onLogout()
+                },
+                tint = Color.Red.copy(alpha = 0.7f)
+            )
+        }
+    }
+}
 
-        // My Shelves
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+@Composable
+private fun GuestProfileContent(
+    onNavigateToLogin: () -> Unit,
+    onNavigateToSignup: () -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier.size(80.dp).clip(CircleShape).background(Cream),
+            contentAlignment = Alignment.Center
         ) {
-            Text("My Shelves", color = DarkBrown, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            Text("See all", color = WarmBrown, fontSize = 13.sp)
+            Icon(Icons.Outlined.Person, contentDescription = null, tint = WarmBrown, modifier = Modifier.size(40.dp))
+        }
+        Spacer(Modifier.height(16.dp))
+        Text(
+            text = "Unlock your rare book collection",
+            color = DarkBrown,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            text = "Sign in to track orders, build your shelves, and save your favorite finds.",
+            color = WarmBrown,
+            fontSize = 14.sp,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+        )
+        Spacer(Modifier.height(24.dp))
+        Button(
+            onClick = onNavigateToLogin,
+            modifier = Modifier.fillMaxWidth().height(50.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = DarkBrown, contentColor = SoftWhite)
+        ) {
+            Text("Sign In", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
         }
         Spacer(Modifier.height(12.dp))
-
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.height(220.dp)
+        OutlinedButton(
+            onClick = onNavigateToSignup,
+            modifier = Modifier.fillMaxWidth().height(50.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = DarkBrown),
+            border = androidx.compose.foundation.BorderStroke(1.dp, DarkBrown)
         ) {
-            items(state.shelves) { shelf ->
-                ShelfCard(shelf = shelf)
-            }
+            Text("Create Account", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
         }
-
-        Spacer(Modifier.height(20.dp))
-        HorizontalDivider(color = Cream, modifier = Modifier.padding(horizontal = 20.dp))
-
-        // Menu items
-        ProfileMenuItem(icon = Icons.Outlined.List, label = "Order History", onClick = onOrdersClick)
-        ProfileMenuItem(icon = Icons.Outlined.Star, label = "My Reviews", onClick = {})
-        ProfileMenuItem(icon = Icons.Outlined.LocationOn, label = "Addresses", onClick = {})
-        ProfileMenuItem(icon = Icons.Outlined.ShoppingCart, label = "Payment Methods", onClick = {})
-        ProfileMenuItem(icon = Icons.Outlined.Info, label = "Help & Support", onClick = {})
-        ProfileMenuItem(
-            icon = Icons.Outlined.ExitToApp,
-            label = "Logout",
-            onClick = {
-                viewModel.logout()
-                onLogout()
-            },
-            tint = Color.Red.copy(alpha = 0.7f)
-        )
     }
 }
 

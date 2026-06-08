@@ -155,7 +155,9 @@ fun BookibaNavHost() {
                 ProfileScreen(
                     onOrdersClick = { navController.navigate(Routes.ORDERS) },
                     onSettingsClick = { /* settings logic */ },
-                    onLogout = { navController.navigate(Routes.AUTH) { popUpTo(0) } }
+                    onLogout = { navController.navigate(Routes.AUTH) { popUpTo(0) } },
+                    onNavigateToLogin = { navController.navigate(Routes.AUTH) },
+                    onNavigateToSignup = { navController.navigate(Routes.AUTH) }
                 )
             }
 

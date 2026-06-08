@@ -22,7 +22,17 @@ class ProfileViewModel @Inject constructor(
     val state: StateFlow<ProfileState> = _state.asStateFlow()
 
     init {
-        fetchProfile()
+        viewModelScope.launch {
+            dataStore.authToken.collect { token ->
+                val loggedIn = token != null
+                _state.update { it.copy(isLoggedIn = loggedIn) }
+                if (loggedIn) {
+                    fetchProfile()
+                } else {
+                    _state.update { it.copy(name = "", bio = "", ordersCount = 0, wishlistCount = 0, reviewsCount = 0) }
+                }
+            }
+        }
     }
 
     private fun fetchProfile() {
