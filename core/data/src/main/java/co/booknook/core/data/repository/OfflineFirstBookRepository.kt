@@ -16,48 +16,37 @@ class OfflineFirstBookRepository @Inject constructor(
     private val bookDao: BookDao
 ) : BookRepository {
 
-    private var cachedHomeResponse: co.booknook.core.network.model.NetworkHomeResponse? = null
-    private suspend fun fetchHomeData(): co.booknook.core.network.model.NetworkHomeResponse? {
-        if (cachedHomeResponse != null) return cachedHomeResponse
-        return try {
-            val response = bookibaApi.getHome()
-            if (response.ok) {
-                cachedHomeResponse = response
-                response
-            } else null
+    override fun getFeaturedBooks(): Flow<List<Book>> = flow {
+        try {
+            val response = bookibaApi.getFeaturedBooks()
+            emit(response.books.map { it.toDomain() })
         } catch (e: Exception) {
-            null
+            emit(emptyList())
         }
     }
 
-    override fun getFeaturedBooks(): Flow<List<Book>> = flow {
-        val response = fetchHomeData()
-        emit(response?.data?.featured?.map { it.toDomain() } ?: emptyList())
-    }
-
     override fun getNewArrivals(): Flow<List<Book>> = flow {
-        val response = fetchHomeData()
-        emit(response?.data?.newArrivals?.map { it.toDomain() } ?: emptyList())
+        try {
+            val response = bookibaApi.getBooks(page = 1, pageSize = 10)
+            emit(response.books.map { it.toDomain() })
+        } catch (e: Exception) {
+            emit(emptyList())
+        }
     }
 
     override fun getStaffPicks(): Flow<List<Book>> = flow {
-        val response = fetchHomeData()
-        val staffPick = response?.data?.staffPick
-        if (staffPick != null) {
-            emit(listOf(staffPick.toDomain()))
-        } else {
+        try {
+            val response = bookibaApi.getStaffPickBooks()
+            emit(response.books.map { it.toDomain() })
+        } catch (e: Exception) {
             emit(emptyList())
         }
     }
 
     override fun getBooksByGenre(genre: String): Flow<List<Book>> = flow {
         try {
-            val response = bookibaApi.getBooks(category = genre)
-            if (response.ok) {
-                emit(response.data.map { it.toDomain() })
-            } else {
-                emit(emptyList())
-            }
+            val response = bookibaApi.getBooks(genre = genre)
+            emit(response.books.map { it.toDomain() })
         } catch (e: Exception) {
             emit(emptyList())
         }
@@ -66,12 +55,7 @@ class OfflineFirstBookRepository @Inject constructor(
     override fun getBookById(id: String): Flow<Book?> = flow {
         try {
             val response = bookibaApi.getBookDetails(id)
-            if (response.ok) {
-                emit(response.data?.toDomain())
-            } else {
-                // Fallback to local DB
-                bookDao.getBookById(id).collect { emit(it?.toDomain()) }
-            }
+            emit(response.toDomain())
         } catch (e: Exception) {
             bookDao.getBookById(id).collect { emit(it?.toDomain()) }
         }
@@ -79,8 +63,8 @@ class OfflineFirstBookRepository @Inject constructor(
 
     override suspend fun searchBooks(query: String): List<Book> {
         return try {
-            val response = bookibaApi.getBooks(query = query)
-            if (response.ok) response.data.map { it.toDomain() } else emptyList()
+            val response = bookibaApi.getBooks(search = query)
+            response.books.map { it.toDomain() }
         } catch (e: Exception) {
             emptyList()
         }

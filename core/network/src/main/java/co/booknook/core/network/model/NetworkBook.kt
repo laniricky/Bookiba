@@ -8,11 +8,17 @@ data class NetworkBook(
     @SerialName("id") val id: String,
     @SerialName("title") val title: String,
     @SerialName("author") val author: String,
-    @SerialName("price_ksh") val priceKsh: Double,
-    @SerialName("condition") val condition: String? = null,
-    @SerialName("cover_url") val coverUrl: String? = null,
     @SerialName("description") val description: String? = null,
-    @SerialName("seller_id") val sellerId: String? = null,
-    @SerialName("category") val category: String? = null,
-    @SerialName("inventory_count") val inventoryCount: Int = 0
+    @SerialName("priceKsh") val priceKsh: Long,
+    @SerialName("condition") val condition: String? = null,
+    @SerialName("coverUrl") val coverUrl: String,
+    @SerialName("imageUrls") val imageUrls: List<String> = emptyList(),
+    @SerialName("category") val category: String,
+    @SerialName("genre") val genre: String? = null,
+    @SerialName("edition") val edition: String? = null,
+    @SerialName("publisher") val publisher: String? = null,
+    @SerialName("isRare") val isRare: Boolean = false,
+    @SerialName("isFeatured") val isFeatured: Boolean = false,
+    @SerialName("isStaffPick") val isStaffPick: Boolean = false,
+    @SerialName("tags") val tags: List<String> = emptyList()
 )

@@ -50,10 +50,10 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
             try {
-                val req = co.booknook.core.network.model.NetworkAuthRequest(action = "login", email = email, password = password)
-                val res = api.auth(req)
+                val req = co.booknook.core.network.model.NetworkLoginRequest(email = email, password = password)
+                val res = api.login(req)
                 val token = res.token
-                if (res.ok && token != null) {
+                if (token != null) {
                     dataStore.saveAuthToken(token)
                     _state.update { it.copy(isLoading = false, isAuthenticated = true) }
                 } else {
@@ -69,10 +69,10 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
             try {
-                val req = co.booknook.core.network.model.NetworkAuthRequest(action = "register", name = name, email = email, password = password)
-                val res = api.auth(req)
+                val req = co.booknook.core.network.model.NetworkRegisterRequest(name = name, email = email, password = password)
+                val res = api.register(req)
                 val token = res.token
-                if (res.ok && token != null) {
+                if (token != null) {
                     dataStore.saveAuthToken(token)
                     _state.update { it.copy(isLoading = false, isAuthenticated = true) }
                 } else {

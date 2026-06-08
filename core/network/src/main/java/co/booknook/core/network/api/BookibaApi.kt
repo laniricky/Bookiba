@@ -4,37 +4,45 @@ import co.booknook.core.network.model.*
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface BookibaApi {
 
-    @GET("home.php")
-    suspend fun getHome(): NetworkHomeResponse
+    @GET("books/featured")
+    suspend fun getFeaturedBooks(): NetworkBooksResponse
 
-    @GET("books.php")
+    @GET("books/staff-pick")
+    suspend fun getStaffPickBooks(): NetworkBooksResponse
+
+    @GET("books")
     suspend fun getBooks(
-        @Query("q") query: String? = null,
-        @Query("category") category: String? = null,
+        @Query("search") search: String? = null,
+        @Query("genre") genre: String? = null,
         @Query("page") page: Int = 1,
-        @Query("limit") limit: Int = 20
+        @Query("pageSize") pageSize: Int = 20
     ): NetworkBooksResponse
 
-    @GET("books.php")
+    @GET("books/{id}")
     suspend fun getBookDetails(
-        @Query("id") bookId: String
-    ): NetworkSingleBookResponse
+        @Path("id") bookId: String
+    ): NetworkBook
 
-    @POST("checkout.php")
+    @POST("checkout")
     suspend fun checkout(
         @Body request: NetworkCheckoutRequest
     ): NetworkCheckoutResponse
 
-    @POST("auth.php")
-    suspend fun auth(
-        @Body request: NetworkAuthRequest
+    @POST("auth/login")
+    suspend fun login(
+        @Body request: NetworkLoginRequest
     ): NetworkAuthResponse
 
-    @GET("user.php")
+    @POST("auth/register")
+    suspend fun register(
+        @Body request: NetworkRegisterRequest
+    ): NetworkAuthResponse
+
+    @GET("user/profile")
     suspend fun getUserProfile(): NetworkUserProfileResponse
 }
-

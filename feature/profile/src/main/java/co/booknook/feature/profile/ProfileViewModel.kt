@@ -40,16 +40,15 @@ class ProfileViewModel @Inject constructor(
             _state.update { it.copy(isLoading = true) }
             try {
                 val response = api.getUserProfile()
-                val data = response.data
-                if (response.ok && data != null) {
+                if (response.error == null) {
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            name = data.name,
-                            bio = data.email,
-                            ordersCount = data.ordersCount,
-                            wishlistCount = data.wishlistCount,
-                            reviewsCount = data.reviewsCount
+                            name = response.name ?: "",
+                            bio = response.email ?: "",
+                            ordersCount = response.ordersCount ?: 0,
+                            wishlistCount = response.wishlistCount ?: 0,
+                            reviewsCount = response.reviewsCount ?: 0
                         )
                     }
                 } else {

@@ -10,11 +10,11 @@ fun NetworkBook.toEntity(): BookEntity {
         title = title,
         author = author,
         description = description ?: "",
-        price = priceKsh, // Changed from price to priceKsh
+        price = priceKsh.toDouble(),
         condition = condition ?: "Good",
-        coverImageUrl = coverUrl ?: "",
+        coverImageUrl = coverUrl,
         isAvailable = true,
-        sellerId = sellerId ?: "",
+        sellerId = "",
         createdAt = System.currentTimeMillis()
     )
 }
@@ -39,10 +39,10 @@ fun NetworkBook.toDomain(): Book {
         title = title,
         author = author,
         description = description ?: "",
-        priceKsh = priceKsh.toLong(),
+        priceKsh = priceKsh,
         condition = condition ?: "Good",
-        coverUrl = coverUrl ?: "",
-        category = category ?: "General",
-        sellerId = sellerId ?: ""
+        coverUrl = coverUrl,
+        category = category,
+        sellerId = ""
     )
 }
