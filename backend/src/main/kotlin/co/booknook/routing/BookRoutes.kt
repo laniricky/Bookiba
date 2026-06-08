@@ -48,6 +48,13 @@ fun ResultRow.toBookDto() = BookDto(
     tags = this[Books.tags]?.split(",")?.map { it.trim() } ?: emptyList()
 )
 
+@Serializable
+data class BooksResponse(
+    val books: List<BookDto>,
+    val page: Int,
+    val pageSize: Int
+)
+
 fun Route.bookRoutes() {
     route("/books") {
 
@@ -78,7 +85,7 @@ fun Route.bookRoutes() {
                     .map { it.toBookDto() }
             }
 
-            call.respond(mapOf("books" to books, "page" to page, "pageSize" to pageSize))
+            call.respond(BooksResponse(books, page, pageSize))
         }
 
         // GET /api/v1/books/featured
