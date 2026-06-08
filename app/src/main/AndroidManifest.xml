@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:label="Bookiba"
         android:supportsRtl="true"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/Theme.Bookiba.Splash">
         <activity
             android:name=".MainActivity"
