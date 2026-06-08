@@ -28,7 +28,13 @@ $total_customers = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn() ?: 0
 $avg_order = $total_orders > 0 ? $total_revenue / $total_orders : 0;
 
 // 2. CHART: Revenue (Last 7 Days)
-$rev_data = $pdo->query("SELECT date(created_at) as d, SUM(total_amount) as r FROM orders WHERE status != 'Cancelled' AND created_at >= date('now', '-7 days') GROUP BY date(created_at) ORDER BY d ASC")->fetchAll(PDO::FETCH_ASSOC);
+// Cross-compatible date grouping
+if ($isPostgres) {
+    $rev_query = "SELECT DATE(created_at) as d, SUM(total_amount) as r FROM orders WHERE status != 'Cancelled' AND created_at >= CURRENT_DATE - INTERVAL '7 days' GROUP BY DATE(created_at) ORDER BY d ASC";
+} else {
+    $rev_query = "SELECT date(created_at) as d, SUM(total_amount) as r FROM orders WHERE status != 'Cancelled' AND created_at >= date('now', '-7 days') GROUP BY date(created_at) ORDER BY d ASC";
+}
+$rev_data = $pdo->query($rev_query)->fetchAll(PDO::FETCH_ASSOC);
 $rev_labels = []; $rev_values = [];
 foreach($rev_data as $row) { $rev_labels[] = date('M j', strtotime($row['d'])); $rev_values[] = (int)$row['r']; }
 

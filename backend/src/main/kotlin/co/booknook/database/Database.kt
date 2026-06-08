@@ -8,10 +8,22 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
     fun init() {
+        val dbUrl = System.getenv("DATABASE_URL") ?: System.getenv("JDBC_URL")
+
         val config = HikariConfig().apply {
-            driverClassName = "org.sqlite.JDBC"
-            jdbcUrl = System.getenv("JDBC_URL") ?: "jdbc:sqlite:/data/bookiba.sqlite"
-            maximumPoolSize = 1
+            if (dbUrl != null && dbUrl.startsWith("postgres")) {
+                driverClassName = "org.postgresql.Driver"
+                // Convert postgresql:// to jdbc:postgresql://
+                jdbcUrl = if (dbUrl.startsWith("postgres://") || dbUrl.startsWith("postgresql://")) {
+                    "jdbc:" + dbUrl
+                } else {
+                    dbUrl
+                }
+            } else {
+                driverClassName = "org.sqlite.JDBC"
+                jdbcUrl = dbUrl ?: "jdbc:sqlite:/data/bookiba.sqlite"
+            }
+            maximumPoolSize = 10 // Increased for postgres
             isAutoCommit = false
             transactionIsolation = "TRANSACTION_SERIALIZABLE"
             validate()

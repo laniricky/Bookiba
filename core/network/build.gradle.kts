@@ -22,10 +22,10 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField("String", "BASE_URL", "\"http://10.100.8.139:8080/api/v1/\"")
+            buildConfigField("String", "BASE_URL", "\"https://bookiba-production.up.railway.app/api/v1/\"")
         }
         release {
-            buildConfigField("String", "BASE_URL", "\"https://api.bookiba.co/v1/\"")
+            buildConfigField("String", "BASE_URL", "\"https://bookiba-production.up.railway.app/api/v1/\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

@@ -36,7 +36,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:0.50.0")
     implementation("org.jetbrains.exposed:exposed-java-time:0.50.0")
     implementation("org.xerial:sqlite-jdbc:3.45.3.0")
-    // implementation("org.postgresql:postgresql:42.7.3")
+    implementation("org.postgresql:postgresql:42.7.3")
     implementation("com.zaxxer:HikariCP:5.1.0")
 
     // BCrypt for passwords

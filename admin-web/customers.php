@@ -43,12 +43,12 @@ $total_all = count($segments['all']);
 $avg_ltv = $total_all > 0 ? array_sum(array_column($segments['all'], 'lifetime_value')) / $total_all : 0;
 
 // Monthly acquisition data for chart (last 6 months)
-$monthly = $pdo->query("
-    SELECT strftime('%Y-%m', created_at) as month, COUNT(*) as cnt
-    FROM users
-    WHERE created_at >= date('now', '-6 months')
-    GROUP BY month ORDER BY month ASC
-")->fetchAll(PDO::FETCH_ASSOC);
+if ($isPostgres) {
+    $monthly_query = "SELECT TO_CHAR(created_at, 'YYYY-MM') as month, COUNT(*) as cnt FROM users WHERE created_at >= CURRENT_DATE - INTERVAL '6 months' GROUP BY TO_CHAR(created_at, 'YYYY-MM') ORDER BY month ASC";
+} else {
+    $monthly_query = "SELECT strftime('%Y-%m', created_at) as month, COUNT(*) as cnt FROM users WHERE created_at >= date('now', '-6 months') GROUP BY strftime('%Y-%m', created_at) ORDER BY month ASC";
+}
+$monthly = $pdo->query($monthly_query)->fetchAll(PDO::FETCH_ASSOC);
 $month_labels = array_column($monthly, 'month');
 $month_counts = array_column($monthly, 'cnt');
 

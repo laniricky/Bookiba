@@ -1,6 +1,21 @@
 <?php
-$dbPath = __DIR__ . '/../database.sqlite';
-$dsn = "sqlite:$dbPath";
+$dbUrl = getenv('DATABASE_URL');
+$isPostgres = false;
+
+if ($dbUrl && strpos($dbUrl, 'postgres') === 0) {
+    $isPostgres = true;
+    $parsedUrl = parse_url($dbUrl);
+    $host = $parsedUrl['host'];
+    $port = isset($parsedUrl['port']) ? $parsedUrl['port'] : 5432;
+    $user = $parsedUrl['user'];
+    $pass = $parsedUrl['pass'];
+    $db = ltrim($parsedUrl['path'], '/');
+    $dsn = "pgsql:host=$host;port=$port;dbname=$db;user=$user;password=$pass";
+} else {
+    $dbPath = __DIR__ . '/../database.sqlite';
+    $dsn = "sqlite:$dbPath";
+}
+
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -16,13 +31,13 @@ try {
 // ── Auto-migrations (idempotent) ─────────────────────────────────────────────
 
 // 1. auth_token column on users
-$cols = $pdo->query("PRAGMA table_info(users)")->fetchAll(PDO::FETCH_COLUMN, 1);
-if (!in_array('auth_token', $cols)) {
+try {
     $pdo->exec("ALTER TABLE users ADD COLUMN auth_token TEXT");
-}
-if (!in_array('password_hash', $cols)) {
+} catch (\Exception $e) { /* Ignore if exists */ }
+
+try {
     $pdo->exec("ALTER TABLE users ADD COLUMN password_hash TEXT");
-}
+} catch (\Exception $e) { /* Ignore if exists */ }
 
 // 2. store_settings key-value table
 $pdo->exec("

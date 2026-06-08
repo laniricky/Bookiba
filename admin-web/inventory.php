@@ -21,13 +21,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
 }
 
 // Compute 30-day sales velocity per book
-$velocity = $pdo->query("
-    SELECT oi.book_id, SUM(oi.quantity) as sold_30d
-    FROM order_items oi
-    JOIN orders o ON oi.order_id = o.id
-    WHERE o.status != 'Cancelled' AND o.created_at >= date('now', '-30 days')
-    GROUP BY oi.book_id
-")->fetchAll(PDO::FETCH_KEY_PAIR);
+if ($isPostgres) {
+    $vel_query = "SELECT book_id, SUM(quantity) as sold FROM order_items oi JOIN orders o ON oi.order_id = o.id WHERE o.status != 'Cancelled' AND o.created_at >= CURRENT_DATE - INTERVAL '30 days' GROUP BY book_id";
+} else {
+    $vel_query = "SELECT book_id, SUM(quantity) as sold FROM order_items oi JOIN orders o ON oi.order_id = o.id WHERE o.status != 'Cancelled' AND o.created_at >= date('now', '-30 days') GROUP BY book_id";
+}
+$velocity = $pdo->query($vel_query)->fetchAll(PDO::FETCH_KEY_PAIR);
 
 // Fetch all books with stock info
 $books = $pdo->query("SELECT id, title, author, cover_url, inventory_count FROM books ORDER BY inventory_count ASC")->fetchAll(PDO::FETCH_ASSOC);
