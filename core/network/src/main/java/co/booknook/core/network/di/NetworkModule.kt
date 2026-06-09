@@ -54,8 +54,9 @@ object NetworkModule {
                 }.build()
                 chain.proceed(req)
             }
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(90, TimeUnit.SECONDS)
+            .readTimeout(90, TimeUnit.SECONDS)
+            .writeTimeout(90, TimeUnit.SECONDS)
 
         // Only attach full-body logging in debug builds
         if (co.booknook.core.network.BuildConfig.DEBUG) {

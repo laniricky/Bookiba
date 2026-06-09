@@ -49,6 +49,13 @@ fun ReelsScreen(
         viewModel.onPageChange(pagerState.settledPage)
     }
 
+    if (state.error != null) {
+        Box(Modifier.fillMaxSize().background(Color.Black), contentAlignment = Alignment.Center) {
+            Text(state.error ?: "Error", color = Cream, fontSize = 16.sp, modifier = Modifier.padding(16.dp))
+        }
+        return
+    }
+
     if (state.reels.isEmpty() && !state.isLoading) {
         Box(Modifier.fillMaxSize().background(Color.Black), contentAlignment = Alignment.Center) {
             Text("No reels yet", color = Cream, fontSize = 16.sp)

@@ -106,10 +106,45 @@ fun HomeScreen(
 
         // Loading
         if (state.isLoading) {
-            CircularProgressIndicator(
-                color = WarmBrown,
-                modifier = Modifier.align(Alignment.Center)
-            )
+            Column(
+                modifier = Modifier.align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                CircularProgressIndicator(color = WarmBrown)
+                Text(
+                    text = "Loading books…",
+                    color = WarmBrown,
+                    fontSize = 13.sp
+                )
+            }
+        }
+
+        // Error with retry
+        if (!state.isLoading && state.error != null) {
+            Column(
+                modifier = Modifier.align(Alignment.Center).padding(32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(
+                    text = "⚠️ Couldn't load books",
+                    color = DarkBrown,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = state.error ?: "Unknown error",
+                    color = WarmBrown,
+                    fontSize = 12.sp
+                )
+                Button(
+                    onClick = { viewModel.refresh() },
+                    colors = ButtonDefaults.buttonColors(containerColor = WarmBrown)
+                ) {
+                    Text("Retry", color = Cream)
+                }
+            }
         }
     }
 }

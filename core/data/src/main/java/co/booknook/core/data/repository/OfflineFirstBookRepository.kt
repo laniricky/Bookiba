@@ -17,30 +17,18 @@ class OfflineFirstBookRepository @Inject constructor(
 ) : BookRepository {
 
     override fun getFeaturedBooks(): Flow<List<Book>> = flow {
-        try {
-            val response = bookibaApi.getFeaturedBooks()
-            emit(response.books.map { it.toDomain() })
-        } catch (e: Exception) {
-            emit(emptyList())
-        }
+        val response = bookibaApi.getFeaturedBooks()
+        emit(response.books.map { it.toDomain() })
     }
 
     override fun getNewArrivals(): Flow<List<Book>> = flow {
-        try {
-            val response = bookibaApi.getBooks(page = 1, pageSize = 10)
-            emit(response.books.map { it.toDomain() })
-        } catch (e: Exception) {
-            emit(emptyList())
-        }
+        val response = bookibaApi.getBooks(page = 1, pageSize = 10)
+        emit(response.books.map { it.toDomain() })
     }
 
     override fun getStaffPicks(): Flow<List<Book>> = flow {
-        try {
-            val response = bookibaApi.getStaffPickBooks()
-            emit(response.books.map { it.toDomain() })
-        } catch (e: Exception) {
-            emit(emptyList())
-        }
+        val response = bookibaApi.getStaffPickBooks()
+        emit(response.books.map { it.toDomain() })
     }
 
     override fun getBooksByGenre(genre: String): Flow<List<Book>> = flow {
