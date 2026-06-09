@@ -150,7 +150,18 @@ $low_stock_count = count(array_filter($books, fn($b) => $b['inventory_count'] > 
                 <div class="form-group"><label>Initial Stock *</label><input type="number" id="f_stock" class="form-input" value="15"></div>
             </div>
             <div class="form-group"><label>Category</label><input type="text" id="f_category" class="form-input" placeholder="Fiction, Self-Help..."></div>
-            <div class="form-group"><label>Cover Image URL</label><input type="url" id="f_cover" class="form-input" placeholder="https://..."></div>
+            <div class="form-group">
+                <label>Cover Image</label>
+                <div id="cover-upload-area" onclick="openCoverWidget()" style="border:2px dashed var(--border-color); border-radius:var(--radius-sm); padding:20px; text-align:center; cursor:pointer; transition:border-color 0.2s; background:#FAFAFA; position:relative;">
+                    <img id="cover-preview" src="" style="display:none; width:80px; height:110px; object-fit:cover; border-radius:6px; margin:0 auto 10px; display:none;">
+                    <div id="cover-placeholder">
+                        <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--text-muted); margin:0 auto 8px; display:block;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        <p style="font-size:13px; color:var(--text-muted); margin:0;">Click to upload cover image</p>
+                        <p style="font-size:11px; color:var(--text-muted); margin:4px 0 0;">PNG, JPG up to 10MB</p>
+                    </div>
+                </div>
+                <input type="hidden" id="f_cover">
+            </div>
         </div>
         <div class="slide-over-footer">
             <button class="btn btn-outline" onclick="closeSlideOver()">Cancel</button>
@@ -302,6 +313,71 @@ $low_stock_count = count(array_filter($books, fn($b) => $b['inventory_count'] > 
         <?php endif; ?>
     </main>
 
+    <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+    <script>
+        // ── Cloudinary Upload Widget ──────────────────────────────────────────
+        const CLOUDINARY_CLOUD = 'dmgyyvupn';
+        const CLOUDINARY_PRESET = 'yldpwwqx';
+
+        let coverWidget = cloudinary.createUploadWidget({
+            cloudName: CLOUDINARY_CLOUD,
+            uploadPreset: CLOUDINARY_PRESET,
+            sources: ['local', 'url', 'camera'],
+            resourceType: 'image',
+            cropping: true,
+            croppingAspectRatio: 0.67,
+            maxFileSize: 10000000,
+            styles: {
+                palette: {
+                    window: '#FFFFFF',
+                    windowBorder: '#E0E0E0',
+                    tabIcon: '#365134',
+                    menuIcons: '#365134',
+                    textDark: '#1A1A1A',
+                    textLight: '#FFFFFF',
+                    link: '#365134',
+                    action: '#365134',
+                    inactiveTabIcon: '#999999',
+                    error: '#C62828',
+                    inProgress: '#365134',
+                    complete: '#2E7D32',
+                    sourceBg: '#F5F5F5'
+                }
+            }
+        }, (error, result) => {
+            if (!error && result && result.event === 'success') {
+                const url = result.info.secure_url;
+                document.getElementById('f_cover').value = url;
+                const preview = document.getElementById('cover-preview');
+                const placeholder = document.getElementById('cover-placeholder');
+                preview.src = url;
+                preview.style.display = 'block';
+                placeholder.style.display = 'none';
+                document.getElementById('cover-upload-area').style.borderColor = '#2E7D32';
+            }
+        });
+
+        function openCoverWidget() { coverWidget.open(); }
+
+        // Reset widget state when slide-over closes
+        function resetCoverWidget() {
+            document.getElementById('f_cover').value = '';
+            document.getElementById('cover-preview').style.display = 'none';
+            document.getElementById('cover-placeholder').style.display = 'block';
+            document.getElementById('cover-upload-area').style.borderColor = '';
+        }
+
+        // Hover effect on upload area
+        document.addEventListener('DOMContentLoaded', () => {
+            const area = document.getElementById('cover-upload-area');
+            if (area) {
+                area.addEventListener('mouseenter', () => area.style.borderColor = '#365134');
+                area.addEventListener('mouseleave', () => {
+                    if (!document.getElementById('f_cover').value) area.style.borderColor = '';
+                });
+            }
+        });
+    </script>
     <script>
         // Inline editing
         document.querySelectorAll('.editable').forEach(el => {
@@ -331,7 +407,7 @@ $low_stock_count = count(array_filter($books, fn($b) => $b['inventory_count'] > 
         }
 
         function openSlideOver() { document.getElementById('slideOver').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
-        function closeSlideOver() { document.getElementById('slideOver').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+        function closeSlideOver() { document.getElementById('slideOver').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); resetCoverWidget(); }
 
         function saveProduct() {
             const data = {
