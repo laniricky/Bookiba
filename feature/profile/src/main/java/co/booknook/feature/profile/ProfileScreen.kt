@@ -29,16 +29,16 @@ private val AccentGreen = Color(0xFF2D6A4F)
 data class ShelfItem(val label: String, val count: Int, val icon: ImageVector)
 data class ProfileState(
     val isLoggedIn: Boolean = false,
-    val name: String = "Amina",
-    val bio: String = "Book lover · Vintage finder · Collecting stories.",
-    val ordersCount: Int = 24,
-    val wishlistCount: Int = 47,
-    val reviewsCount: Int = 12,
+    val name: String = "",
+    val bio: String = "",
+    val ordersCount: Int = 0,
+    val wishlistCount: Int = 0,
+    val reviewsCount: Int = 0,
     val shelves: List<ShelfItem> = listOf(
-        ShelfItem("Wishlist", 47, Icons.Outlined.FavoriteBorder),
-        ShelfItem("Purchased", 24, Icons.Outlined.ShoppingCart),
-        ShelfItem("Reading", 5, Icons.Outlined.MenuBook),
-        ShelfItem("Favorites", 12, Icons.Outlined.StarBorder)
+        ShelfItem("Wishlist", 0, Icons.Outlined.FavoriteBorder),
+        ShelfItem("Purchased", 0, Icons.Outlined.ShoppingCart),
+        ShelfItem("Reading", 0, Icons.Outlined.MenuBook),
+        ShelfItem("Favorites", 0, Icons.Outlined.StarBorder)
     ),
     val isLoading: Boolean = false,
     val error: String? = null
@@ -54,6 +54,16 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = androidx.hilt.navigation.compose.hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+
+    // Compute shelves from live counts
+    val shelves = remember(state.ordersCount, state.wishlistCount, state.reviewsCount) {
+        listOf(
+            ShelfItem("Wishlist", state.wishlistCount, Icons.Outlined.FavoriteBorder),
+            ShelfItem("Purchased", state.ordersCount, Icons.Outlined.ShoppingCart),
+            ShelfItem("Reading", 0, Icons.Outlined.MenuBook),
+            ShelfItem("Favorites", state.reviewsCount, Icons.Outlined.StarBorder)
+        )
+    }
 
     Column(modifier = Modifier.fillMaxSize().background(SoftWhite)) {
         // Top bar
@@ -127,7 +137,7 @@ fun ProfileScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.height(220.dp)
             ) {
-                items(state.shelves) { shelf ->
+                items(shelves) { shelf ->
                     ShelfCard(shelf = shelf)
                 }
             }
