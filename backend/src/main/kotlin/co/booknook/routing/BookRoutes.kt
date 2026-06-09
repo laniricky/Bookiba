@@ -26,7 +26,8 @@ data class BookDto(
     val isRare: Boolean,
     val isFeatured: Boolean,
     val isStaffPick: Boolean,
-    val tags: List<String>
+    val tags: List<String>,
+    val inventoryCount: Int
 )
 
 fun ResultRow.toBookDto() = BookDto(
@@ -45,7 +46,8 @@ fun ResultRow.toBookDto() = BookDto(
     isRare = this[Books.isRare],
     isFeatured = this[Books.isFeatured],
     isStaffPick = this[Books.isStaffPick],
-    tags = this[Books.tags]?.split(",")?.map { it.trim() } ?: emptyList()
+    tags = this[Books.tags]?.split(",")?.map { it.trim() } ?: emptyList(),
+    inventoryCount = this[Books.inventoryCount]
 )
 
 @Serializable

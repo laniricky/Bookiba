@@ -43,7 +43,7 @@ object DatabaseFactory {
         val dataSource = HikariDataSource(config)
         Database.connect(dataSource)
         transaction {
-            SchemaUtils.create(
+            SchemaUtils.createMissingTablesAndColumns(
                 co.booknook.database.models.Users,
                 co.booknook.database.models.Books,
                 co.booknook.database.models.Orders,

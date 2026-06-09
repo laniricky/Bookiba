@@ -32,6 +32,7 @@ object Books : Table("books") {
     val isFeatured = bool("is_featured").default(false)
     val isStaffPick = bool("is_staff_pick").default(false)
     val tags = text("tags").nullable() // Comma separated
+    val inventoryCount = integer("inventory_count").default(0)
     val createdAt = datetime("created_at").default(LocalDateTime.now())
 
     override val primaryKey = PrimaryKey(id)
