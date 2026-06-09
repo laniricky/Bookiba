@@ -2,6 +2,7 @@ package co.booknook.feature.reels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.booknook.core.network.api.BookibaApi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -32,7 +33,9 @@ data class ReelsUiState(
 )
 
 @HiltViewModel
-class ReelsViewModel @Inject constructor() : ViewModel() {
+class ReelsViewModel @Inject constructor(
+    private val api: BookibaApi
+) : ViewModel() {
 
     private val _state = MutableStateFlow(ReelsUiState())
     val state: StateFlow<ReelsUiState> = _state.asStateFlow()
@@ -43,9 +46,25 @@ class ReelsViewModel @Inject constructor() : ViewModel() {
 
     private fun loadReels() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-            // TODO: wire to actual API
-            _state.update { it.copy(isLoading = false, reels = sampleReels()) }
+            _state.update { it.copy(isLoading = true, error = null) }
+            try {
+                val networkReels = api.getReels()
+                val uiReels = networkReels.map { nr ->
+                    ReelItem(
+                        id = nr.id,
+                        videoUrl = nr.videoUrl,
+                        thumbnailUrl = nr.thumbnailUrl ?: "",
+                        username = "Bookiba Admin",
+                        userHandle = "@bookiba",
+                        description = nr.title,
+                        linkedBookId = nr.bookId,
+                        linkedBookTitle = nr.bookTitle
+                    )
+                }
+                _state.update { it.copy(isLoading = false, reels = uiReels) }
+            } catch (e: Exception) {
+                _state.update { it.copy(isLoading = false, error = e.localizedMessage ?: "Failed to load reels") }
+            }
         }
     }
 
@@ -75,20 +94,4 @@ class ReelsViewModel @Inject constructor() : ViewModel() {
             )
         }
     }
-
-    private fun sampleReels() = listOf(
-        ReelItem(
-            id = "1",
-            videoUrl = "",
-            thumbnailUrl = "",
-            username = "bookiba.co.ke",
-            userHandle = "@bookiba",
-            description = "Flipping through a 1984 vintage copy of Animal Farm. The annotations inside are absolutely beautiful ✨",
-            audioLabel = "Original audio",
-            likeCount = 1234,
-            commentCount = 56,
-            shareCount = 342,
-            linkedBookTitle = "Animal Farm — 1984 Edition"
-        )
-    )
 }

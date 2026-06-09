@@ -48,7 +48,8 @@ object DatabaseFactory {
                 co.booknook.database.models.Books,
                 co.booknook.database.models.Orders,
                 co.booknook.database.models.OrderItems,
-                co.booknook.database.models.Wishlists
+                co.booknook.database.models.Wishlists,
+                co.booknook.database.models.Reels
             )
         }
     }
