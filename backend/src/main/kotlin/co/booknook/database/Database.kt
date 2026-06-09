@@ -13,11 +13,23 @@ object DatabaseFactory {
         val config = HikariConfig().apply {
             if (dbUrl != null && dbUrl.startsWith("postgres")) {
                 driverClassName = "org.postgresql.Driver"
-                // Convert postgresql:// to jdbc:postgresql://
-                jdbcUrl = if (dbUrl.startsWith("postgres://") || dbUrl.startsWith("postgresql://")) {
-                    "jdbc:" + dbUrl
-                } else {
-                    dbUrl
+                try {
+                    val uri = java.net.URI(dbUrl)
+                    val userInfo = uri.userInfo?.split(":")
+                    if (userInfo != null && userInfo.size == 2) {
+                        username = userInfo[0]
+                        password = userInfo[1]
+                    }
+                    val port = if (uri.port != -1) ":${uri.port}" else ""
+                    val query = if (uri.query != null) "?${uri.query}" else ""
+                    jdbcUrl = "jdbc:postgresql://${uri.host}$port${uri.path}$query"
+                } catch (e: Exception) {
+                    // Fallback to original logic if parsing fails
+                    jdbcUrl = if (dbUrl.startsWith("postgres://") || dbUrl.startsWith("postgresql://")) {
+                        "jdbc:" + dbUrl
+                    } else {
+                        dbUrl
+                    }
                 }
             } else {
                 driverClassName = "org.sqlite.JDBC"
