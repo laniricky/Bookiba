@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,6 +48,7 @@ private val genreGradients = listOf(
     listOf(Color(0xFF3D2B35), Color(0xFF6B3D54))
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExploreScreen(
     onBookClick: (String) -> Unit,
@@ -56,13 +58,29 @@ fun ExploreScreen(
     val state by viewModel.state.collectAsState()
     val focusManager = LocalFocusManager.current
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
+    var isRefreshing by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state.isLoading, state.isSearching) {
+        if (!state.isLoading && !state.isSearching) {
+            isRefreshing = false
+        }
+    }
+
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = {
+            isRefreshing = true
+            viewModel.refresh()
+        },
         modifier = Modifier
             .fillMaxSize()
-            .background(SoftWhite),
-        contentPadding = PaddingValues(bottom = 80.dp)
+            .background(SoftWhite)
     ) {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 80.dp)
+        ) {
         // ── Search Bar ────────────────────────────────────────────
         item(span = { GridItemSpan(2) }) {
             Spacer(Modifier.height(12.dp))
@@ -163,6 +181,7 @@ fun ExploreScreen(
             Spacer(Modifier.height(16.dp))
         }
     }
+}
 }
 
 @Composable

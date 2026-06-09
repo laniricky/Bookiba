@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,7 +36,7 @@ import androidx.media3.ui.PlayerView
 private val Cream = Color(0xFFF5F0E8)
 private val WarmBrown = Color(0xFF8B7355)
 
-@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ReelsScreen(
     onBookClick: (String) -> Unit,
@@ -63,18 +64,35 @@ fun ReelsScreen(
         return
     }
 
-    VerticalPager(
-        state = pagerState,
+    var isRefreshing by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state.isLoading) {
+        if (!state.isLoading) {
+            isRefreshing = false
+        }
+    }
+
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = {
+            isRefreshing = true
+            viewModel.refresh()
+        },
         modifier = Modifier.fillMaxSize()
-    ) { pageIndex ->
-        if (pageIndex < state.reels.size) {
-            ReelPage(
-                reel = state.reels[pageIndex],
-                isActive = pagerState.settledPage == pageIndex,
-                onLike = { viewModel.onToggleLike(state.reels[pageIndex].id) },
-                onFollow = { viewModel.onToggleFollow(state.reels[pageIndex].id) },
-                onBookClick = onBookClick
-            )
+    ) {
+        VerticalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize()
+        ) { pageIndex ->
+            if (pageIndex < state.reels.size) {
+                ReelPage(
+                    reel = state.reels[pageIndex],
+                    isActive = pagerState.settledPage == pageIndex,
+                    onLike = { viewModel.onToggleLike(state.reels[pageIndex].id) },
+                    onFollow = { viewModel.onToggleFollow(state.reels[pageIndex].id) },
+                    onBookClick = onBookClick
+                )
+            }
         }
     }
 }

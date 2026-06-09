@@ -83,4 +83,12 @@ class ExploreViewModel @Inject constructor(
         searchQuery.value = ""
         _state.update { it.copy(searchQuery = "", searchResults = emptyList()) }
     }
+
+    fun refresh() {
+        // Since Explore is mostly static or handles search, we can just clear search or reload.
+        // For now, it just toggles the loading state off immediately if we aren't searching.
+        if (searchQuery.value.isNotBlank()) {
+            searchQuery.value = searchQuery.value // Trigger re-search
+        }
+    }
 }

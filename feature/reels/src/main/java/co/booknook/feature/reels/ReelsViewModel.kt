@@ -67,6 +67,9 @@ class ReelsViewModel @Inject constructor(
             }
         }
     }
+    fun refresh() {
+        loadReels()
+    }
 
     fun onPageChange(page: Int) {
         _state.update { it.copy(currentPage = page) }
