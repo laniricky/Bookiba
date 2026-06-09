@@ -1,7 +1,9 @@
 package co.booknook.app
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -206,47 +208,107 @@ private fun BookibaBottomBar(
     currentRoute: String?,
     onItemClick: (BottomNavItem) -> Unit
 ) {
-    NavigationBar(
-        containerColor = SoftWhite,
-        tonalElevation = 0.dp,
+    val reelsItem = items.find { it.route == Routes.REELS }
+    val otherItems = items.filter { it.route != Routes.REELS }
+    val leftItems = otherItems.take(2)
+    val rightItems = otherItems.drop(2)
+
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+            .wrapContentHeight()
     ) {
-        items.forEach { item ->
-            val selected = currentRoute == item.route
-            NavigationBarItem(
-                selected = selected,
-                onClick = { onItemClick(item) },
-                icon = {
-                    if (item.iconResId != null) {
+        // ── Nav bar surface ──────────────────────────────────────────
+        NavigationBar(
+            containerColor = SoftWhite,
+            tonalElevation = 0.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(androidx.compose.ui.Alignment.BottomCenter)
+                .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+        ) {
+            // Left items
+            leftItems.forEach { item ->
+                val selected = currentRoute == item.route
+                NavigationBarItem(
+                    selected = selected,
+                    onClick = { onItemClick(item) },
+                    icon = {
                         Icon(
-                            painter = painterResource(id = item.iconResId),
+                            imageVector = if (selected) item.selectedIcon!! else item.unselectedIcon!!,
                             contentDescription = item.label,
                             modifier = Modifier.size(24.dp)
                         )
-                    } else if (item.selectedIcon != null && item.unselectedIcon != null) {
-                        Icon(
-                            imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
-                            contentDescription = item.label,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                },
-                label = {
-                    Text(
-                        text = item.label,
-                        style = MaterialTheme.typography.labelSmall
+                    },
+                    label = { Text(item.label, style = MaterialTheme.typography.labelSmall) },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = DarkBrown,
+                        selectedTextColor = DarkBrown,
+                        unselectedIconColor = WarmBrown.copy(alpha = 0.6f),
+                        unselectedTextColor = WarmBrown.copy(alpha = 0.6f),
+                        indicatorColor = Cream
                     )
-                },
+                )
+            }
+
+            // Centre spacer — reserves space for the floating Reels button
+            NavigationBarItem(
+                selected = false,
+                onClick = {},
+                icon = { Spacer(Modifier.size(56.dp)) },
+                label = { Spacer(Modifier.height(0.dp)) },
+                enabled = false,
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = DarkBrown,
-                    selectedTextColor = DarkBrown,
-                    unselectedIconColor = WarmBrown.copy(alpha = 0.6f),
-                    unselectedTextColor = WarmBrown.copy(alpha = 0.6f),
-                    indicatorColor = Cream
+                    indicatorColor = Color.Transparent
                 )
             )
+
+            // Right items
+            rightItems.forEach { item ->
+                val selected = currentRoute == item.route
+                NavigationBarItem(
+                    selected = selected,
+                    onClick = { onItemClick(item) },
+                    icon = {
+                        Icon(
+                            imageVector = if (selected) item.selectedIcon!! else item.unselectedIcon!!,
+                            contentDescription = item.label,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    },
+                    label = { Text(item.label, style = MaterialTheme.typography.labelSmall) },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = DarkBrown,
+                        selectedTextColor = DarkBrown,
+                        unselectedIconColor = WarmBrown.copy(alpha = 0.6f),
+                        unselectedTextColor = WarmBrown.copy(alpha = 0.6f),
+                        indicatorColor = Cream
+                    )
+                )
+            }
+        }
+
+        // ── Floating Reels button ─────────────────────────────────────
+        if (reelsItem != null) {
+            val reelsSelected = currentRoute == reelsItem.route
+            androidx.compose.foundation.layout.Box(
+                modifier = Modifier
+                    .align(androidx.compose.ui.Alignment.TopCenter)
+                    .offset(y = (-10).dp)
+                    .size(64.dp)
+                    .clip(androidx.compose.foundation.shape.CircleShape)
+                    .background(if (reelsSelected) DarkBrown else WarmBrown)
+                    .clickable { onItemClick(reelsItem) },
+                contentAlignment = androidx.compose.ui.Alignment.Center
+            ) {
+                Icon(
+                    painter = painterResource(id = reelsItem.iconResId!!),
+                    contentDescription = reelsItem.label,
+                    tint = Cream,
+                    modifier = Modifier.size(38.dp)
+                )
+            }
         }
     }
 }
+
