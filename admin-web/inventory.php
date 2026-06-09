@@ -37,9 +37,9 @@ $books = $pdo->query("SELECT id, title, author, cover_url, inventory_count FROM 
 
 // Summary stats
 $total_stock = array_sum(array_column($books, 'inventory_count'));
-$out_of_stock = count(array_filter($books, fn($b) => $b['inventory_count'] == 0));
+$out_of_stock_count = count(array_filter($books, fn($b) => $b['inventory_count'] == 0));
 $low_stock = count(array_filter($books, fn($b) => $b['inventory_count'] > 0 && $b['inventory_count'] <= 10));
-$healthy = count($books) - $out_of_stock - $low_stock;
+$healthy = count($books) - $out_of_stock_count - $low_stock;
 
 // Reorder threshold
 define('REORDER_POINT', 10);
@@ -125,7 +125,7 @@ define('MAX_STOCK', 50);
             </div>
             <div class="inv-stat-card" style="border-color: #FFCDD2;">
                 <div class="inv-stat-label">Out of Stock</div>
-                <div class="inv-stat-val" style="color: #C62828;"><?= $out_of_stock ?></div>
+                <div class="inv-stat-val" style="color: #C62828;"><?= $out_of_stock_count ?></div>
                 <div class="inv-stat-sub">products — action needed</div>
             </div>
         </div>
