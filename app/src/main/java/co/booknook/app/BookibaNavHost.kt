@@ -50,24 +50,18 @@ object Routes {
 data class BottomNavItem(
     val route: String,
     val label: String,
-    val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector,
-    val drawableResId: Int? = null  // optional override with a custom PNG
+    val selectedIcon: ImageVector? = null,
+    val unselectedIcon: ImageVector? = null,
+    val iconResId: Int? = null
 )
 
 private val bottomNavItems = listOf(
-    BottomNavItem(Routes.HOME, "Home", Icons.Filled.Home, Icons.Outlined.Home),
-    BottomNavItem(Routes.EXPLORE, "Explore", Icons.Filled.Search, Icons.Outlined.Search),
-    BottomNavItem(
-        route = Routes.REELS,
-        label = "Reels",
-        selectedIcon = Icons.Filled.PlayArrow,
-        unselectedIcon = Icons.Outlined.PlayArrow,
-        drawableResId = co.booknook.app.R.drawable.ic_bookiba_logo
-    ),
-    BottomNavItem(Routes.WISHLIST, "Wishlist", Icons.Filled.Favorite, Icons.Outlined.FavoriteBorder),
-    BottomNavItem(Routes.CART, "Cart", Icons.Filled.ShoppingCart, Icons.Outlined.ShoppingCart),
-    BottomNavItem(Routes.PROFILE, "Profile", Icons.Filled.Person, Icons.Outlined.Person)
+    BottomNavItem(Routes.HOME, "Home", selectedIcon = Icons.Filled.Home, unselectedIcon = Icons.Outlined.Home),
+    BottomNavItem(Routes.EXPLORE, "Explore", selectedIcon = Icons.Filled.Search, unselectedIcon = Icons.Outlined.Search),
+    BottomNavItem(Routes.REELS, "Reels", iconResId = co.booknook.app.R.drawable.ic_launcher_foreground),
+    BottomNavItem(Routes.WISHLIST, "Wishlist", selectedIcon = Icons.Filled.Favorite, unselectedIcon = Icons.Outlined.FavoriteBorder),
+    BottomNavItem(Routes.CART, "Cart", selectedIcon = Icons.Filled.ShoppingCart, unselectedIcon = Icons.Outlined.ShoppingCart),
+    BottomNavItem(Routes.PROFILE, "Profile", selectedIcon = Icons.Filled.Person, unselectedIcon = Icons.Outlined.Person)
 )
 
 private val bottomNavRoutes = bottomNavItems.map { it.route }.toSet()
@@ -225,14 +219,13 @@ private fun BookibaBottomBar(
                 selected = selected,
                 onClick = { onItemClick(item) },
                 icon = {
-                    if (item.drawableResId != null) {
+                    if (item.iconResId != null) {
                         Icon(
-                            painter = painterResource(id = item.drawableResId),
+                            painter = painterResource(id = item.iconResId),
                             contentDescription = item.label,
-                            modifier = Modifier.size(26.dp),
-                            tint = Color.Unspecified
+                            modifier = Modifier.size(24.dp)
                         )
-                    } else {
+                    } else if (item.selectedIcon != null && item.unselectedIcon != null) {
                         Icon(
                             imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
                             contentDescription = item.label,
