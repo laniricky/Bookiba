@@ -2,9 +2,8 @@ package co.booknook.feature.reels
 
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.VerticalPager
@@ -85,11 +84,12 @@ fun ReelsScreen(
             modifier = Modifier.fillMaxSize()
         ) { pageIndex ->
             if (pageIndex < state.reels.size) {
+                // Pause immediately when user starts swiping between pages
+                val isActive = pagerState.settledPage == pageIndex && !pagerState.isScrollInProgress
                 ReelPage(
                     reel = state.reels[pageIndex],
-                    isActive = pagerState.settledPage == pageIndex,
+                    isActive = isActive,
                     onLike = { viewModel.onToggleLike(state.reels[pageIndex].id) },
-                    onFollow = { viewModel.onToggleFollow(state.reels[pageIndex].id) },
                     onBookClick = onBookClick
                 )
             }
@@ -102,7 +102,6 @@ private fun ReelPage(
     reel: ReelItem,
     isActive: Boolean,
     onLike: () -> Unit,
-    onFollow: () -> Unit,
     onBookClick: (String) -> Unit
 ) {
     Box(
@@ -114,7 +113,6 @@ private fun ReelPage(
         if (reel.videoUrl.isNotBlank()) {
             VideoPlayer(videoUrl = reel.videoUrl, isActive = isActive)
         } else {
-            // Placeholder gradient when no video URL yet
             Box(
                 modifier = Modifier.fillMaxSize().background(
                     Brush.verticalGradient(listOf(Color(0xFF1A1512), Color(0xFF2A1F16), Color(0xFF1A1512)))
@@ -127,41 +125,45 @@ private fun ReelPage(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .height(350.dp)
+                .height(320.dp)
                 .background(
-                    Brush.verticalGradient(listOf(Color.Transparent, Color.Black.copy(alpha = 0.75f)))
+                    Brush.verticalGradient(listOf(Color.Transparent, Color.Black.copy(alpha = 0.88f)))
                 )
         )
 
-        // ── Right action rail ─────────────────────────────────────
+        // ── Right action rail (glassmorphism buttons) ─────────────
         Column(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(end = 14.dp, bottom = 100.dp),
+                .padding(end = 14.dp, bottom = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // Wishlist / Like
             ReelActionButton(
                 icon = if (reel.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                 label = formatCount(reel.likeCount),
-                tint = if (reel.isLiked) Color.Red else Color.White,
+                tint = if (reel.isLiked) Color(0xFFFF4D6D) else Color.White,
                 onClick = onLike
             )
+            // Reviews / Ratings
             ReelActionButton(
-                icon = Icons.Outlined.Email,
+                icon = Icons.Outlined.ChatBubbleOutline,
                 label = formatCount(reel.commentCount),
                 tint = Color.White,
                 onClick = {}
             )
+            // Save to shelf
             ReelActionButton(
-                icon = Icons.Outlined.Send,
-                label = formatCount(reel.shareCount),
+                icon = Icons.Outlined.BookmarkBorder,
+                label = "Save",
                 tint = Color.White,
                 onClick = {}
             )
+            // Share
             ReelActionButton(
-                icon = Icons.Outlined.MoreVert,
-                label = "",
+                icon = Icons.Outlined.Share,
+                label = "Share",
                 tint = Color.White,
                 onClick = {}
             )
@@ -171,48 +173,33 @@ private fun ReelPage(
         Column(
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(start = 14.dp, bottom = 100.dp, end = 70.dp)
+                .padding(start = 16.dp, bottom = 28.dp, end = 82.dp)
         ) {
-            // Username + Follow
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .background(WarmBrown)
-                )
-                Text(reel.username, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                if (!reel.isFollowing) {
-                    TextButton(onClick = onFollow) {
-                        Text("Follow", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
-                    }
-                }
-            }
-
-            Spacer(Modifier.height(8.dp))
-
-            // Description
+            // Book reel title / description
             Text(
                 text = reel.description,
                 color = Color.White,
-                fontSize = 13.sp,
-                lineHeight = 19.sp,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                lineHeight = 20.sp,
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis
             )
 
             Spacer(Modifier.height(8.dp))
 
-            // Audio label
+            // Audio label with music note icon
             Row(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(Icons.Filled.PlayArrow, contentDescription = null, tint = Color.White, modifier = Modifier.size(14.dp))
-                Text(reel.audioLabel, color = Color.White, fontSize = 12.sp)
+                Icon(
+                    imageVector = Icons.Outlined.MusicNote,
+                    contentDescription = null,
+                    tint = Color.White.copy(alpha = 0.75f),
+                    modifier = Modifier.size(13.dp)
+                )
+                Text(reel.audioLabel, color = Color.White.copy(alpha = 0.75f), fontSize = 12.sp)
             }
 
             // Linked book chip
@@ -229,7 +216,14 @@ private fun ReelPage(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(Icons.Outlined.ShoppingCart, contentDescription = null, tint = Cream, modifier = Modifier.size(14.dp))
-                        Text(title, color = Cream, fontSize = 12.sp, fontWeight = FontWeight.Medium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(
+                            title,
+                            color = Cream,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
                 }
             }
@@ -264,13 +258,39 @@ private fun VideoPlayer(videoUrl: String, isActive: Boolean) {
 }
 
 @Composable
-private fun ReelActionButton(icon: ImageVector, label: String, tint: Color, onClick: () -> Unit) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        IconButton(onClick = onClick) {
-            Icon(icon, contentDescription = label, tint = tint, modifier = Modifier.size(30.dp))
+private fun ReelActionButton(
+    icon: ImageVector,
+    label: String,
+    tint: Color = Color.White,
+    onClick: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(5.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(50.dp)
+                .clip(CircleShape)
+                .background(Color.White.copy(alpha = 0.18f))
+                .border(1.dp, Color.White.copy(alpha = 0.28f), CircleShape)
+                .clickable(onClick = onClick),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                tint = tint,
+                modifier = Modifier.size(26.dp)
+            )
         }
         if (label.isNotEmpty()) {
-            Text(label, color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Medium)
+            Text(
+                text = label,
+                color = Color.White,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }

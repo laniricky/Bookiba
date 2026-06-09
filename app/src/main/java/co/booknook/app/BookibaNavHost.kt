@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -50,13 +51,20 @@ data class BottomNavItem(
     val route: String,
     val label: String,
     val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector
+    val unselectedIcon: ImageVector,
+    val drawableResId: Int? = null  // optional override with a custom PNG
 )
 
 private val bottomNavItems = listOf(
     BottomNavItem(Routes.HOME, "Home", Icons.Filled.Home, Icons.Outlined.Home),
     BottomNavItem(Routes.EXPLORE, "Explore", Icons.Filled.Search, Icons.Outlined.Search),
-    BottomNavItem(Routes.REELS, "Reels", Icons.Filled.PlayArrow, Icons.Outlined.PlayArrow),
+    BottomNavItem(
+        route = Routes.REELS,
+        label = "Reels",
+        selectedIcon = Icons.Filled.PlayArrow,
+        unselectedIcon = Icons.Outlined.PlayArrow,
+        drawableResId = co.booknook.app.R.drawable.ic_bookiba_logo
+    ),
     BottomNavItem(Routes.WISHLIST, "Wishlist", Icons.Filled.Favorite, Icons.Outlined.FavoriteBorder),
     BottomNavItem(Routes.CART, "Cart", Icons.Filled.ShoppingCart, Icons.Outlined.ShoppingCart),
     BottomNavItem(Routes.PROFILE, "Profile", Icons.Filled.Person, Icons.Outlined.Person)
@@ -217,11 +225,20 @@ private fun BookibaBottomBar(
                 selected = selected,
                 onClick = { onItemClick(item) },
                 icon = {
-                    Icon(
-                        imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
-                        contentDescription = item.label,
-                        modifier = Modifier.size(24.dp)
-                    )
+                    if (item.drawableResId != null) {
+                        Icon(
+                            painter = painterResource(id = item.drawableResId),
+                            contentDescription = item.label,
+                            modifier = Modifier.size(26.dp),
+                            tint = Color.Unspecified
+                        )
+                    } else {
+                        Icon(
+                            imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
+                            contentDescription = item.label,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
                 },
                 label = {
                     Text(
