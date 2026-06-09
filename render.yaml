@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: bookiba-backend
+    env: docker
+    dockerfilePath: backend/Dockerfile
+    dockerContext: backend
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        value: postgresql://neondb_owner:npg_Oe5MjQgky8wv@ep-delicate-dust-aq9c1mft.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require
+      - key: JWT_SECRET
+        generateValue: true
+
+  - type: web
+    name: bookiba-admin
+    env: docker
+    dockerfilePath: admin-web/Dockerfile
+    dockerContext: admin-web
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        value: postgresql://neondb_owner:npg_Oe5MjQgky8wv@ep-delicate-dust-aq9c1mft.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require
