@@ -24,7 +24,7 @@ data class ReelDto(
 )
 
 fun Route.reelRoutes() {
-    route("/api/reels") {
+    route("/reels") {
         get {
             val reels = transaction {
                 Reels.join(Books, JoinType.LEFT, onColumn = Reels.bookId, otherColumn = Books.id)

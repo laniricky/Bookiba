@@ -20,6 +20,7 @@ fun Application.configureRouting() {
             orderRoutes()
             wishlistRoutes()
             userRoutes()
+            reelRoutes()
         }
     }
 }
