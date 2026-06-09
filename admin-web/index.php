@@ -14,9 +14,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_action'])) {
     $cover_url = $_POST['cover_url'] ?? ''; $category = $_POST['category'] ?? ''; $inventory_count = (int)($_POST['inventory_count'] ?? 15);
     $seller_id = '00000000-0000-0000-0000-000000000000';
 
+    $desc = $_POST['description'] ?: null;
+    $cond = $_POST['condition'] ?: null;
+    $genre = $_POST['genre'] ?: null;
+    $ed = $_POST['edition'] ?: null;
+    $pub = $_POST['publisher'] ?: null;
+    $tags = $_POST['tags'] ?: null;
+    $imgUrls = $_POST['image_urls'] ?: null;
+    $rare = !empty($_POST['is_rare']) ? 'true' : 'false';
+    $feat = !empty($_POST['is_featured']) ? 'true' : 'false';
+    $staff = !empty($_POST['is_staff_pick']) ? 'true' : 'false';
+
     if ($action === 'add') {
-        $stmt = $pdo->prepare("INSERT INTO books (id, title, author, price_ksh, cover_url, category, inventory_count, seller_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$id, $title, $author, $price, $cover_url, $category, $inventory_count, $seller_id, date('Y-m-d H:i:s')]);
+        $stmt = $pdo->prepare("INSERT INTO books (id, title, author, price_ksh, cover_url, category, inventory_count, seller_id, created_at, description, condition, genre, edition, publisher, tags, image_urls, is_rare, is_featured, is_staff_pick) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$id, $title, $author, $price, $cover_url, $category, $inventory_count, $seller_id, date('Y-m-d H:i:s'), $desc, $cond, $genre, $ed, $pub, $tags, $imgUrls, $rare, $feat, $staff]);
     }
     header("Location: index.php?added=1"); exit;
 }
@@ -360,6 +371,18 @@ function getStatusBadge($status) {
                 <div class="form-group"><label>Price (Ksh)</label><input type="number" name="price_ksh" required></div>
                 <div class="form-group"><label>Initial Inventory Count</label><input type="number" name="inventory_count" value="15" required></div>
                 <div class="form-group"><label>Category</label><input type="text" name="category" placeholder="Fiction, Non-Fiction..."></div>
+                <div class="form-group"><label>Genre</label><input type="text" name="genre" placeholder="Sci-Fi..."></div>
+                <div class="form-group"><label>Condition</label><input type="text" name="condition" placeholder="Like New..."></div>
+                <div class="form-group"><label>Edition</label><input type="text" name="edition" placeholder="1st Edition"></div>
+                <div class="form-group"><label>Publisher</label><input type="text" name="publisher" placeholder="Penguin..."></div>
+                <div class="form-group"><label>Description</label><textarea name="description" rows="3" class="form-input"></textarea></div>
+                <div class="form-group"><label>Tags (Comma separated)</label><input type="text" name="tags" placeholder="Vintage, Bestseller"></div>
+                <div class="form-group"><label>Additional Image URLs (Comma separated)</label><input type="text" name="image_urls"></div>
+                <div style="display:flex; gap: 16px; margin-bottom: 20px;">
+                    <label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" name="is_rare"> <span style="font-size:13px; font-weight:600">Rare</span></label>
+                    <label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" name="is_featured"> <span style="font-size:13px; font-weight:600">Featured</span></label>
+                    <label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" name="is_staff_pick"> <span style="font-size:13px; font-weight:600">Staff Pick</span></label>
+                </div>
                 <div class="form-group"><label>Cover URL</label><input type="url" name="cover_url"></div>
             </form>
         </div>

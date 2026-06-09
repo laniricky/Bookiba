@@ -21,8 +21,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_W
         echo json_encode(['ok' => true]);
     } elseif ($action === 'add') {
         $id = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x', mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0x0fff) | 0x4000, mt_rand(0, 0x3fff) | 0x8000, mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff));
-        $stmt = $pdo->prepare("INSERT INTO books (id, title, author, price_ksh, category, inventory_count, cover_url, seller_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$id, $_POST['title'], $_POST['author'], (int)$_POST['price_ksh'], $_POST['category'], (int)$_POST['inventory_count'], $_POST['cover_url'], '00000000-0000-0000-0000-000000000000', date('Y-m-d H:i:s')]);
+        $desc = $_POST['description'] ?: null;
+        $cond = $_POST['condition'] ?: null;
+        $genre = $_POST['genre'] ?: null;
+        $ed = $_POST['edition'] ?: null;
+        $pub = $_POST['publisher'] ?: null;
+        $tags = $_POST['tags'] ?: null;
+        $imgUrls = $_POST['image_urls'] ?: null;
+        $rare = !empty($_POST['is_rare']) ? 'true' : 'false';
+        $feat = !empty($_POST['is_featured']) ? 'true' : 'false';
+        $staff = !empty($_POST['is_staff_pick']) ? 'true' : 'false';
+
+        $stmt = $pdo->prepare("INSERT INTO books (id, title, author, price_ksh, category, inventory_count, cover_url, seller_id, created_at, description, condition, genre, edition, publisher, tags, image_urls, is_rare, is_featured, is_staff_pick) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$id, $_POST['title'], $_POST['author'], (int)$_POST['price_ksh'], $_POST['category'], (int)$_POST['inventory_count'], $_POST['cover_url'], '00000000-0000-0000-0000-000000000000', date('Y-m-d H:i:s'), $desc, $cond, $genre, $ed, $pub, $tags, $imgUrls, $rare, $feat, $staff]);
         echo json_encode(['ok' => true, 'id' => $id]);
     }
     exit;
@@ -150,6 +161,22 @@ $low_stock_count = count(array_filter($books, fn($b) => $b['inventory_count'] > 
                 <div class="form-group"><label>Initial Stock *</label><input type="number" id="f_stock" class="form-input" value="15"></div>
             </div>
             <div class="form-group"><label>Category</label><input type="text" id="f_category" class="form-input" placeholder="Fiction, Self-Help..."></div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+                <div class="form-group"><label>Genre</label><input type="text" id="f_genre" class="form-input" placeholder="Sci-Fi..."></div>
+                <div class="form-group"><label>Condition</label><input type="text" id="f_condition" class="form-input" placeholder="Like New..."></div>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+                <div class="form-group"><label>Edition</label><input type="text" id="f_edition" class="form-input" placeholder="1st Edition"></div>
+                <div class="form-group"><label>Publisher</label><input type="text" id="f_publisher" class="form-input" placeholder="Penguin..."></div>
+            </div>
+            <div class="form-group"><label>Description</label><textarea id="f_description" class="form-input" rows="3"></textarea></div>
+            <div class="form-group"><label>Tags (Comma separated)</label><input type="text" id="f_tags" class="form-input" placeholder="Vintage, Bestseller"></div>
+            <div class="form-group"><label>Additional Image URLs (Comma separated)</label><input type="text" id="f_image_urls" class="form-input"></div>
+            <div style="display:flex; gap: 16px; margin-bottom: 20px;">
+                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" id="f_is_rare"> <span style="font-size:13px; font-weight:600">Rare</span></label>
+                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" id="f_is_featured"> <span style="font-size:13px; font-weight:600">Featured</span></label>
+                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" id="f_is_staff_pick"> <span style="font-size:13px; font-weight:600">Staff Pick</span></label>
+            </div>
             <div class="form-group">
                 <label>Cover Image</label>
                 <div id="cover-upload-area" onclick="openCoverWidget()" style="border:2px dashed var(--border-color); border-radius:var(--radius-sm); padding:20px; text-align:center; cursor:pointer; transition:border-color 0.2s; background:#FAFAFA; position:relative;">
@@ -418,6 +445,16 @@ $low_stock_count = count(array_filter($books, fn($b) => $b['inventory_count'] > 
                 inventory_count: document.getElementById('f_stock').value,
                 category: document.getElementById('f_category').value,
                 cover_url: document.getElementById('f_cover').value,
+                description: document.getElementById('f_description').value,
+                condition: document.getElementById('f_condition').value,
+                genre: document.getElementById('f_genre').value,
+                edition: document.getElementById('f_edition').value,
+                publisher: document.getElementById('f_publisher').value,
+                tags: document.getElementById('f_tags').value,
+                image_urls: document.getElementById('f_image_urls').value,
+                is_rare: document.getElementById('f_is_rare').checked ? 1 : 0,
+                is_featured: document.getElementById('f_is_featured').checked ? 1 : 0,
+                is_staff_pick: document.getElementById('f_is_staff_pick').checked ? 1 : 0
             };
             fetch('products.php', {
                 method: 'POST',
