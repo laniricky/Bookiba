@@ -38,7 +38,7 @@ $stmt = $pdo->prepare("
     JOIN users u ON o.user_id = u.id
     LEFT JOIN order_items oi ON oi.order_id = o.id
     $where_sql
-    GROUP BY o.id
+    GROUP BY o.id, u.name, u.email
     ORDER BY o.created_at DESC
 ");
 $stmt->execute($params);

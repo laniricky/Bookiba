@@ -21,14 +21,21 @@ $categories = $pdo->query("
 $cat_monthly = [];
 foreach ($categories as $cat) {
     $name = $cat['category'] ?: 'Uncategorised';
+    if ($isPostgres) {
+        $mo_expr = "TO_CHAR(o.created_at, 'YYYY-MM')";
+        $date_limit = "CURRENT_DATE - INTERVAL '6 months'";
+    } else {
+        $mo_expr = "strftime('%Y-%m', o.created_at)";
+        $date_limit = "date('now', '-6 months')";
+    }
     $stmt = $pdo->prepare("
-        SELECT strftime('%Y-%m', o.created_at) as mo, SUM(oi.quantity * oi.price_ksh) as rev
+        SELECT $mo_expr as mo, SUM(oi.quantity * oi.price_ksh) as rev
         FROM order_items oi
         JOIN books b ON oi.book_id = b.id
         JOIN orders o ON oi.order_id = o.id
-        WHERE o.status != 'Cancelled' 
+        WHERE o.status != 'Cancelled'
           AND (b.category = ? OR (b.category = '' AND ? = 'Uncategorised'))
-          AND o.created_at >= date('now', '-6 months')
+          AND o.created_at >= $date_limit
         GROUP BY mo ORDER BY mo ASC
     ");
     $stmt->execute([$cat['category'], $name]);
@@ -42,19 +49,32 @@ $grand_rev = array_sum(array_column($categories, 'total_revenue')) ?: 1;
 // Trend: compare last 30 vs previous 30 days per category
 $trends = [];
 foreach ($categories as $cat) {
-    $stmt = $pdo->prepare("
-        SELECT 
-            SUM(CASE WHEN o.created_at >= date('now', '-30 days') THEN oi.quantity * oi.price_ksh ELSE 0 END) as recent,
-            SUM(CASE WHEN o.created_at >= date('now', '-60 days') AND o.created_at < date('now', '-30 days') THEN oi.quantity * oi.price_ksh ELSE 0 END) as prior
-        FROM order_items oi
-        JOIN books b ON oi.book_id = b.id
-        JOIN orders o ON oi.order_id = o.id
-        WHERE o.status != 'Cancelled' AND b.category = ?
-    ");
+    if ($isPostgres) {
+        $trend_sql = "
+            SELECT
+                SUM(CASE WHEN o.created_at >= CURRENT_DATE - INTERVAL '30 days' THEN oi.quantity * oi.price_ksh ELSE 0 END) as recent,
+                SUM(CASE WHEN o.created_at >= CURRENT_DATE - INTERVAL '60 days' AND o.created_at < CURRENT_DATE - INTERVAL '30 days' THEN oi.quantity * oi.price_ksh ELSE 0 END) as prior
+            FROM order_items oi
+            JOIN books b ON oi.book_id = b.id
+            JOIN orders o ON oi.order_id = o.id
+            WHERE o.status != 'Cancelled' AND b.category = ?
+        ";
+    } else {
+        $trend_sql = "
+            SELECT
+                SUM(CASE WHEN o.created_at >= date('now', '-30 days') THEN oi.quantity * oi.price_ksh ELSE 0 END) as recent,
+                SUM(CASE WHEN o.created_at >= date('now', '-60 days') AND o.created_at < date('now', '-30 days') THEN oi.quantity * oi.price_ksh ELSE 0 END) as prior
+            FROM order_items oi
+            JOIN books b ON oi.book_id = b.id
+            JOIN orders o ON oi.order_id = o.id
+            WHERE o.status != 'Cancelled' AND b.category = ?
+        ";
+    }
+    $stmt = $pdo->prepare($trend_sql);
     $stmt->execute([$cat['category']]);
     $r = $stmt->fetch(PDO::FETCH_ASSOC);
-    $recent = (float)$r['recent'];
-    $prior = (float)$r['prior'];
+    $recent = (float)($r['recent'] ?? 0);
+    $prior = (float)($r['prior'] ?? 0);
     if ($prior > 0) $pctChange = round((($recent - $prior) / $prior) * 100, 1);
     elseif ($recent > 0) $pctChange = 100;
     else $pctChange = 0;
@@ -126,8 +146,12 @@ foreach ($categories as $cat) {
             </div>
             <div class="sum-card">
                 <div class="sum-label">Top Earning Category</div>
+                <?php if (!empty($categories)): ?>
                 <div class="sum-val" style="font-size:18px;"><?= htmlspecialchars($categories[0]['category'] ?: 'Uncategorised') ?></div>
-                <div style="color:var(--text-muted); font-size:13px; margin-top:4px;">Ksh <?= number_format($categories[0]['total_revenue']) ?></div>
+                <div style="color:var(--text-muted); font-size:13px; margin-top:4px;">Ksh <?= number_format($categories[0]['total_revenue'] ?? 0) ?></div>
+                <?php else: ?>
+                <div class="sum-val" style="font-size:18px; color:var(--text-muted);">None yet</div>
+                <?php endif; ?>
             </div>
             <div class="sum-card">
                 <div class="sum-label">Total Books Sold</div>

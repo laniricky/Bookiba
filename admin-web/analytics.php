@@ -84,14 +84,26 @@ $statusCounts = array_column($statusData, 'cnt');
 
 // ── 5. Hourly Heatmap (day-of-week × hour) ───────────────────
 $heatmap = array_fill(0, 7, array_fill(0, 24, 0));
-$heatRows = $pdo->prepare("
-    SELECT strftime('%w', created_at) as dow,
-           strftime('%H', created_at) as hr,
-           COUNT(*) as cnt
-    FROM orders
-    WHERE status != 'Cancelled' AND DATE(created_at) BETWEEN ? AND ?
-    GROUP BY dow, hr
-");
+if ($isPostgres) {
+    $heatmapSql = "
+        SELECT EXTRACT(DOW FROM created_at)::int as dow,
+               EXTRACT(HOUR FROM created_at)::int as hr,
+               COUNT(*) as cnt
+        FROM orders
+        WHERE status != 'Cancelled' AND DATE(created_at) BETWEEN ? AND ?
+        GROUP BY dow, hr
+    ";
+} else {
+    $heatmapSql = "
+        SELECT strftime('%w', created_at) as dow,
+               strftime('%H', created_at) as hr,
+               COUNT(*) as cnt
+        FROM orders
+        WHERE status != 'Cancelled' AND DATE(created_at) BETWEEN ? AND ?
+        GROUP BY dow, hr
+    ";
+}
+$heatRows = $pdo->prepare($heatmapSql);
 $heatRows->execute([$dateFrom, $dateTo]);
 foreach ($heatRows->fetchAll(PDO::FETCH_ASSOC) as $row) {
     $heatmap[(int)$row['dow']][(int)$row['hr']] = (int)$row['cnt'];
@@ -107,7 +119,7 @@ $topBooks = $pdo->prepare("
     JOIN books b ON oi.book_id = b.id
     JOIN orders o ON oi.order_id = o.id
     WHERE o.status != 'Cancelled' AND DATE(o.created_at) BETWEEN ? AND ?
-    GROUP BY b.id ORDER BY rev DESC LIMIT 7
+    GROUP BY b.id, b.title, b.author, b.cover_url ORDER BY rev DESC LIMIT 7
 ");
 $topBooks->execute([$dateFrom, $dateTo]);
 $topBooksRows = $topBooks->fetchAll(PDO::FETCH_ASSOC);

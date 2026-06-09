@@ -26,7 +26,11 @@ if ($isPostgres) {
 } else {
     $vel_query = "SELECT book_id, SUM(quantity) as sold FROM order_items oi JOIN orders o ON oi.order_id = o.id WHERE o.status != 'Cancelled' AND o.created_at >= date('now', '-30 days') GROUP BY book_id";
 }
-$velocity = $pdo->query($vel_query)->fetchAll(PDO::FETCH_KEY_PAIR);
+$velocityRows = $pdo->query($vel_query)->fetchAll(PDO::FETCH_ASSOC);
+$velocity = [];
+foreach ($velocityRows as $vrow) {
+    $velocity[$vrow['book_id']] = (float)$vrow['sold'];
+}
 
 // Fetch all books with stock info
 $books = $pdo->query("SELECT id, title, author, cover_url, inventory_count FROM books ORDER BY inventory_count ASC")->fetchAll(PDO::FETCH_ASSOC);
