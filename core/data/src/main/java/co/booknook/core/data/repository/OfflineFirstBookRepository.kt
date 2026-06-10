@@ -60,12 +60,16 @@ class OfflineFirstBookRepository @Inject constructor(
 
     override suspend fun checkout(items: List<Triple<String, Int, Double>>): Boolean {
         return try {
-            val cartItems = items.map { (id, quantity, price) ->
-                co.booknook.core.network.model.NetworkCartItem(bookId = id, quantity = quantity, price = price) 
+            val cartItems = items.map { (id, quantity, _) ->
+                co.booknook.core.network.model.NetworkOrderItemRequest(bookId = id, quantity = quantity) 
             }
-            val request = co.booknook.core.network.model.NetworkCheckoutRequest(items = cartItems)
-            val response = bookibaApi.checkout(request)
-            response.ok
+            val request = co.booknook.core.network.model.NetworkCheckoutRequest(
+                items = cartItems,
+                shippingAddress = "Nairobi, Kenya",
+                paymentMethod = "CARD"
+            )
+            val response = bookibaApi.createOrder(request)
+            response.orderId != null
         } catch (e: Exception) {
             false
         }

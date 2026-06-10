@@ -16,22 +16,22 @@ data class NetworkBooksResponse(
 
 @Serializable
 data class NetworkCheckoutRequest(
-    val items: List<NetworkCartItem>
+    val items: List<NetworkOrderItemRequest>,
+    val shippingAddress: String,
+    val paymentMethod: String
 )
 
 @Serializable
-data class NetworkCartItem(
+data class NetworkOrderItemRequest(
     val bookId: String,
-    val quantity: Int,
-    val price: Double
+    val quantity: Int
 )
 
 @Serializable
 data class NetworkCheckoutResponse(
-    val ok: Boolean = false,
     val orderId: String? = null,
-    val message: String? = null,
-    val error: String? = null
+    val total: Long? = null,
+    val status: String? = null
 )
 
 // ── Auth ─────────────────────────────────────────────────────────────────────

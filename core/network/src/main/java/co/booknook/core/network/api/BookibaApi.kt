@@ -28,8 +28,8 @@ interface BookibaApi {
         @Path("id") bookId: String
     ): NetworkBook
 
-    @POST("checkout")
-    suspend fun checkout(
+    @POST("orders")
+    suspend fun createOrder(
         @Body request: NetworkCheckoutRequest
     ): NetworkCheckoutResponse
 

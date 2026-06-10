@@ -9,7 +9,6 @@ import co.booknook.core.domain.model.OrderItem
 import co.booknook.core.domain.model.OrderStatus
 import co.booknook.core.domain.repository.OrderRepository
 import co.booknook.core.network.api.BookibaApi
-import co.booknook.core.network.model.NetworkCartItem
 import co.booknook.core.network.model.NetworkCheckoutRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -47,18 +46,19 @@ class LocalOrderRepository @Inject constructor(
     override suspend fun createOrder(totalAmount: Long, items: List<CartItem>) {
         // 1. Sync with backend API
         val networkItems = items.map {
-            NetworkCartItem(
+            co.booknook.core.network.model.NetworkOrderItemRequest(
                 bookId = it.bookId,
-                quantity = it.quantity,
-                price = it.priceKsh.toDouble()
+                quantity = it.quantity
             )
         }
         
-        val response = bookibaApi.checkout(NetworkCheckoutRequest(items = networkItems))
-        
-        if (!response.ok) {
-            throw Exception(response.error ?: "Failed to create order on server")
-        }
+        val response = bookibaApi.createOrder(
+            NetworkCheckoutRequest(
+                items = networkItems,
+                shippingAddress = "Nairobi, Kenya",
+                paymentMethod = "CARD"
+            )
+        )
 
         // 2. Save locally with the server-generated order ID
         val orderId = response.orderId ?: UUID.randomUUID().toString().take(8).uppercase()
