@@ -20,21 +20,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.booknook.core.domain.model.Book
+import co.booknook.core.domain.model.CartItem
 
 private val Cream = Color(0xFFF5F0E8)
 private val DarkBrown = Color(0xFF1A1512)
 private val WarmBrown = Color(0xFF8B7355)
 private val SoftWhite = Color(0xFFFEFCF9)
 
-data class CartItem(val book: Book, val quantity: Int)
 data class CartUiState(
     val items: List<CartItem> = emptyList(),
     val couponCode: String = "",
     val couponDiscount: Long = 0,
     val isLoading: Boolean = false
 ) {
-    val subtotal: Long get() = items.sumOf { it.book.priceKsh * it.quantity }
+    val subtotal: Long get() = items.sumOf { it.priceKsh * it.quantity }
     val shipping: Long get() = if (items.isEmpty()) 0L else 200L
     val total: Long get() = subtotal + shipping - couponDiscount
 }
@@ -43,10 +45,9 @@ data class CartUiState(
 fun CartScreen(
     onCheckout: () -> Unit,
     onBookClick: (String) -> Unit,
-    state: CartUiState = CartUiState(),
-    onUpdateQuantity: (String, Int) -> Unit = { _, _ -> },
-    onRemoveItem: (String) -> Unit = {}
+    viewModel: CartViewModel = hiltViewModel()
 ) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     var coupon by remember { mutableStateOf("") }
 
     Box(modifier = Modifier.fillMaxSize().background(SoftWhite)) {
@@ -88,12 +89,12 @@ fun CartScreen(
                 }
             } else {
                 // Cart items
-                items(state.items, key = { it.book.id }) { item ->
+                items(state.items, key = { it.bookId }) { item ->
                     CartItemRow(
                         item = item,
-                        onQuantityChange = { qty -> onUpdateQuantity(item.book.id, qty) },
-                        onRemove = { onRemoveItem(item.book.id) },
-                        onClick = { onBookClick(item.book.id) }
+                        onQuantityChange = { qty -> viewModel.updateQuantity(item.bookId, qty) },
+                        onRemove = { viewModel.removeItem(item.bookId) },
+                        onClick = { onBookClick(item.bookId) }
                     )
                     HorizontalDivider(color = Cream, modifier = Modifier.padding(horizontal = 16.dp))
                 }
@@ -178,14 +179,14 @@ private fun CartItemRow(item: CartItem, onQuantityChange: (Int) -> Unit, onRemov
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
-            model = item.book.coverUrl,
-            contentDescription = item.book.title,
+            model = item.coverUrl,
+            contentDescription = item.title,
             modifier = Modifier.size(70.dp).clip(RoundedCornerShape(10.dp)),
             contentScale = ContentScale.Crop
         )
         Column(modifier = Modifier.weight(1f)) {
-            Text(item.book.title, color = DarkBrown, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
-            Text("KSh ${"%,d".format(item.book.priceKsh)}", color = WarmBrown, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 4.dp))
+            Text(item.title, color = DarkBrown, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Text("KSh ${"%,d".format(item.priceKsh)}", color = WarmBrown, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 4.dp))
         }
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             IconButton(onClick = { if (item.quantity > 1) onQuantityChange(item.quantity - 1) else onRemove() }, modifier = Modifier.size(32.dp)) {

@@ -8,38 +8,34 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import coil.compose.AsyncImage
-import co.booknook.core.domain.model.Book
+import co.booknook.core.domain.model.Order
+import co.booknook.core.domain.model.OrderStatus
 
 private val Cream = Color(0xFFF5F0E8)
 private val DarkBrown = Color(0xFF1A1512)
 private val WarmBrown = Color(0xFF8B7355)
 private val SoftWhite = Color(0xFFFEFCF9)
 private val AccentGreen = Color(0xFF2D6A4F)
-
-enum class OrderStatus(val label: String, val color: Color) {
-    PROCESSING("Processing", WarmBrown),
-    SHIPPED("Shipped", Color(0xFFD97706)),
-    DELIVERED("Delivered", AccentGreen)
-}
-
-data class Order(val id: String, val date: String, val total: Long, val status: OrderStatus, val items: List<Book>)
-
 @Composable
 fun OrdersScreen(
     onBack: () -> Unit,
-    orders: List<Order> = sampleOrders()
+    viewModel: OrdersViewModel = hiltViewModel()
 ) {
+    val state by viewModel.state.collectAsState()
+    val orders = state.orders
+    
     var selectedTab by remember { mutableStateOf("All") }
     val tabs = listOf("All", "Processing", "Shipped", "Delivered")
 
@@ -55,7 +51,6 @@ fun OrdersScreen(
             }
             Text("Order History", color = DarkBrown, fontSize = 22.sp, fontWeight = FontWeight.Bold)
         }
-
         ScrollableTabRow(
             selectedTabIndex = tabs.indexOf(selectedTab),
             containerColor = SoftWhite,
@@ -79,12 +74,17 @@ fun OrdersScreen(
                 )
             }
         }
-
         LazyColumn(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            if (filteredOrders.isEmpty()) {
+            if (state.isLoading) {
+                item {
+                    Box(modifier = Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = WarmBrown)
+                    }
+                }
+            } else if (filteredOrders.isEmpty()) {
                 item {
                     Box(modifier = Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) {
                         Text("No orders found.", color = WarmBrown)
@@ -109,7 +109,9 @@ private fun OrderCard(order: Order) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text("Order #${order.id}", color = DarkBrown, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-                Text(order.date, color = WarmBrown, fontSize = 13.sp)
+                // Format the long dateMs string
+                val dateStr = java.text.SimpleDateFormat("MMM dd, yyyy", java.util.Locale.getDefault()).format(java.util.Date(order.dateMs))
+                Text(dateStr, color = WarmBrown, fontSize = 13.sp)
             }
             Spacer(Modifier.height(12.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -132,16 +134,18 @@ private fun OrderCard(order: Order) {
             }
             Spacer(Modifier.height(12.dp))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Text("KSh ${"%,d".format(order.total)}", color = DarkBrown, fontSize = 16.sp, fontWeight = FontWeight.ExtraBold)
-                Surface(color = order.status.color.copy(alpha = 0.15f), shape = RoundedCornerShape(8.dp)) {
-                    Text(order.status.label, color = order.status.color, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp))
+                Text("KSh ${"%,d".format(order.totalAmount)}", color = DarkBrown, fontSize = 16.sp, fontWeight = FontWeight.ExtraBold)
+                
+                val statusColor = when (order.status) {
+                    OrderStatus.PROCESSING -> WarmBrown
+                    OrderStatus.SHIPPED -> Color(0xFFD97706)
+                    OrderStatus.DELIVERED -> AccentGreen
+                }
+                
+                Surface(color = statusColor.copy(alpha = 0.15f), shape = RoundedCornerShape(8.dp)) {
+                    Text(order.status.label, color = statusColor, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp))
                 }
             }
         }
     }
 }
-
-private fun sampleOrders() = listOf(
-    Order("1024", "Oct 12, 2026", 4200L, OrderStatus.PROCESSING, listOf(Book(id = "1", title = "Book", author = "Author", coverUrl = ""))),
-    Order("982", "Sep 04, 2026", 1850L, OrderStatus.DELIVERED, listOf(Book(id = "2", title = "Book 2", author = "Author", coverUrl = "")))
-)

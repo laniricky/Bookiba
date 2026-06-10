@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import co.booknook.core.database.BookibaDatabase
 import co.booknook.core.database.dao.BookDao
+import co.booknook.core.database.dao.CartDao
+import co.booknook.core.database.dao.OrderDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,7 +26,9 @@ object DatabaseModule {
             context,
             BookibaDatabase::class.java,
             "bookiba_database"
-        ).build()
+        )
+        .addMigrations(BookibaDatabase.MIGRATION_1_2, BookibaDatabase.MIGRATION_2_3)
+        .build()
     }
 
     @Provides
@@ -33,5 +37,19 @@ object DatabaseModule {
         database: BookibaDatabase
     ): BookDao {
         return database.bookDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCartDao(
+        database: BookibaDatabase
+    ): CartDao {
+        return database.cartDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideOrderDao(database: BookibaDatabase): OrderDao {
+        return database.orderDao()
     }
 }

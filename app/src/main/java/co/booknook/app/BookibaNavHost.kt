@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.booknook.feature.auth.AuthFlow
 import co.booknook.feature.bookdetails.BookDetailScreen
 import co.booknook.feature.cart.CartScreen
@@ -74,11 +76,15 @@ private val WarmBrown = Color(0xFF8B7355)
 private val SoftWhite = Color(0xFFFEFCF9)
 
 @Composable
-fun BookibaNavHost() {
+fun BookibaNavHost(
+    viewModel: MainViewModel = hiltViewModel()
+) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val currentRoute = currentDestination?.route
+
+    val cartCount by viewModel.cartCount.collectAsStateWithLifecycle()
 
     val showBottomBar = bottomNavRoutes.any { currentRoute == it }
 
@@ -88,6 +94,7 @@ fun BookibaNavHost() {
                 BookibaBottomBar(
                     items = bottomNavItems,
                     currentRoute = currentRoute,
+                    cartCount = cartCount,
                     onItemClick = { item ->
                         navController.navigate(item.route) {
                             popUpTo(navController.graph.findStartDestination().id) { saveState = true }
@@ -206,6 +213,7 @@ fun BookibaNavHost() {
 private fun BookibaBottomBar(
     items: List<BottomNavItem>,
     currentRoute: String?,
+    cartCount: Int,
     onItemClick: (BottomNavItem) -> Unit
 ) {
     val reelsItem = items.find { it.route == Routes.REELS }
@@ -270,11 +278,27 @@ private fun BookibaBottomBar(
                     selected = selected,
                     onClick = { onItemClick(item) },
                     icon = {
-                        Icon(
-                            imageVector = if (selected) item.selectedIcon!! else item.unselectedIcon!!,
-                            contentDescription = item.label,
-                            modifier = Modifier.size(24.dp)
-                        )
+                        if (item.route == Routes.CART && cartCount > 0) {
+                            BadgedBox(
+                                badge = {
+                                    Badge(containerColor = Color(0xFF2D6A4F), contentColor = Color.White) {
+                                        Text(cartCount.toString())
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = if (selected) item.selectedIcon!! else item.unselectedIcon!!,
+                                    contentDescription = item.label,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        } else {
+                            Icon(
+                                imageVector = if (selected) item.selectedIcon!! else item.unselectedIcon!!,
+                                contentDescription = item.label,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
                     },
                     label = { Text(item.label, style = MaterialTheme.typography.labelSmall) },
                     colors = NavigationBarItemDefaults.colors(
@@ -291,22 +315,34 @@ private fun BookibaBottomBar(
         // ── Floating Reels button ─────────────────────────────────────
         if (reelsItem != null) {
             val reelsSelected = currentRoute == reelsItem.route
-            androidx.compose.foundation.layout.Box(
+            Row(
                 modifier = Modifier
+                    .fillMaxWidth()
                     .align(androidx.compose.ui.Alignment.TopCenter)
-                    .offset(y = (-10).dp)
-                    .size(64.dp)
-                    .clip(androidx.compose.foundation.shape.CircleShape)
-                    .background(if (reelsSelected) DarkBrown else WarmBrown)
-                    .clickable { onItemClick(reelsItem) },
-                contentAlignment = androidx.compose.ui.Alignment.Center
             ) {
-                Icon(
-                    painter = painterResource(id = reelsItem.iconResId!!),
-                    contentDescription = reelsItem.label,
-                    tint = Cream,
-                    modifier = Modifier.size(38.dp)
-                )
+                Spacer(modifier = Modifier.weight(2f))
+                androidx.compose.foundation.layout.Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = androidx.compose.ui.Alignment.TopCenter
+                ) {
+                    androidx.compose.foundation.layout.Box(
+                        modifier = Modifier
+                            .offset(y = (-10).dp)
+                            .size(64.dp)
+                            .clip(androidx.compose.foundation.shape.CircleShape)
+                            .background(if (reelsSelected) DarkBrown else WarmBrown)
+                            .clickable { onItemClick(reelsItem) },
+                        contentAlignment = androidx.compose.ui.Alignment.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(id = reelsItem.iconResId!!),
+                            contentDescription = reelsItem.label,
+                            tint = Cream,
+                            modifier = Modifier.size(38.dp)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.weight(3f))
             }
         }
     }

@@ -3,6 +3,7 @@ package co.booknook.feature.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.booknook.core.domain.model.Book
+import co.booknook.core.domain.repository.CartRepository
 import co.booknook.core.domain.usecase.GetFeaturedBooksUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -15,6 +16,7 @@ data class HomeUiState(
     val newArrivals: List<Book> = emptyList(),
     val stories: List<StoryItem> = emptyList(),
     val isLoading: Boolean = true,
+    val cartSuccess: Boolean = false,
     val error: String? = null
 )
 
@@ -26,7 +28,8 @@ data class StoryItem(
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getFeaturedBooksUseCase: GetFeaturedBooksUseCase
+    private val getFeaturedBooksUseCase: GetFeaturedBooksUseCase,
+    private val cartRepository: CartRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeUiState())
@@ -58,6 +61,17 @@ class HomeViewModel @Inject constructor(
                 _state.update { it.copy(isLoading = false, error = e.message) }
             }
         }
+    }
+
+    fun addToCart(book: Book) {
+        viewModelScope.launch {
+            cartRepository.addToCart(book)
+            _state.update { it.copy(cartSuccess = true) }
+        }
+    }
+
+    fun resetCartSuccess() {
+        _state.update { it.copy(cartSuccess = false) }
     }
 
     fun refresh() = loadHome()

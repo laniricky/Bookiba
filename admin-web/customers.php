@@ -54,12 +54,23 @@ $month_counts = array_column($monthly, 'cnt');
 
 // Sparkline data per customer (last 6 months spending)
 function getSparkline($pdo, $user_id) {
-    $rows = $pdo->prepare("
-        SELECT strftime('%Y-%m', created_at) as m, SUM(total_amount) as v
-        FROM orders WHERE user_id = ? AND status != 'Cancelled'
-        AND created_at >= date('now', '-6 months')
-        GROUP BY m ORDER BY m
-    ");
+    global $isPostgres;
+    if ($isPostgres) {
+        $sql = "
+            SELECT TO_CHAR(created_at, 'YYYY-MM') as m, SUM(total_amount) as v
+            FROM orders WHERE user_id = ? AND status != 'Cancelled'
+            AND created_at >= CURRENT_DATE - INTERVAL '6 months'
+            GROUP BY TO_CHAR(created_at, 'YYYY-MM') ORDER BY m
+        ";
+    } else {
+        $sql = "
+            SELECT strftime('%Y-%m', created_at) as m, SUM(total_amount) as v
+            FROM orders WHERE user_id = ? AND status != 'Cancelled'
+            AND created_at >= date('now', '-6 months')
+            GROUP BY m ORDER BY m
+        ";
+    }
+    $rows = $pdo->prepare($sql);
     $rows->execute([$user_id]);
     return array_column($rows->fetchAll(PDO::FETCH_ASSOC), 'v');
 }

@@ -48,6 +48,14 @@ fun BookDetailScreen(
     viewModel: BookDetailViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(state.cartSuccess) {
+        if (state.cartSuccess) {
+            snackbarHostState.showSnackbar("Added to cart")
+            viewModel.onEvent(BookDetailEvent.ResetCartSuccess)
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize().background(SoftWhite)) {
         state.book?.let { book ->
@@ -172,7 +180,7 @@ fun BookDetailScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 OutlinedButton(
-                    onClick = { onAddToCart(book.id) },
+                    onClick = { viewModel.onEvent(BookDetailEvent.AddToCart) },
                     modifier = Modifier.weight(1f).height(50.dp),
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = DarkBrown),
@@ -194,6 +202,11 @@ fun BookDetailScreen(
         if (state.isLoading) {
             CircularProgressIndicator(color = WarmBrown, modifier = Modifier.align(Alignment.Center))
         }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 80.dp)
+        )
     }
 }
 

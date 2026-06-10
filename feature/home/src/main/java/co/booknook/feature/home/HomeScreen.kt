@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.*
@@ -45,11 +46,19 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
     var isRefreshing by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.isLoading) {
         if (!state.isLoading) {
             isRefreshing = false
+        }
+    }
+
+    LaunchedEffect(state.cartSuccess) {
+        if (state.cartSuccess) {
+            snackbarHostState.showSnackbar("Added to cart")
+            viewModel.resetCartSuccess()
         }
     }
 
@@ -87,7 +96,7 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
                     items(state.featuredBooks) { book ->
-                        FeaturedBookCard(book = book, onClick = { onBookClick(book.id) })
+                        FeaturedBookCard(book = book, onClick = { onBookClick(book.id) }, onAddToCart = { viewModel.addToCart(book) })
                     }
                 }
                 Spacer(Modifier.height(24.dp))
@@ -97,7 +106,7 @@ fun HomeScreen(
             state.staffPick?.let { pick ->
                 item {
                     SectionHeader(title = "Staff Pick", onSeeAll = onSearchClick)
-                    StaffPickCard(book = pick, onClick = { onBookClick(pick.id) })
+                    StaffPickCard(book = pick, onClick = { onBookClick(pick.id) }, onAddToCart = { viewModel.addToCart(pick) })
                     Spacer(Modifier.height(24.dp))
                 }
             }
@@ -112,7 +121,7 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
                     items(state.newArrivals) { book ->
-                        SmallBookCard(book = book, onClick = { onBookClick(book.id) })
+                        SmallBookCard(book = book, onClick = { onBookClick(book.id) }, onAddToCart = { viewModel.addToCart(book) })
                     }
                 }
                 Spacer(Modifier.height(24.dp))
@@ -268,7 +277,7 @@ private fun SectionHeader(title: String, onSeeAll: () -> Unit) {
 }
 
 @Composable
-private fun FeaturedBookCard(book: Book, onClick: () -> Unit) {
+private fun FeaturedBookCard(book: Book, onClick: () -> Unit, onAddToCart: () -> Unit) {
     Card(
         modifier = Modifier
             .width(160.dp)
@@ -311,19 +320,24 @@ private fun FeaturedBookCard(book: Book, onClick: () -> Unit) {
                     )
                 }
                 Spacer(Modifier.height(6.dp))
-                Text(
-                    text = "KSh ${"%,d".format(book.priceKsh)}",
-                    color = DarkBrown,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "KSh ${"%,d".format(book.priceKsh)}",
+                        color = DarkBrown,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    IconButton(onClick = onAddToCart, modifier = Modifier.size(24.dp)) {
+                        Icon(Icons.Outlined.ShoppingCart, contentDescription = "Add to Cart", tint = AccentGreen, modifier = Modifier.size(18.dp))
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-private fun StaffPickCard(book: Book, onClick: () -> Unit) {
+private fun StaffPickCard(book: Book, onClick: () -> Unit, onAddToCart: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -364,19 +378,24 @@ private fun StaffPickCard(book: Book, onClick: () -> Unit) {
                         fontSize = 13.sp
                     )
                 }
-                Text(
-                    text = "KSh ${"%,d".format(book.priceKsh)}",
-                    color = DarkBrown,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.ExtraBold
-                )
+                Row(modifier = Modifier.fillMaxWidth().padding(end = 8.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "KSh ${"%,d".format(book.priceKsh)}",
+                        color = DarkBrown,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                    IconButton(onClick = onAddToCart, modifier = Modifier.size(32.dp)) {
+                        Icon(Icons.Outlined.ShoppingCart, contentDescription = "Add to Cart", tint = AccentGreen, modifier = Modifier.size(22.dp))
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-private fun SmallBookCard(book: Book, onClick: () -> Unit) {
+private fun SmallBookCard(book: Book, onClick: () -> Unit, onAddToCart: () -> Unit) {
     Column(
         modifier = Modifier
             .width(110.dp)
@@ -400,11 +419,16 @@ private fun SmallBookCard(book: Book, onClick: () -> Unit) {
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
-        Text(
-            text = "KSh ${"%,d".format(book.priceKsh)}",
-            color = WarmBrown,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold
-        )
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = "KSh ${"%,d".format(book.priceKsh)}",
+                color = WarmBrown,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold
+            )
+            IconButton(onClick = onAddToCart, modifier = Modifier.size(20.dp)) {
+                Icon(Icons.Outlined.ShoppingCart, contentDescription = "Add to Cart", tint = AccentGreen, modifier = Modifier.size(16.dp))
+            }
+        }
     }
 }

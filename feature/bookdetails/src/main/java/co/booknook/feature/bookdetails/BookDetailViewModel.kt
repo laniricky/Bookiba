@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.booknook.core.domain.model.Book
 import co.booknook.core.domain.repository.BookRepository
+import co.booknook.core.domain.repository.CartRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -23,12 +24,14 @@ sealed interface BookDetailEvent {
     data object AddToCart : BookDetailEvent
     data object ToggleWishlist : BookDetailEvent
     data object BuyNow : BookDetailEvent
+    data object ResetCartSuccess : BookDetailEvent
 }
 
 @HiltViewModel
 class BookDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val bookRepository: BookRepository
+    private val bookRepository: BookRepository,
+    private val cartRepository: CartRepository
 ) : ViewModel() {
 
     private val bookId: String = checkNotNull(savedStateHandle["bookId"])
@@ -59,8 +62,17 @@ class BookDetailViewModel @Inject constructor(
         when (event) {
             is BookDetailEvent.ToggleWishlist ->
                 _state.update { it.copy(isWishlisted = !it.isWishlisted) }
-            is BookDetailEvent.AddToCart ->
-                _state.update { it.copy(cartSuccess = true) }
+            is BookDetailEvent.AddToCart -> {
+                viewModelScope.launch {
+                    val book = _state.value.book
+                    if (book != null) {
+                        cartRepository.addToCart(book)
+                        _state.update { it.copy(cartSuccess = true) }
+                    }
+                }
+            }
+            is BookDetailEvent.ResetCartSuccess ->
+                _state.update { it.copy(cartSuccess = false) }
             is BookDetailEvent.BuyNow -> { /* navigate to checkout */ }
         }
     }

@@ -12,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -26,9 +27,16 @@ private val SoftWhite = Color(0xFFFEFCF9)
 fun CheckoutScreen(
     onBack: () -> Unit,
     onSuccess: () -> Unit,
-    totalAmount: Long = 4200L
+    viewModel: CheckoutViewModel = hiltViewModel()
 ) {
+    val state by viewModel.state.collectAsState()
     var selectedPayment by remember { mutableStateOf("mpesa") }
+
+    LaunchedEffect(state.paymentSuccess) {
+        if (state.paymentSuccess) {
+            onSuccess()
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize().background(SoftWhite)) {
         LazyColumn(contentPadding = PaddingValues(bottom = 100.dp)) {
@@ -107,15 +115,19 @@ fun CheckoutScreen(
             Column(modifier = Modifier.padding(16.dp)) {
                 Row(Modifier.fillMaxWidth().padding(bottom = 12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text("Total Payment", color = WarmBrown, fontSize = 15.sp)
-                    Text("KSh ${"%,d".format(totalAmount)}", color = DarkBrown, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
+                    Text("KSh ${"%,d".format(state.totalAmount)}", color = DarkBrown, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
                 }
                 Button(
-                    onClick = onSuccess,
+                    onClick = { viewModel.payNow() },
                     modifier = Modifier.fillMaxWidth().height(54.dp),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = DarkBrown)
                 ) {
-                    Text("Pay Now", color = Cream, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                    if (state.isProcessing) {
+                        CircularProgressIndicator(color = Cream, modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
+                    } else {
+                        Text("Pay Now", color = Cream, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                    }
                 }
             }
         }
