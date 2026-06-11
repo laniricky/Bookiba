@@ -64,7 +64,7 @@ $pdo->exec("
         subtitle    TEXT,
         sort_order  INTEGER DEFAULT 0,
         is_active   INTEGER DEFAULT 1,
-        created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+        created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
 ");
 
