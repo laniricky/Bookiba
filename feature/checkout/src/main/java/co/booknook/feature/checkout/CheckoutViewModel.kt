@@ -17,7 +17,8 @@ data class CheckoutUiState(
     val cartItems: List<CartItem> = emptyList(),
     val totalAmount: Long = 0L,
     val isProcessing: Boolean = false,
-    val paymentSuccess: Boolean = false
+    val paymentSuccess: Boolean = false,
+    val error: String? = null
 )
 
 @HiltViewModel
@@ -41,24 +42,25 @@ class CheckoutViewModel @Inject constructor(
         }
     }
 
-    fun payNow() {
+    fun payNow(paymentMethod: String = "MPESA") {
         if (_state.value.cartItems.isEmpty() || _state.value.isProcessing) return
 
         viewModelScope.launch {
-            _state.update { currentState -> currentState.copy(isProcessing = true) }
+            _state.update { it.copy(isProcessing = true, error = null) }
             try {
-                // Submit order to repository
                 orderRepository.createOrder(
                     totalAmount = _state.value.totalAmount,
                     items = _state.value.cartItems
                 )
-                // Clear the cart
                 cartRepository.clearCart()
-                // Mark as success
-                _state.update { currentState -> currentState.copy(isProcessing = false, paymentSuccess = true) }
+                _state.update { it.copy(isProcessing = false, paymentSuccess = true) }
             } catch (e: Exception) {
-                _state.update { currentState -> currentState.copy(isProcessing = false) }
+                _state.update { it.copy(isProcessing = false, error = e.message ?: "Order failed. Please try again.") }
             }
         }
+    }
+
+    fun clearError() {
+        _state.update { it.copy(error = null) }
     }
 }

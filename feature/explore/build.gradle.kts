@@ -33,5 +33,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.coil.compose)
+    implementation(libs.play.services.code.scanner)
+    implementation(libs.androidx.material.icons.extended)
     ksp(libs.hilt.compiler)
 }

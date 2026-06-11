@@ -87,6 +87,14 @@ fun Route.orderRoutes() {
                             it[OrderItems.quantity] = item.quantity
                             it[OrderItems.priceKsh] = bookPrices[item.bookId] ?: 0L
                         }
+                        
+                        val currentStock = Books.select { Books.id eq item.bookId }
+                            .firstOrNull()?.get(Books.inventoryCount) ?: 0
+                        val newStock = maxOf(0, currentStock - item.quantity)
+                        
+                        Books.update({ Books.id eq item.bookId }) {
+                            it[inventoryCount] = newStock
+                        }
                     }
                 }
 

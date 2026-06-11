@@ -49,6 +49,9 @@ interface BookibaApi {
     @GET("reels")
     suspend fun getReels(): List<NetworkReel>
 
+    @GET("banners")
+    suspend fun getBanners(): NetworkBannersResponse
+
     companion object {
         const val BASE_URL = "https://bookiba-backend.onrender.com"
     }

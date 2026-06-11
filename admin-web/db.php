@@ -55,3 +55,16 @@ $pdo->exec("
     )
 ");
 
+// 4. banners table
+$pdo->exec("
+    CREATE TABLE IF NOT EXISTS banners (
+        id          TEXT PRIMARY KEY,
+        image_url   TEXT NOT NULL,
+        title       TEXT,
+        subtitle    TEXT,
+        sort_order  INTEGER DEFAULT 0,
+        is_active   INTEGER DEFAULT 1,
+        created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+");
+

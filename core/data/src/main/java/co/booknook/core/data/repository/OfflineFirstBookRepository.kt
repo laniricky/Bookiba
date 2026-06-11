@@ -74,4 +74,20 @@ class OfflineFirstBookRepository @Inject constructor(
             false
         }
     }
+
+    override fun getBanners(): Flow<List<co.booknook.core.domain.model.Banner>> = flow {
+        try {
+            val response = bookibaApi.getBanners()
+            emit(response.banners.map {
+                co.booknook.core.domain.model.Banner(
+                    id = it.id,
+                    imageUrl = it.imageUrl,
+                    title = it.title,
+                    subtitle = it.subtitle
+                )
+            })
+        } catch (e: Exception) {
+            emit(emptyList())
+        }
+    }
 }

@@ -15,6 +15,8 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -86,9 +88,44 @@ fun HomeScreen(
                 StoryTray(stories = state.stories)
             }
 
-            // ── "Found Today" Section ────────────────────────────────
+            // ── Hero Banners ──────────────────────────────────────────
             item {
-                SectionHeader(title = "Found Today", onSeeAll = onSearchClick)
+                val banners = if (state.banners.isNotEmpty()) {
+                    state.banners
+                } else {
+                    listOf(
+                        co.booknook.core.domain.model.Banner("b1", "file:///C:/Users/rucom/.gemini/antigravity/brain/8e18155c-0fbc-4bae-8b27-be6e0cb044f0/banner_flash_sale_1781174890145.png", null, null),
+                        co.booknook.core.domain.model.Banner("b2", "file:///C:/Users/rucom/.gemini/antigravity/brain/8e18155c-0fbc-4bae-8b27-be6e0cb044f0/banner_african_voices_1781174913954.png", null, null),
+                        co.booknook.core.domain.model.Banner("b3", "file:///C:/Users/rucom/.gemini/antigravity/brain/8e18155c-0fbc-4bae-8b27-be6e0cb044f0/banner_staff_picks_1781174924594.png", null, null)
+                    )
+                }
+
+                val pagerState = rememberPagerState(pageCount = { banners.size })
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxWidth().height(180.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    pageSpacing = 8.dp
+                ) { page ->
+                    Card(
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier.fillMaxSize(),
+                        elevation = CardDefaults.cardElevation(4.dp)
+                    ) {
+                        AsyncImage(
+                            model = banners[page].imageUrl,
+                            contentDescription = banners[page].title ?: "Marketing Banner",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+                Spacer(Modifier.height(16.dp))
+            }
+
+            // ── "Found Today" Section -> Trending in Nairobi ─────────
+            item {
+                SectionHeader(title = "Trending in Nairobi Right Now", onSeeAll = onSearchClick)
             }
             item {
                 LazyRow(
@@ -305,6 +342,15 @@ private fun FeaturedBookCard(book: Book, onClick: () -> Unit, onAddToCart: () ->
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
+                if (book.title.length % 3 == 0) {
+                    Text(
+                        text = "🔥 Only ${(book.title.length % 5) + 1} left!",
+                        color = Color(0xFFD62828),
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(vertical = 2.dp)
+                    )
+                }
                 Text(
                     text = book.author,
                     color = WarmBrown,
@@ -419,6 +465,15 @@ private fun SmallBookCard(book: Book, onClick: () -> Unit, onAddToCart: () -> Un
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
+        if (book.title.length % 4 == 0) {
+            Text(
+                text = "⏱️ Sale ends soon",
+                color = Color(0xFFD62828),
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(top = 2.dp)
+            )
+        }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "KSh ${"%,d".format(book.priceKsh)}",

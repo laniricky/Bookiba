@@ -21,6 +21,7 @@ fun Application.configureRouting() {
             wishlistRoutes()
             userRoutes()
             reelRoutes()
+            bannerRoutes()
         }
     }
 }

@@ -65,6 +65,17 @@ object Wishlists : Table("wishlists") {
     override val primaryKey = PrimaryKey(userId, bookId)
 }
 
+object Banners : Table("banners") {
+    val id = varchar("id", 36)
+    val imageUrl = varchar("image_url", 500)
+    val title = varchar("title", 200).nullable()
+    val subtitle = varchar("subtitle", 200).nullable()
+    val sortOrder = integer("sort_order").default(0)
+    val isActive = integer("is_active").default(1)
+    val createdAt = datetime("created_at").default(LocalDateTime.now())
+    override val primaryKey = PrimaryKey(id)
+}
+
 object Reels : Table("reels") {
     val id = varchar("id", 36)
     val title = varchar("title", 200)

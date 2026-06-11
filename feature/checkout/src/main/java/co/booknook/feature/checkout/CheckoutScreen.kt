@@ -30,7 +30,16 @@ fun CheckoutScreen(
     viewModel: CheckoutViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    var selectedPayment by remember { mutableStateOf("mpesa") }
+    var selectedPayment by remember { mutableStateOf("MPESA") }
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // Show error in snackbar
+    LaunchedEffect(state.error) {
+        state.error?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.clearError()
+        }
+    }
 
     LaunchedEffect(state.paymentSuccess) {
         if (state.paymentSuccess) {
@@ -38,95 +47,100 @@ fun CheckoutScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(SoftWhite)) {
-        LazyColumn(contentPadding = PaddingValues(bottom = 100.dp)) {
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(start = 8.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = DarkBrown)
-                    }
-                    Text("Checkout", color = DarkBrown, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-                }
-            }
-
-            item {
-                Text(
-                    text = "Shipping Address",
-                    color = DarkBrown,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                )
-                Surface(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    color = Cream
-                ) {
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        containerColor = SoftWhite
+    ) { innerPadding ->
+        Box(modifier = Modifier.fillMaxSize().background(SoftWhite).padding(innerPadding)) {
+            LazyColumn(contentPadding = PaddingValues(bottom = 100.dp)) {
+                item {
                     Row(
-                        modifier = Modifier.padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth().padding(start = 8.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column {
-                            Text("Amina Doe", color = DarkBrown, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
-                            Text("123 Vintage Lane\nNairobi, Kenya 00100", color = WarmBrown, fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp))
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = DarkBrown)
                         }
-                        TextButton(onClick = {}) { Text("Change", color = DarkBrown) }
+                        Text("Checkout", color = DarkBrown, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
+
+                item {
+                    Text(
+                        text = "Shipping Address",
+                        color = DarkBrown,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+                    Surface(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        color = Cream
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column {
+                                Text("Amina Doe", color = DarkBrown, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                                Text("123 Vintage Lane\nNairobi, Kenya 00100", color = WarmBrown, fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp))
+                            }
+                            TextButton(onClick = {}) { Text("Change", color = DarkBrown) }
+                        }
+                    }
+                }
+
+                item {
+                    Text(
+                        text = "Payment Method",
+                        color = DarkBrown,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 8.dp)
+                    )
+                    Column(modifier = Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        PaymentOptionRow(
+                            title = "M-Pesa",
+                            subtitle = "Pay via phone number",
+                            icon = Icons.Outlined.Phone,
+                            selected = selectedPayment == "MPESA",
+                            onClick = { selectedPayment = "MPESA" }
+                        )
+                        PaymentOptionRow(
+                            title = "Credit/Debit Card",
+                            subtitle = "Visa, Mastercard",
+                            icon = Icons.Outlined.ShoppingCart,
+                            selected = selectedPayment == "CARD",
+                            onClick = { selectedPayment = "CARD" }
+                        )
                     }
                 }
             }
 
-            item {
-                Text(
-                    text = "Payment Method",
-                    color = DarkBrown,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 8.dp)
-                )
-                Column(modifier = Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    PaymentOptionRow(
-                        title = "M-Pesa",
-                        subtitle = "Pay via phone number",
-                        icon = Icons.Outlined.Phone,
-                        selected = selectedPayment == "mpesa",
-                        onClick = { selectedPayment = "mpesa" }
-                    )
-                    PaymentOptionRow(
-                        title = "Credit/Debit Card",
-                        subtitle = "Visa, Mastercard",
-                        icon = Icons.Outlined.ShoppingCart,
-                        selected = selectedPayment == "card",
-                        onClick = { selectedPayment = "card" }
-                    )
-                }
-            }
-        }
-
-        // Pay button
-        Surface(
-            modifier = Modifier.align(Alignment.BottomCenter),
-            color = SoftWhite,
-            shadowElevation = 8.dp
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Row(Modifier.fillMaxWidth().padding(bottom = 12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("Total Payment", color = WarmBrown, fontSize = 15.sp)
-                    Text("KSh ${"%,d".format(state.totalAmount)}", color = DarkBrown, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
-                }
-                Button(
-                    onClick = { viewModel.payNow() },
-                    modifier = Modifier.fillMaxWidth().height(54.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = DarkBrown)
-                ) {
-                    if (state.isProcessing) {
-                        CircularProgressIndicator(color = Cream, modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
-                    } else {
-                        Text("Pay Now", color = Cream, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+            // Pay button
+            Surface(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                color = SoftWhite,
+                shadowElevation = 8.dp
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(Modifier.fillMaxWidth().padding(bottom = 12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text("Total Payment", color = WarmBrown, fontSize = 15.sp)
+                        Text("KSh ${"%,d".format(state.totalAmount)}", color = DarkBrown, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
+                    }
+                    Button(
+                        onClick = { viewModel.payNow(selectedPayment) },
+                        modifier = Modifier.fillMaxWidth().height(54.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = DarkBrown)
+                    ) {
+                        if (state.isProcessing) {
+                            CircularProgressIndicator(color = Cream, modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
+                        } else {
+                            Text("Pay Now", color = Cream, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                        }
                     }
                 }
             }

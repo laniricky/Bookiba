@@ -28,14 +28,12 @@ data class ExploreUiState(
 )
 
 private fun defaultGenres() = listOf(
-    GenreCollection("dark_academia", "Dark Academia"),
-    GenreCollection("vintage_classics", "Vintage Classics"),
-    GenreCollection("african_lit", "African Literature"),
-    GenreCollection("rare_finds", "Rare Finds"),
-    GenreCollection("philosophy", "Philosophy"),
-    GenreCollection("horror", "Horror"),
-    GenreCollection("vintage_scifi", "Vintage Sci-Fi"),
-    GenreCollection("annotated", "Annotated Copies")
+    GenreCollection("thriller", "Keep me up all night"),
+    GenreCollection("business", "Make me 1% better"),
+    GenreCollection("fantasy", "Escape reality"),
+    GenreCollection("romance", "Cry your eyes out"),
+    GenreCollection("rare", "Vintage aesthetic"),
+    GenreCollection("philosophy", "Deep thoughts")
 )
 
 @HiltViewModel

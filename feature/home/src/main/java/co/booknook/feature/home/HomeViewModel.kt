@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class HomeUiState(
+    val banners: List<co.booknook.core.domain.model.Banner> = emptyList(),
     val featuredBooks: List<Book> = emptyList(),
     val staffPick: Book? = null,
     val newArrivals: List<Book> = emptyList(),
@@ -29,6 +30,7 @@ data class StoryItem(
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getFeaturedBooksUseCase: GetFeaturedBooksUseCase,
+    private val bookRepository: co.booknook.core.domain.repository.BookRepository,
     private val cartRepository: CartRepository
 ) : ViewModel() {
 
@@ -43,6 +45,13 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
             try {
+                // Fetch banners
+                launch {
+                    bookRepository.getBanners().collect { banners ->
+                        _state.update { it.copy(banners = banners) }
+                    }
+                }
+                
                 getFeaturedBooksUseCase()
                     .catch { e -> _state.update { it.copy(isLoading = false, error = e.message) } }
                     .collect { books ->
