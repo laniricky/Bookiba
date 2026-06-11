@@ -23,6 +23,13 @@ data class CreateOrderRequest(
 )
 
 @Serializable
+data class CreateOrderResponse(
+    val orderId: String,
+    val total: Long,
+    val status: String
+)
+
+@Serializable
 data class OrderItemRequest(val bookId: String, val quantity: Int)
 
 @Serializable
@@ -83,7 +90,12 @@ fun Route.orderRoutes() {
                     }
                 }
 
-                call.respond(HttpStatusCode.Created, mapOf("orderId" to orderId, "total" to total, "status" to "PROCESSING"))
+                val responseDto = CreateOrderResponse(
+                    orderId = orderId,
+                    total = total,
+                    status = "PROCESSING"
+                )
+                call.respond(HttpStatusCode.Created, responseDto)
             }
 
             // GET /api/v1/orders — list user's orders
