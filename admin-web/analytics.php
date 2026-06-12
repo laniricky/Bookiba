@@ -1,5 +1,6 @@
 <?php
 require 'db.php';
+require 'includes/auth_gate.php';
 
 // Date range filter
 $range = $_GET['range'] ?? '30';
@@ -438,3 +439,4 @@ $hours = range(0, 23);
     </script>
 </body>
 </html>
+

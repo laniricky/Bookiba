@@ -1,5 +1,6 @@
 <?php
 require 'db.php';
+require 'includes/auth_gate.php';
 
 // Handle AJAX inline edit
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
@@ -476,3 +477,4 @@ $low_stock_count = count(array_filter($books, fn($b) => $b['inventory_count'] > 
     </script>
 </body>
 </html>
+

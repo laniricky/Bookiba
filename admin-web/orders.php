@@ -1,5 +1,6 @@
 <?php
 require 'db.php';
+require 'includes/auth_gate.php';
 
 // Handle AJAX status update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -483,3 +484,4 @@ function timelineSteps($status) {
     </script>
 </body>
 </html>
+

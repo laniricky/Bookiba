@@ -1,5 +1,6 @@
 <?php
 require 'db.php';
+require 'includes/auth_gate.php';
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -17,3 +18,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 echo json_encode(['ok' => false, 'error' => 'Invalid request']);
+

@@ -1,5 +1,6 @@
 <?php
 require 'db.php';
+require 'includes/auth_gate.php';
 
 // Full category analytics
 $categories = $pdo->query("
@@ -267,3 +268,4 @@ foreach ($categories as $cat) {
     </script>
 </body>
 </html>
+

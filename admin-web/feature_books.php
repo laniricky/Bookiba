@@ -1,5 +1,6 @@
 <?php
 require_once 'db.php';
+require 'includes/auth_gate.php';
 
 try {
     $stmt = $pdo->prepare("UPDATE books SET is_featured = true, is_staff_pick = true WHERE id IN (SELECT id FROM books LIMIT 3)");
@@ -9,3 +10,4 @@ try {
     echo "Error: " . $e->getMessage() . "\n";
 }
 ?>
+

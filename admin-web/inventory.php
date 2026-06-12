@@ -1,5 +1,6 @@
 <?php
 require 'db.php';
+require 'includes/auth_gate.php';
 
 // Handle AJAX stock updates
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
@@ -271,3 +272,4 @@ define('MAX_STOCK', 50);
     </script>
 </body>
 </html>
+

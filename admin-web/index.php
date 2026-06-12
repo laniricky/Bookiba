@@ -1,5 +1,6 @@
 <?php
 require 'db.php';
+require 'includes/auth_gate.php';
 
 // Form Handling (Slide-over drawer for Add Book)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_action'])) {
@@ -424,3 +425,4 @@ function getStatusBadge($status) {
     </script>
 </body>
 </html>
+

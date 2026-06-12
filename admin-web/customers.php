@@ -1,5 +1,6 @@
 <?php
 require 'db.php';
+require 'includes/auth_gate.php';
 
 // Segment definitions
 $segment = $_GET['segment'] ?? 'all';
@@ -291,3 +292,4 @@ function getSparkline($pdo, $user_id) {
     </script>
 </body>
 </html>
+

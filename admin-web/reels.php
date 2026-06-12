@@ -1,5 +1,6 @@
 <?php
 require 'db.php';
+require 'includes/auth_gate.php';
 
 // ── Handle AJAX actions ────────────────────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
@@ -341,3 +342,4 @@ $active_reels = count(array_filter($reels, fn($r) => $r['is_active']));
     </script>
 </body>
 </html>
+

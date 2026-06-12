@@ -1,5 +1,6 @@
 <?php
 require 'db.php';
+require 'includes/auth_gate.php';
 
 header('Content-Type: application/json');
 
@@ -30,3 +31,4 @@ if ($action === 'toggle') {
 }
 
 echo json_encode(['ok' => false, 'error' => 'Invalid action']);
+

@@ -1,5 +1,6 @@
 <?php
 require 'db.php';
+require 'includes/auth_gate.php';
 header('Content-Type: application/json');
 
 $q = trim($_GET['q'] ?? '');
@@ -62,3 +63,4 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
 }
 
 echo json_encode(['results' => $results, 'query' => $q]);
+
