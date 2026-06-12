@@ -25,6 +25,7 @@ dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:domain"))
     implementation(project(":core:common"))
+    implementation(project(":core:datastore"))
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)

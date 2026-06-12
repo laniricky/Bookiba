@@ -135,8 +135,8 @@ $banners = $pdo->query("SELECT * FROM banners ORDER BY sort_order ASC")->fetchAl
     <script>
         // Cloudinary setup
         const myWidget = cloudinary.createUploadWidget({
-            cloudName: 'dq3593ofp', // From existing products.php
-            uploadPreset: 'bookiba_imgs',
+            cloudName: 'dmgyyvupn',
+            uploadPreset: 'yldpwwqx',
             sources: ['local', 'url', 'camera'],
             multiple: false
         }, (error, result) => {

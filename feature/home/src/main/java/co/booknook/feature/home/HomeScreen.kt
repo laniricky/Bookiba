@@ -48,7 +48,7 @@ fun HomeScreen(
     onSearchClick: () -> Unit,
     onNavigateToAuth: () -> Unit
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     var isRefreshing by remember { mutableStateOf(false) }
 
