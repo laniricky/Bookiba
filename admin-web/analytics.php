@@ -181,6 +181,19 @@ $hours = range(0, 23);
 
         .legend-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
     </style>
+    <!-- PWA Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#365134">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(reg => {
+                    console.log('SW registered!', reg);
+                }).catch(err => console.log('SW registration failed', err));
+            });
+        }
+    </script>
 </head>
 <body>
     <?php include 'includes/sidebar.php'; ?>

@@ -101,6 +101,19 @@ $s = [
         .toast { position: fixed; bottom: 24px; right: 24px; background: var(--accent-green); color: white; padding: 12px 20px; border-radius: var(--radius-sm); font-weight: 600; font-size: 13px; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 8px; transform: translateY(100px); opacity: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 9999; }
         .toast.show { transform: translateY(0); opacity: 1; }
     </style>
+    <!-- PWA Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#365134">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(reg => {
+                    console.log('SW registered!', reg);
+                }).catch(err => console.log('SW registration failed', err));
+            });
+        }
+    </script>
 </head>
 <body>
     <?php include 'includes/sidebar.php'; ?>

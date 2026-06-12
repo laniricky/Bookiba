@@ -117,6 +117,19 @@ function getSparkline($pdo, $user_id) {
         .insight-stat { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-color); font-size: 14px; }
         .insight-stat:last-child { border-bottom: none; }
     </style>
+    <!-- PWA Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#365134">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(reg => {
+                    console.log('SW registered!', reg);
+                }).catch(err => console.log('SW registration failed', err));
+            });
+        }
+    </script>
 </head>
 <body>
     <?php include 'includes/sidebar.php'; ?>

@@ -21,7 +21,8 @@ import java.util.UUID
 data class CreateOrderRequest(
     val items: List<OrderItemRequest>,
     val shippingAddress: String,
-    val paymentMethod: String // MPESA or CARD
+    val paymentMethod: String, // MPESA or CARD
+    val phoneNumber: String? = null
 )
 
 @Serializable
@@ -42,6 +43,7 @@ data class OrderDto(
     val status: String,
     val authorizationUrl: String? = null,
     val paymentMethod: String,
+    val phoneNumber: String? = null,
     val shippingAddress: String,
     val createdAt: String,
     val items: List<OrderItemDto>
@@ -81,6 +83,7 @@ fun Route.orderRoutes() {
                         it[totalAmount] = total
                         it[status] = "PENDING_PAYMENT"
                         it[paymentMethod] = request.paymentMethod
+                        it[phoneNumber] = request.phoneNumber
                         it[shippingAddress] = request.shippingAddress
                     }
 
@@ -143,6 +146,7 @@ fun Route.orderRoutes() {
                                 totalAmount = orderRow[Orders.totalAmount],
                                 status = orderRow[Orders.status],
                                 paymentMethod = orderRow[Orders.paymentMethod],
+                                phoneNumber = orderRow[Orders.phoneNumber],
                                 shippingAddress = orderRow[Orders.shippingAddress],
                                 createdAt = orderRow[Orders.createdAt].toString(),
                                 items = items
@@ -182,6 +186,7 @@ fun Route.orderRoutes() {
                         totalAmount = orderRow[Orders.totalAmount],
                         status = orderRow[Orders.status],
                         paymentMethod = orderRow[Orders.paymentMethod],
+                        phoneNumber = orderRow[Orders.phoneNumber],
                         shippingAddress = orderRow[Orders.shippingAddress],
                         createdAt = orderRow[Orders.createdAt].toString(),
                         items = items

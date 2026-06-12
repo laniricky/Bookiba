@@ -179,6 +179,19 @@ function timelineSteps($status) {
         .order-total-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; }
         .order-total-row.grand { font-weight: 800; font-size: 16px; border-top: 2px solid var(--border-color); margin-top: 4px; padding-top: 12px; }
     </style>
+    <!-- PWA Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#365134">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(reg => {
+                    console.log('SW registered!', reg);
+                }).catch(err => console.log('SW registration failed', err));
+            });
+        }
+    </script>
 </head>
 <body>
     <?php include 'includes/sidebar.php'; ?>
@@ -261,6 +274,7 @@ function timelineSteps($status) {
                                 <?= $selected_order['status'] ?>
                             </span>
                             &nbsp; Placed <?= date('M j, Y · g:i a', strtotime($selected_order['created_at'])) ?>
+                            &nbsp; • &nbsp; <?= htmlspecialchars($selected_order['payment_method']) ?>
                         </div>
                     </div>
                     <div class="detail-actions">
@@ -375,6 +389,9 @@ function timelineSteps($status) {
                                     <div>
                                         <div style="font-weight:700;"><?= htmlspecialchars($selected_order['customer_name']) ?></div>
                                         <div style="font-size:12px; color:var(--text-muted);"><?= htmlspecialchars($selected_order['customer_email']) ?></div>
+                                        <?php if (!empty($selected_order['phone_number'])): ?>
+                                        <div style="font-size:12px; color:var(--text-main); margin-top: 4px;">📞 <?= htmlspecialchars($selected_order['phone_number']) ?></div>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                                 <?php if($customer_stats): ?>

@@ -124,6 +124,19 @@ foreach ($categories as $cat) {
         .sum-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; }
         .sum-val { font-size: 26px; font-weight: 800; }
     </style>
+    <!-- PWA Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#365134">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(reg => {
+                    console.log('SW registered!', reg);
+                }).catch(err => console.log('SW registration failed', err));
+            });
+        }
+    </script>
 </head>
 <body>
     <?php include 'includes/sidebar.php'; ?>

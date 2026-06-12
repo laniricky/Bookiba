@@ -88,6 +88,19 @@ define('MAX_STOCK', 50);
         .batch-input::placeholder { color: rgba(255,255,255,0.5); }
         .batch-btn { background: white; color: var(--text-main); border: none; padding: 6px 14px; border-radius: 4px; font-weight: 700; cursor: pointer; font-size: 13px; }
     </style>
+    <!-- PWA Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#365134">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(reg => {
+                    console.log('SW registered!', reg);
+                }).catch(err => console.log('SW registration failed', err));
+            });
+        }
+    </script>
 </head>
 <body>
     <?php include 'includes/sidebar.php'; ?>

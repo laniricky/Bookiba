@@ -43,15 +43,22 @@ class CheckoutViewModel @Inject constructor(
         }
     }
 
-    fun payNow(paymentMethod: String = "MPESA") {
+    fun payNow(paymentMethod: String = "MPESA", phoneNumber: String = "") {
         if (_state.value.cartItems.isEmpty() || _state.value.isProcessing) return
+
+        if (paymentMethod == "MPESA" && phoneNumber.isBlank()) {
+            _state.update { it.copy(error = "Please enter your M-Pesa phone number.") }
+            return
+        }
 
         viewModelScope.launch {
             _state.update { it.copy(isProcessing = true, error = null) }
             try {
                 val authUrl = orderRepository.createOrder(
                     totalAmount = _state.value.totalAmount,
-                    items = _state.value.cartItems
+                    items = _state.value.cartItems,
+                    paymentMethod = paymentMethod,
+                    phoneNumber = phoneNumber
                 )
                 cartRepository.clearCart()
                 _state.update { it.copy(isProcessing = false, paymentSuccess = true, authorizationUrl = authUrl) }

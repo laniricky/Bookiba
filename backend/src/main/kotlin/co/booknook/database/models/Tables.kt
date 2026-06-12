@@ -44,6 +44,7 @@ object Orders : Table("orders") {
     val totalAmount = long("total_amount")
     val status = varchar("status", 50) // PROCESSING, SHIPPED, DELIVERED
     val paymentMethod = varchar("payment_method", 50) // MPESA, CARD
+    val phoneNumber = varchar("phone_number", 20).nullable()
     val shippingAddress = text("shipping_address")
     val createdAt = datetime("created_at").default(LocalDateTime.now())
 

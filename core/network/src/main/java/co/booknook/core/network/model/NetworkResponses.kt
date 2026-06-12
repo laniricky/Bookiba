@@ -18,7 +18,8 @@ data class NetworkBooksResponse(
 data class NetworkCheckoutRequest(
     val items: List<NetworkOrderItemRequest>,
     val shippingAddress: String,
-    val paymentMethod: String
+    val paymentMethod: String,
+    val phoneNumber: String? = null
 )
 
 @Serializable

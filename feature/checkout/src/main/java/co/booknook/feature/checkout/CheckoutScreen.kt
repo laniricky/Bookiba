@@ -31,6 +31,7 @@ fun CheckoutScreen(
 ) {
     val state by viewModel.state.collectAsState()
     var selectedPayment by remember { mutableStateOf("MPESA") }
+    var phoneNumber by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
     val context = androidx.compose.ui.platform.LocalContext.current
 
@@ -113,6 +114,23 @@ fun CheckoutScreen(
                             selected = selectedPayment == "MPESA",
                             onClick = { selectedPayment = "MPESA" }
                         )
+                        if (selectedPayment == "MPESA") {
+                            OutlinedTextField(
+                                value = phoneNumber,
+                                onValueChange = { phoneNumber = it },
+                                label = { Text("M-Pesa Phone Number") },
+                                placeholder = { Text("e.g. 0712345678") },
+                                modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                                singleLine = true,
+                                shape = RoundedCornerShape(12.dp),
+                                colors = TextFieldDefaults.colors(
+                                    focusedContainerColor = Cream,
+                                    unfocusedContainerColor = Cream,
+                                    focusedIndicatorColor = DarkBrown,
+                                    unfocusedIndicatorColor = Color.Transparent
+                                )
+                            )
+                        }
                         PaymentOptionRow(
                             title = "Credit/Debit Card",
                             subtitle = "Visa, Mastercard",
@@ -136,7 +154,7 @@ fun CheckoutScreen(
                         Text("KSh ${"%,d".format(state.totalAmount)}", color = DarkBrown, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
                     }
                     Button(
-                        onClick = { viewModel.payNow(selectedPayment) },
+                        onClick = { viewModel.payNow(selectedPayment, phoneNumber) },
                         modifier = Modifier.fillMaxWidth().height(54.dp),
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = DarkBrown)

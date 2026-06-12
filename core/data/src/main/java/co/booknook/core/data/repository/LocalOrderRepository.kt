@@ -43,7 +43,7 @@ class LocalOrderRepository @Inject constructor(
         }
     }
 
-    override suspend fun createOrder(totalAmount: Long, items: List<CartItem>): String? {
+    override suspend fun createOrder(totalAmount: Long, items: List<CartItem>, paymentMethod: String, phoneNumber: String): String? {
         // 1. Sync with backend API
         val networkItems = items.map {
             co.booknook.core.network.model.NetworkOrderItemRequest(
@@ -56,7 +56,8 @@ class LocalOrderRepository @Inject constructor(
             NetworkCheckoutRequest(
                 items = networkItems,
                 shippingAddress = "Nairobi, Kenya",
-                paymentMethod = "CARD"
+                paymentMethod = paymentMethod,
+                phoneNumber = phoneNumber
             )
         )
 
