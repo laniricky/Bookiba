@@ -9,6 +9,8 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import co.booknook.core.domain.repository.CartRepository
+import kotlinx.coroutines.Job
 
 data class GenreCollection(
     val id: String,
@@ -23,8 +25,11 @@ data class ExploreUiState(
     val genres: List<GenreCollection> = defaultGenres(),
     val newArrivals: List<Book> = emptyList(),
     val isSearching: Boolean = false,
-    val isLoading: Boolean = false,
-    val error: String? = null
+    val selectedGenre: String? = null,
+    val isLoading: Boolean = true,
+    val error: String? = null,
+    val cartSuccess: Boolean = false,
+    val isLoggedIn: Boolean = false
 )
 
 private fun defaultGenres() = listOf(
@@ -38,15 +43,23 @@ private fun defaultGenres() = listOf(
 
 @HiltViewModel
 class ExploreViewModel @Inject constructor(
-    private val bookRepository: BookRepository
+    private val bookRepository: co.booknook.core.domain.repository.BookRepository,
+    private val cartRepository: CartRepository,
+    private val preferencesDataSource: co.booknook.core.datastore.BookibaPreferencesDataSource
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ExploreUiState())
     val state: StateFlow<ExploreUiState> = _state.asStateFlow()
 
+    private var searchJob: Job? = null
     private val searchQuery = MutableStateFlow("")
 
     init {
+        viewModelScope.launch {
+            preferencesDataSource.authToken.collect { token ->
+                _state.update { it.copy(isLoggedIn = !token.isNullOrEmpty()) }
+            }
+        }
         observeSearch()
     }
 
@@ -90,3 +103,4 @@ class ExploreViewModel @Inject constructor(
         }
     }
 }
+

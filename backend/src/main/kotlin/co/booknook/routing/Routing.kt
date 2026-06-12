@@ -22,6 +22,7 @@ fun Application.configureRouting() {
             userRoutes()
             reelRoutes()
             bannerRoutes()
+            webhookRoutes()
         }
     }
 }

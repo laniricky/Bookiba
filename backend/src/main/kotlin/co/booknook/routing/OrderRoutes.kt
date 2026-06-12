@@ -3,6 +3,8 @@ package co.booknook.routing
 import co.booknook.database.models.Orders
 import co.booknook.database.models.OrderItems
 import co.booknook.database.models.Books
+import co.booknook.database.models.Users
+import co.booknook.network.PaystackClient
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -26,7 +28,8 @@ data class CreateOrderRequest(
 data class CreateOrderResponse(
     val orderId: String,
     val total: Long,
-    val status: String
+    val status: String,
+    val authorizationUrl: String? = null
 )
 
 @Serializable
@@ -37,6 +40,7 @@ data class OrderDto(
     val id: String,
     val totalAmount: Long,
     val status: String,
+    val authorizationUrl: String? = null,
     val paymentMethod: String,
     val shippingAddress: String,
     val createdAt: String,
@@ -75,7 +79,7 @@ fun Route.orderRoutes() {
                         it[id] = orderId
                         it[Orders.userId] = userId
                         it[totalAmount] = total
-                        it[status] = "PROCESSING"
+                        it[status] = "PENDING_PAYMENT"
                         it[paymentMethod] = request.paymentMethod
                         it[shippingAddress] = request.shippingAddress
                     }
@@ -98,10 +102,18 @@ fun Route.orderRoutes() {
                     }
                 }
 
+                
+                val userEmail = transaction {
+                    Users.select { Users.id eq userId }.firstOrNull()?.get(Users.email)
+                } ?: "guest@bookiba.co"
+
+                val authUrl = PaystackClient.initializeTransaction(userEmail, total, orderId)
+
                 val responseDto = CreateOrderResponse(
                     orderId = orderId,
                     total = total,
-                    status = "PROCESSING"
+                    status = "PENDING_PAYMENT",
+                    authorizationUrl = authUrl
                 )
                 call.respond(HttpStatusCode.Created, responseDto)
             }
@@ -182,3 +194,4 @@ fun Route.orderRoutes() {
         }
     }
 }
+

@@ -43,7 +43,7 @@ class LocalOrderRepository @Inject constructor(
         }
     }
 
-    override suspend fun createOrder(totalAmount: Long, items: List<CartItem>) {
+    override suspend fun createOrder(totalAmount: Long, items: List<CartItem>): String? {
         // 1. Sync with backend API
         val networkItems = items.map {
             co.booknook.core.network.model.NetworkOrderItemRequest(
@@ -82,5 +82,7 @@ class LocalOrderRepository @Inject constructor(
         
         orderDao.insertOrder(orderEntity)
         orderDao.insertOrderItems(orderItemEntities)
+
+        return response.authorizationUrl
     }
 }

@@ -18,6 +18,7 @@ data class HomeUiState(
     val stories: List<StoryItem> = emptyList(),
     val isLoading: Boolean = true,
     val cartSuccess: Boolean = false,
+    val isLoggedIn: Boolean = false,
     val error: String? = null
 )
 
@@ -31,13 +32,19 @@ data class StoryItem(
 class HomeViewModel @Inject constructor(
     private val getFeaturedBooksUseCase: GetFeaturedBooksUseCase,
     private val bookRepository: co.booknook.core.domain.repository.BookRepository,
-    private val cartRepository: CartRepository
+    private val cartRepository: CartRepository,
+    private val preferencesDataSource: co.booknook.core.datastore.BookibaPreferencesDataSource
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeUiState())
     val state: StateFlow<HomeUiState> = _state.asStateFlow()
 
     init {
+        viewModelScope.launch {
+            preferencesDataSource.authToken.collect { token ->
+                _state.update { it.copy(isLoggedIn = !token.isNullOrEmpty()) }
+            }
+        }
         loadHome()
     }
 

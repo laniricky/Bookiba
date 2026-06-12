@@ -17,6 +17,7 @@ data class BookDetailUiState(
     val isLoading: Boolean = true,
     val isWishlisted: Boolean = false,
     val cartSuccess: Boolean = false,
+    val isLoggedIn: Boolean = false,
     val error: String? = null
 )
 
@@ -31,7 +32,8 @@ sealed interface BookDetailEvent {
 class BookDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val bookRepository: BookRepository,
-    private val cartRepository: CartRepository
+    private val cartRepository: CartRepository,
+    private val preferencesDataSource: co.booknook.core.datastore.BookibaPreferencesDataSource
 ) : ViewModel() {
 
     private val bookId: String = checkNotNull(savedStateHandle["bookId"])
@@ -40,6 +42,11 @@ class BookDetailViewModel @Inject constructor(
     val state: StateFlow<BookDetailUiState> = _state.asStateFlow()
 
     init {
+        viewModelScope.launch {
+            preferencesDataSource.authToken.collect { token ->
+                _state.update { it.copy(isLoggedIn = !token.isNullOrEmpty()) }
+            }
+        }
         loadBook()
     }
 
@@ -77,3 +84,4 @@ class BookDetailViewModel @Inject constructor(
         }
     }
 }
+

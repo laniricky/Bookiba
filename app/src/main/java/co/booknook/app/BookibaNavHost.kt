@@ -131,7 +131,8 @@ fun BookibaNavHost(
             composable(Routes.HOME) {
                 HomeScreen(
                     onBookClick = { bookId -> navController.navigate(Routes.bookDetail(bookId)) },
-                    onSearchClick = { navController.navigate(Routes.EXPLORE) }
+                    onSearchClick = { navController.navigate(Routes.EXPLORE) },
+                    onNavigateToAuth = { navController.navigate(Routes.AUTH) }
                 )
             }
 
@@ -176,7 +177,8 @@ fun BookibaNavHost(
                 BookDetailScreen(
                     onBack = { navController.popBackStack() },
                     onAddToCart = { navController.navigate(Routes.CART) },
-                    onBuyNow = { navController.navigate(Routes.CHECKOUT) }
+                    onBuyNow = { navController.navigate(Routes.CHECKOUT) },
+                    onNavigateToAuth = { navController.navigate(Routes.AUTH) }
                 )
             }
 

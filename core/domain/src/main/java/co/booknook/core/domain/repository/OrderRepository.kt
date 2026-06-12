@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface OrderRepository {
     fun getOrders(): Flow<List<Order>>
-    suspend fun createOrder(totalAmount: Long, items: List<CartItem>)
+    suspend fun createOrder(totalAmount: Long, items: List<CartItem>): String?
 }

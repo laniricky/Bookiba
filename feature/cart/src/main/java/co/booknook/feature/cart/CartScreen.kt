@@ -34,7 +34,8 @@ data class CartUiState(
     val items: List<CartItem> = emptyList(),
     val couponCode: String = "",
     val couponDiscount: Long = 0,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val isLoggedIn: Boolean = true
 ) {
     val subtotal: Long get() = items.sumOf { it.priceKsh * it.quantity }
     val shipping: Long get() = if (items.isEmpty()) 0L else 200L
@@ -73,7 +74,21 @@ fun CartScreen(
                 }
             }
 
-            if (state.items.isEmpty()) {
+            if (!state.isLoggedIn) {
+                item {
+                    Box(
+                        modifier = Modifier.fillParentMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(Icons.Outlined.Person, contentDescription = null, tint = WarmBrown, modifier = Modifier.size(48.dp))
+                            Spacer(Modifier.height(12.dp))
+                            Text("Please sign in", color = DarkBrown, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                            Text("Sign in to view your cart", color = WarmBrown, fontSize = 13.sp, modifier = Modifier.padding(top = 6.dp))
+                        }
+                    }
+                }
+            } else if (state.items.isEmpty()) {
                 item {
                     Box(
                         modifier = Modifier.fillParentMaxSize(),
@@ -207,3 +222,5 @@ private fun SummaryRow(label: String, amount: Long, tint: Color = WarmBrown) {
         Text("KSh ${"%,d".format(kotlin.math.abs(amount))}", color = tint, fontSize = 14.sp, fontWeight = FontWeight.Medium)
     }
 }
+
+

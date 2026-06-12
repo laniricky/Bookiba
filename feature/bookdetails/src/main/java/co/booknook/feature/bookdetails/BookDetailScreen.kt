@@ -45,6 +45,7 @@ fun BookDetailScreen(
     onBack: () -> Unit,
     onAddToCart: (String) -> Unit,
     onBuyNow: (String) -> Unit,
+    onNavigateToAuth: () -> Unit,
     viewModel: BookDetailViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -180,7 +181,13 @@ fun BookDetailScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 OutlinedButton(
-                    onClick = { viewModel.onEvent(BookDetailEvent.AddToCart) },
+                    onClick = { 
+                        if (state.isLoggedIn) {
+                            viewModel.onEvent(BookDetailEvent.AddToCart)
+                        } else {
+                            onNavigateToAuth()
+                        }
+                    },
                     modifier = Modifier.weight(1f).height(50.dp),
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = DarkBrown),
@@ -189,7 +196,9 @@ fun BookDetailScreen(
                     Text("Add to Cart", fontWeight = FontWeight.SemiBold)
                 }
                 Button(
-                    onClick = { onBuyNow(book.id) },
+                    onClick = { 
+                        if (state.isLoggedIn) onBuyNow(book.id) else onNavigateToAuth()
+                    },
                     modifier = Modifier.weight(1f).height(50.dp),
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = DarkBrown)

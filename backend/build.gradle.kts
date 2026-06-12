@@ -30,6 +30,11 @@ dependencies {
     implementation("io.ktor:ktor-server-call-logging-jvm")
     implementation("io.ktor:ktor-server-status-pages-jvm")
 
+    // Ktor Client
+    implementation("io.ktor:ktor-client-core-jvm")
+    implementation("io.ktor:ktor-client-cio-jvm")
+    implementation("io.ktor:ktor-client-content-negotiation-jvm")
+
     // Database: Exposed & PostgreSQL
     implementation("org.jetbrains.exposed:exposed-core:0.50.0")
     implementation("org.jetbrains.exposed:exposed-dao:0.50.0")

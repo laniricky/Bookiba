@@ -18,6 +18,7 @@ data class CheckoutUiState(
     val totalAmount: Long = 0L,
     val isProcessing: Boolean = false,
     val paymentSuccess: Boolean = false,
+    val authorizationUrl: String? = null,
     val error: String? = null
 )
 
@@ -48,12 +49,12 @@ class CheckoutViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isProcessing = true, error = null) }
             try {
-                orderRepository.createOrder(
+                val authUrl = orderRepository.createOrder(
                     totalAmount = _state.value.totalAmount,
                     items = _state.value.cartItems
                 )
                 cartRepository.clearCart()
-                _state.update { it.copy(isProcessing = false, paymentSuccess = true) }
+                _state.update { it.copy(isProcessing = false, paymentSuccess = true, authorizationUrl = authUrl) }
             } catch (e: Exception) {
                 _state.update { it.copy(isProcessing = false, error = e.message ?: "Order failed. Please try again.") }
             }

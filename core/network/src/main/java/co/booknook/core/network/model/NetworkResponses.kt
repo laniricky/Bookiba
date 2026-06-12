@@ -31,7 +31,8 @@ data class NetworkOrderItemRequest(
 data class NetworkCheckoutResponse(
     val orderId: String? = null,
     val total: Long? = null,
-    val status: String? = null
+    val status: String? = null,
+    val authorizationUrl: String? = null
 )
 
 // ── Auth ─────────────────────────────────────────────────────────────────────

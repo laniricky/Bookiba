@@ -32,6 +32,7 @@ fun CheckoutScreen(
     val state by viewModel.state.collectAsState()
     var selectedPayment by remember { mutableStateOf("MPESA") }
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = androidx.compose.ui.platform.LocalContext.current
 
     // Show error in snackbar
     LaunchedEffect(state.error) {
@@ -43,6 +44,10 @@ fun CheckoutScreen(
 
     LaunchedEffect(state.paymentSuccess) {
         if (state.paymentSuccess) {
+            state.authorizationUrl?.let { url ->
+                val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url))
+                context.startActivity(intent)
+            }
             onSuccess()
         }
     }
@@ -174,3 +179,4 @@ private fun PaymentOptionRow(title: String, subtitle: String, icon: androidx.com
         }
     }
 }
+

@@ -43,11 +43,12 @@ private val AccentGreen = Color(0xFF2D6A4F)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    viewModel: HomeViewModel = hiltViewModel(),
     onBookClick: (String) -> Unit,
     onSearchClick: () -> Unit,
-    viewModel: HomeViewModel = hiltViewModel()
+    onNavigateToAuth: () -> Unit
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     var isRefreshing by remember { mutableStateOf(false) }
 
@@ -133,7 +134,9 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
                     items(state.featuredBooks) { book ->
-                        FeaturedBookCard(book = book, onClick = { onBookClick(book.id) }, onAddToCart = { viewModel.addToCart(book) })
+                        FeaturedBookCard(book = book, onClick = { onBookClick(book.id) }, onAddToCart = { 
+                            if (state.isLoggedIn) viewModel.addToCart(book) else onNavigateToAuth()
+                        })
                     }
                 }
                 Spacer(Modifier.height(24.dp))
@@ -143,7 +146,9 @@ fun HomeScreen(
             state.staffPick?.let { pick ->
                 item {
                     SectionHeader(title = "Staff Pick", onSeeAll = onSearchClick)
-                    StaffPickCard(book = pick, onClick = { onBookClick(pick.id) }, onAddToCart = { viewModel.addToCart(pick) })
+                    StaffPickCard(book = pick, onClick = { onBookClick(pick.id) }, onAddToCart = { 
+                        if (state.isLoggedIn) viewModel.addToCart(pick) else onNavigateToAuth()
+                    })
                     Spacer(Modifier.height(24.dp))
                 }
             }
@@ -158,7 +163,9 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
                     items(state.newArrivals) { book ->
-                        SmallBookCard(book = book, onClick = { onBookClick(book.id) }, onAddToCart = { viewModel.addToCart(book) })
+                        SmallBookCard(book = book, onClick = { onBookClick(book.id) }, onAddToCart = { 
+                            if (state.isLoggedIn) viewModel.addToCart(book) else onNavigateToAuth()
+                        })
                     }
                 }
                 Spacer(Modifier.height(24.dp))
