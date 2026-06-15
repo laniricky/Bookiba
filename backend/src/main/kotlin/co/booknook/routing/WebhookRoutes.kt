@@ -26,7 +26,7 @@ fun Route.webhookRoutes() {
             val mac = Mac.getInstance("HmacSHA512")
             val secretKeySpec = SecretKeySpec(secretKey.toByteArray(), "HmacSHA512")
             mac.init(secretKeySpec)
-            val hash = mac.doFinal(body.toByteArray()).joinToString("") { "%02x".format(it) }
+            val hash = mac.doFinal(body.toByteArray(Charsets.UTF_8)).joinToString("") { "%02x".format(it.toInt() and 0xFF) }
 
             if (hash != signature) {
                 return@post call.respond(HttpStatusCode.Unauthorized, "Invalid signature")

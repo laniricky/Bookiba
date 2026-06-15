@@ -15,7 +15,9 @@ import kotlinx.serialization.json.Json
 data class PaystackInitializeRequest(
     val email: String,
     val amount: Long, // in minor currency (e.g. kobo or cents). For Ksh, multiply by 100.
-    val reference: String
+    val reference: String,
+    val currency: String = "KES",
+    val channels: List<String> = listOf("mobile_money", "card")
 )
 
 @Serializable

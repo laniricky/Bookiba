@@ -197,7 +197,10 @@ fun BookDetailScreen(
                 }
                 Button(
                     onClick = { 
-                        if (state.isLoggedIn) onBuyNow(book.id) else onNavigateToAuth()
+                        if (state.isLoggedIn) {
+                            viewModel.onEvent(BookDetailEvent.AddToCart)
+                            onBuyNow(book.id)
+                        } else onNavigateToAuth()
                     },
                     modifier = Modifier.weight(1f).height(50.dp),
                     shape = RoundedCornerShape(14.dp),
