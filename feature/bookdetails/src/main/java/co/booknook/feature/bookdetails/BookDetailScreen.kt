@@ -495,6 +495,7 @@ private fun BookImageGallery(
     val sharedTransitionScope = LocalSharedTransitionScope.current
     val animatedVisibilityScope = LocalNavAnimatedVisibilityScope.current
 
+    Box(modifier = Modifier.fillMaxWidth().height(360.dp)) {
         // Fullscreen Overlay
         var showFullscreen by remember { mutableStateOf(false) }
 
