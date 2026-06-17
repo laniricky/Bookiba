@@ -11,7 +11,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    cartRepository: CartRepository
+    cartRepository: CartRepository,
+    preferencesDataSource: co.booknook.core.datastore.BookibaPreferencesDataSource
 ) : ViewModel() {
 
     val cartCount: StateFlow<Int> = cartRepository.getCartCount()
@@ -19,5 +20,12 @@ class MainViewModel @Inject constructor(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = 0
+        )
+
+    val isDarkMode: StateFlow<Boolean> = preferencesDataSource.isDarkMode
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false
         )
 }

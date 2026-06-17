@@ -1,72 +1,245 @@
 package co.booknook.core.designsystem.components
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import co.booknook.core.designsystem.theme.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.ShoppingCart
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import co.booknook.core.domain.model.Book
 
+/**
+ * Vertical book card used in horizontal lists (Featured, New Arrivals).
+ */
+@OptIn(androidx.compose.animation.ExperimentalSharedTransitionApi::class)
 @Composable
 fun BookCard(
-    title: String,
-    author: String,
-    priceKsh: Int,
-    imageUrl: String,
+    book: Book,
+    onClick: () -> Unit,
+    onAddToCart: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
+    val sharedTransitionScope = LocalSharedTransitionScope.current
+    val animatedVisibilityScope = LocalNavAnimatedVisibilityScope.current
+
     Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp
-        )
+        modifier = modifier
+            .width(160.dp)
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Cream),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column {
+            var imageModifier: Modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+
+            if (sharedTransitionScope != null && animatedVisibilityScope != null) {
+                with(sharedTransitionScope) {
+                    imageModifier = Modifier
+                        .sharedElement(
+                            state = rememberSharedContentState(key = "cover_${book.id}"),
+                            animatedVisibilityScope = animatedVisibilityScope
+                        )
+                        .then(imageModifier)
+                }
+            }
+
             AsyncImage(
-                model = imageUrl,
-                contentDescription = "Cover of $title",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp),
+                model = book.coverUrl,
+                contentDescription = book.title,
+                modifier = imageModifier,
+                contentScale = ContentScale.Crop
+            )
+            Column(modifier = Modifier.padding(12.dp)) {
+                Text(
+                    text = book.title,
+                    color = DarkBrown,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                // Real low-stock badge — driven by server data, not fake heuristics
+                if (book.inventoryCount in 1..4) {
+                    Text(
+                        text = "Only ${book.inventoryCount} left",
+                        color = Color(0xFFD62828),
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(vertical = 2.dp)
+                    )
+                }
+                Text(
+                    text = book.author,
+                    color = WarmBrown,
+                    fontSize = 12.sp,
+                    maxLines = 1
+                )
+                if (book.edition != null) {
+                    Text(
+                        text = "${book.edition} Edition",
+                        color = AccentGreen,
+                        fontSize = 11.sp,
+                        fontStyle = FontStyle.Italic
+                    )
+                }
+                Spacer(Modifier.height(4.dp))
+                // Star rating row — only shown when there are reviews
+                if (book.reviewCount > 0) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        for (i in 1..5) {
+                            Icon(
+                                imageVector = if (i <= book.averageRating) Icons.Filled.Star else Icons.Outlined.Star,
+                                contentDescription = null,
+                                tint = if (i <= book.averageRating) Color(0xFFF5A623) else Cream,
+                                modifier = Modifier.size(12.dp)
+                            )
+                        }
+                        Text(
+                            text = "${"%.1f".format(book.averageRating)}",
+                            color = WarmBrown,
+                            fontSize = 10.sp,
+                            modifier = Modifier.padding(start = 2.dp)
+                        )
+                    }
+                }
+                Spacer(Modifier.height(2.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "KSh ${"%,d".format(book.priceKsh)}",
+                        color = DarkBrown,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    if (onAddToCart != null) {
+                        IconButton(onClick = onAddToCart, modifier = Modifier.size(24.dp)) {
+                            Icon(
+                                Icons.Outlined.ShoppingCart,
+                                contentDescription = "Add to Cart",
+                                tint = AccentGreen,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Compact horizontal book card used in list/search results.
+ */
+@OptIn(androidx.compose.animation.ExperimentalSharedTransitionApi::class)
+@Composable
+fun BookListCard(
+    book: Book,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val sharedTransitionScope = LocalSharedTransitionScope.current
+    val animatedVisibilityScope = LocalNavAnimatedVisibilityScope.current
+
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Cream),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Row(modifier = Modifier.height(100.dp)) {
+            var imageModifier: Modifier = Modifier
+                .width(70.dp)
+                .fillMaxHeight()
+                .clip(RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp))
+
+            if (sharedTransitionScope != null && animatedVisibilityScope != null) {
+                with(sharedTransitionScope) {
+                    imageModifier = Modifier
+                        .sharedElement(
+                            state = rememberSharedContentState(key = "cover_${book.id}"),
+                            animatedVisibilityScope = animatedVisibilityScope
+                        )
+                        .then(imageModifier)
+                }
+            }
+
+            AsyncImage(
+                model = book.coverUrl,
+                contentDescription = book.title,
+                modifier = imageModifier,
                 contentScale = ContentScale.Crop
             )
             Column(
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier
+                    .padding(12.dp)
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
+                Column {
+                    Text(
+                        text = book.title,
+                        color = DarkBrown,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(text = book.author, color = WarmBrown, fontSize = 12.sp)
+                    if (book.reviewCount > 0) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(2.dp),
+                            modifier = Modifier.padding(top = 2.dp)
+                        ) {
+                            for (i in 1..5) {
+                                Icon(
+                                    imageVector = if (i <= book.averageRating) Icons.Filled.Star else Icons.Outlined.Star,
+                                    contentDescription = null,
+                                    tint = if (i <= book.averageRating) Color(0xFFF5A623) else Cream,
+                                    modifier = Modifier.size(11.dp)
+                                )
+                            }
+                            Text(
+                                text = "${"%,.1f".format(book.averageRating)} (${book.reviewCount})",
+                                color = WarmBrown,
+                                fontSize = 10.sp,
+                                modifier = Modifier.padding(start = 2.dp)
+                            )
+                        }
+                    }
+                }
                 Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = author,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "KSh $priceKsh",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
+                    text = "KSh ${"%,d".format(book.priceKsh)}",
+                    color = DarkBrown,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.ExtraBold
                 )
             }
         }

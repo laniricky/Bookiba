@@ -1,5 +1,6 @@
 package co.booknook.feature.orders
 
+import co.booknook.core.designsystem.theme.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,11 +25,7 @@ import coil.compose.AsyncImage
 import co.booknook.core.domain.model.Order
 import co.booknook.core.domain.model.OrderStatus
 
-private val Cream = Color(0xFFF5F0E8)
-private val DarkBrown = Color(0xFF1A1512)
-private val WarmBrown = Color(0xFF8B7355)
-private val SoftWhite = Color(0xFFFEFCF9)
-private val AccentGreen = Color(0xFF2D6A4F)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrdersScreen(
     onBack: () -> Unit,
@@ -41,63 +39,70 @@ fun OrdersScreen(
 
     val filteredOrders = if (selectedTab == "All") orders else orders.filter { it.status.label == selectedTab }
 
-    Column(modifier = Modifier.fillMaxSize().background(SoftWhite)) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(start = 8.dp, end = 16.dp, top = 16.dp, bottom = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = onBack) {
-                Icon(Icons.Outlined.ArrowBack, contentDescription = "Back", tint = DarkBrown)
-            }
-            Text("Order History", color = DarkBrown, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-        }
-        ScrollableTabRow(
-            selectedTabIndex = tabs.indexOf(selectedTab),
-            containerColor = SoftWhite,
-            contentColor = DarkBrown,
-            edgePadding = 16.dp,
-            indicator = { tabPositions ->
-                TabRowDefaults.SecondaryIndicator(
-                    Modifier.tabIndicatorOffset(tabPositions[tabs.indexOf(selectedTab)]),
-                    color = DarkBrown
-                )
-            },
-            divider = {}
-        ) {
-            tabs.forEachIndexed { index, title ->
-                Tab(
-                    selected = selectedTab == title,
-                    onClick = { selectedTab = title },
-                    text = { Text(title, fontWeight = if (selectedTab == title) FontWeight.Bold else FontWeight.Normal) },
-                    selectedContentColor = DarkBrown,
-                    unselectedContentColor = WarmBrown
-                )
-            }
-        }
-        LazyColumn(
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            if (state.isLoading) {
-                item {
-                    Box(modifier = Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(color = WarmBrown)
-                    }
+    PullToRefreshBox(
+        isRefreshing = state.isRefreshing,
+        onRefresh = { viewModel.refresh() },
+        modifier = Modifier.fillMaxSize().background(SoftWhite)
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(start = 8.dp, end = 16.dp, top = 16.dp, bottom = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onBack) {
+                    Icon(Icons.Outlined.ArrowBack, contentDescription = "Back", tint = DarkBrown)
                 }
-            } else if (filteredOrders.isEmpty()) {
-                item {
-                    Box(modifier = Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("No orders found.", color = WarmBrown)
-                    }
+                Text("Order History", color = DarkBrown, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            }
+            ScrollableTabRow(
+                selectedTabIndex = tabs.indexOf(selectedTab),
+                containerColor = SoftWhite,
+                contentColor = DarkBrown,
+                edgePadding = 16.dp,
+                indicator = { tabPositions ->
+                    TabRowDefaults.SecondaryIndicator(
+                        Modifier.tabIndicatorOffset(tabPositions[tabs.indexOf(selectedTab)]),
+                        color = DarkBrown
+                    )
+                },
+                divider = {}
+            ) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTab == title,
+                        onClick = { selectedTab = title },
+                        text = { Text(title, fontWeight = if (selectedTab == title) FontWeight.Bold else FontWeight.Normal) },
+                        selectedContentColor = DarkBrown,
+                        unselectedContentColor = WarmBrown
+                    )
                 }
-            } else {
-                items(filteredOrders) { order ->
-                    OrderCard(order)
+            }
+            LazyColumn(
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                if (state.isLoading) {
+                    item {
+                        Box(modifier = Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator(color = WarmBrown)
+                        }
+                    }
+                } else if (filteredOrders.isEmpty()) {
+                    item {
+                        Box(modifier = Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) {
+                            Text("No orders found.", color = WarmBrown)
+                        }
+                    }
+                } else {
+                    items(filteredOrders) { order ->
+                        OrderCard(order)
+                    }
                 }
             }
         }
     }
 }
+
 
 @Composable
 private fun OrderCard(order: Order) {

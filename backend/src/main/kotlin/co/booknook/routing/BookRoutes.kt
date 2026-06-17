@@ -27,7 +27,9 @@ data class BookDto(
     val isFeatured: Boolean,
     val isStaffPick: Boolean,
     val tags: List<String>,
-    val inventoryCount: Int
+    val inventoryCount: Int,
+    val averageRating: Double,
+    val reviewCount: Int
 )
 
 fun ResultRow.toBookDto() = BookDto(
@@ -47,7 +49,9 @@ fun ResultRow.toBookDto() = BookDto(
     isFeatured = this[Books.isFeatured],
     isStaffPick = this[Books.isStaffPick],
     tags = this[Books.tags]?.split(",")?.map { it.trim() } ?: emptyList(),
-    inventoryCount = this[Books.inventoryCount]
+    inventoryCount = this[Books.inventoryCount],
+    averageRating = this[Books.averageRating],
+    reviewCount = this[Books.reviewCount]
 )
 
 @Serializable
@@ -133,6 +137,24 @@ fun Route.bookRoutes() {
                     .sorted()
             }
             call.respond(mapOf("genres" to genres))
+        }
+
+        // GET /api/v1/books/suggestions?q=ha
+        get("/suggestions") {
+            val q = call.request.queryParameters["q"] ?: ""
+            if (q.length < 2) { call.respond(mapOf("suggestions" to emptyList<String>())); return@get }
+            val suggestions = transaction {
+                val titleMatches = Books.slice(Books.title)
+                    .select { Books.title.lowerCase() like "%${q.lowercase()}%" }
+                    .limit(5)
+                    .map { it[Books.title] }
+                val authorMatches = Books.slice(Books.author)
+                    .select { Books.author.lowerCase() like "%${q.lowercase()}%" }
+                    .limit(3)
+                    .map { it[Books.author] }
+                (titleMatches + authorMatches).distinct().take(8)
+            }
+            call.respond(mapOf("suggestions" to suggestions))
         }
     }
 }

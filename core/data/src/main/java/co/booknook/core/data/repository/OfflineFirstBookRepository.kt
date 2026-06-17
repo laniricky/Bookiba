@@ -58,6 +58,14 @@ class OfflineFirstBookRepository @Inject constructor(
         }
     }
 
+    override suspend fun getSuggestions(query: String): List<String> {
+        return try {
+            val response = bookibaApi.getBookSuggestions(query)
+            response["suggestions"] ?: emptyList()
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
     override suspend fun checkout(items: List<Triple<String, Int, Double>>): Boolean {
         return try {
             val cartItems = items.map { (id, quantity, _) ->
@@ -84,6 +92,23 @@ class OfflineFirstBookRepository @Inject constructor(
                     imageUrl = it.imageUrl,
                     title = it.title,
                     subtitle = it.subtitle
+                )
+            })
+        } catch (e: Exception) {
+            emit(emptyList())
+        }
+    }
+
+    override fun getEditorials(): Flow<List<co.booknook.core.domain.model.Editorial>> = flow {
+        try {
+            val response = bookibaApi.getEditorials()
+            emit(response.editorials.map {
+                co.booknook.core.domain.model.Editorial(
+                    id = it.id,
+                    label = it.label,
+                    imageUrl = it.imageUrl,
+                    queryTag = it.queryTag,
+                    sortOrder = it.sortOrder
                 )
             })
         } catch (e: Exception) {

@@ -1,5 +1,6 @@
 package co.booknook.feature.profile
 
+import co.booknook.core.designsystem.theme.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -21,11 +22,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material.icons.outlined.MenuBook
-private val Cream = Color(0xFFF5F0E8)
-private val DarkBrown = Color(0xFF1A1512)
-private val WarmBrown = Color(0xFF8B7355)
-private val SoftWhite = Color(0xFFFEFCF9)
-private val AccentGreen = Color(0xFF2D6A4F)
 data class ShelfItem(val label: String, val count: Int, val icon: ImageVector)
 data class ProfileState(
     val isLoggedIn: Boolean = false,
@@ -47,6 +43,7 @@ data class ProfileState(
 @Composable
 fun ProfileScreen(
     onOrdersClick: () -> Unit,
+    onAddressesClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onLogout: () -> Unit,
     onNavigateToLogin: () -> Unit,
@@ -148,7 +145,7 @@ fun ProfileScreen(
             // Menu items
             ProfileMenuItem(icon = Icons.Outlined.List, label = "Order History", onClick = onOrdersClick)
             ProfileMenuItem(icon = Icons.Outlined.Star, label = "My Reviews", onClick = {})
-            ProfileMenuItem(icon = Icons.Outlined.LocationOn, label = "Addresses", onClick = {})
+            ProfileMenuItem(icon = Icons.Outlined.LocationOn, label = "Addresses", onClick = onAddressesClick)
             ProfileMenuItem(icon = Icons.Outlined.ShoppingCart, label = "Payment Methods", onClick = {})
         } else {
             GuestProfileContent(

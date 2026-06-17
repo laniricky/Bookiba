@@ -39,4 +39,22 @@ abstract class DataModule {
     abstract fun bindTokenProvider(
         dataStoreTokenProvider: co.booknook.core.data.auth.DataStoreTokenProvider
     ): co.booknook.core.network.di.NetworkModule.TokenProvider
+
+    @Binds
+    @Singleton
+    abstract fun bindWishlistRepository(
+        networkWishlistRepository: co.booknook.core.data.repository.NetworkWishlistRepository
+    ): co.booknook.core.domain.repository.WishlistRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindReviewRepository(
+        networkReviewRepository: co.booknook.core.data.repository.NetworkReviewRepository
+    ): co.booknook.core.domain.repository.ReviewRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAddressRepository(
+        networkAddressRepository: co.booknook.core.data.repository.NetworkAddressRepository
+    ): co.booknook.core.domain.repository.AddressRepository
 }

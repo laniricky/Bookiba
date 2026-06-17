@@ -65,6 +65,7 @@ dependencies {
     implementation(project(":feature:onboarding"))
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
+    implementation(project(":core:datastore"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -79,4 +80,8 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.hilt.navigation.compose)
+
+    implementation(libs.work.runtime.ktx)
+    implementation(libs.hilt.work)
+    ksp(libs.hilt.compiler.androidx)
 }

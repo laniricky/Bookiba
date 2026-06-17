@@ -17,5 +17,8 @@ data class Book(
     val isRare: Boolean = false,
     val isFeatured: Boolean = false,
     val isStaffPick: Boolean = false,
-    val tags: List<String> = emptyList()  // e.g. "Vintage", "Annotated"
+    val tags: List<String> = emptyList(),  // e.g. "Vintage", "Annotated"
+    val inventoryCount: Int = 0,           // copies available; 0 = unknown/unlimited
+    val averageRating: Double = 0.0,
+    val reviewCount: Int = 0
 )

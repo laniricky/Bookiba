@@ -14,7 +14,8 @@ import javax.inject.Inject
 
 data class OrdersUiState(
     val orders: List<Order> = emptyList(),
-    val isLoading: Boolean = true
+    val isLoading: Boolean = true,
+    val isRefreshing: Boolean = false
 )
 
 @HiltViewModel
@@ -26,10 +27,17 @@ class OrdersViewModel @Inject constructor(
     val state: StateFlow<OrdersUiState> = _state.asStateFlow()
 
     init {
+        load()
+    }
+
+    private fun load(isRefresh: Boolean = false) {
         viewModelScope.launch {
+            if (isRefresh) _state.update { it.copy(isRefreshing = true) }
             orderRepository.getOrders().collect { orderList ->
-                _state.update { it.copy(orders = orderList, isLoading = false) }
+                _state.update { it.copy(orders = orderList, isLoading = false, isRefreshing = false) }
             }
         }
     }
+
+    fun refresh() = load(isRefresh = true)
 }

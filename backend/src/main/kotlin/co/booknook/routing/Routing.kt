@@ -23,6 +23,9 @@ fun Application.configureRouting() {
             reelRoutes()
             bannerRoutes()
             webhookRoutes()
+            reviewRoutes()
+            addressRoutes()
+            editorialRoutes()
         }
     }
 }

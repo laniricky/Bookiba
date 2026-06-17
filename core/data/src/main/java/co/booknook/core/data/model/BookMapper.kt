@@ -15,7 +15,9 @@ fun NetworkBook.toEntity(): BookEntity {
         coverImageUrl = coverUrl,
         isAvailable = true,
         sellerId = "",
-        createdAt = System.currentTimeMillis()
+        createdAt = System.currentTimeMillis(),
+        averageRating = averageRating ?: 0.0,
+        reviewCount = reviewCount ?: 0
     )
 }
 
@@ -29,7 +31,9 @@ fun BookEntity.toDomain(): Book {
         condition = condition,
         coverUrl = coverImageUrl,
         category = "General", // Fallback since it's not in DB entity
-        sellerId = sellerId
+        sellerId = sellerId,
+        averageRating = averageRating,
+        reviewCount = reviewCount
     )
 }
 
@@ -43,6 +47,8 @@ fun NetworkBook.toDomain(): Book {
         condition = condition ?: "Good",
         coverUrl = coverUrl,
         category = category,
-        sellerId = ""
+        sellerId = "",
+        averageRating = averageRating ?: 0.0,
+        reviewCount = reviewCount ?: 0
     )
 }

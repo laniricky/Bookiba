@@ -20,5 +20,8 @@ data class NetworkBook(
     @SerialName("isRare") val isRare: Boolean = false,
     @SerialName("isFeatured") val isFeatured: Boolean = false,
     @SerialName("isStaffPick") val isStaffPick: Boolean = false,
-    @SerialName("tags") val tags: List<String> = emptyList()
+    @SerialName("tags") val tags: List<String> = emptyList(),
+    @SerialName("inventoryCount") val inventoryCount: Int? = null,
+    @SerialName("averageRating") val averageRating: Double? = null,
+    @SerialName("reviewCount") val reviewCount: Int? = null
 )

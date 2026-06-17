@@ -71,3 +71,25 @@ data class NetworkUserProfileResponse(
     val error: String? = null
 )
 
+// ── Wishlist ─────────────────────────────────────────────────────────────────
+
+@Serializable
+data class NetworkWishlistRequest(
+    val bookId: String
+)
+
+// ── Editorials ───────────────────────────────────────────────────────────────
+
+@Serializable
+data class NetworkEditorial(
+    val id: String,
+    val label: String,
+    val imageUrl: String? = null,
+    val queryTag: String,
+    val sortOrder: Int = 0
+)
+
+@Serializable
+data class NetworkEditorialsResponse(
+    val editorials: List<NetworkEditorial> = emptyList()
+)

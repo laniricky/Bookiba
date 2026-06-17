@@ -33,6 +33,30 @@ object Books : Table("books") {
     val isStaffPick = bool("is_staff_pick").default(false)
     val tags = text("tags").nullable() // Comma separated
     val inventoryCount = integer("inventory_count").default(0)
+    val averageRating = double("average_rating").default(0.0)
+    val reviewCount = integer("review_count").default(0)
+    val createdAt = datetime("created_at").default(LocalDateTime.now())
+
+    override val primaryKey = PrimaryKey(id)
+}
+
+object Reviews : Table("reviews") {
+    val id = varchar("id", 36)
+    val userId = varchar("user_id", 36).references(Users.id)
+    val bookId = varchar("book_id", 36).references(Books.id)
+    val rating = integer("rating")
+    val comment = text("comment").nullable()
+    val createdAt = datetime("created_at").default(LocalDateTime.now())
+
+    override val primaryKey = PrimaryKey(id)
+}
+
+object Addresses : Table("addresses") {
+    val id = varchar("id", 36)
+    val userId = varchar("user_id", 36).references(Users.id)
+    val label = varchar("label", 100)           // e.g. "Home", "Work", "Other"
+    val fullAddress = text("full_address")
+    val isDefault = bool("is_default").default(false)
     val createdAt = datetime("created_at").default(LocalDateTime.now())
 
     override val primaryKey = PrimaryKey(id)
@@ -83,6 +107,19 @@ object Reels : Table("reels") {
     val videoUrl = varchar("video_url", 500)
     val thumbnailUrl = varchar("thumbnail_url", 500).nullable()
     val bookId = varchar("book_id", 36).references(Books.id).nullable()
+    val isActive = bool("is_active").default(true)
+    val createdAt = datetime("created_at").default(LocalDateTime.now())
+
+    override val primaryKey = PrimaryKey(id)
+}
+
+// ── Editorial picks (Story Tray) ─────────────────────────────────────────────
+object Editorials : Table("editorials") {
+    val id = varchar("id", 36)
+    val label = varchar("label", 100)           // e.g. "Staff Picks", "Fiction"
+    val imageUrl = varchar("image_url", 500).nullable()
+    val queryTag = varchar("query_tag", 100)    // search term to trigger on click
+    val sortOrder = integer("sort_order").default(0)
     val isActive = bool("is_active").default(true)
     val createdAt = datetime("created_at").default(LocalDateTime.now())
 

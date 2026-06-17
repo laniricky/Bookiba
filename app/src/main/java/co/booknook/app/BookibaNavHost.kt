@@ -1,5 +1,6 @@
 package co.booknook.app
 
+import co.booknook.core.designsystem.theme.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -33,13 +34,16 @@ import co.booknook.feature.orders.OrdersScreen
 import co.booknook.feature.profile.ProfileScreen
 import co.booknook.feature.reels.ReelsScreen
 import co.booknook.feature.wishlist.WishlistScreen
+import co.booknook.feature.wishlist.WishlistViewModel
+import co.booknook.feature.checkout.OrderConfirmationScreen
 
-// ── Route constants ──────────────────────────────────────────────────────────
+// â”€â”€ Route constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 object Routes {
     const val SPLASH = "splash"
     const val ONBOARDING = "onboarding"
     const val HOME = "home"
-    const val EXPLORE = "explore"
+    const val EXPLORE = "explore?query={query}"
+    fun explore(query: String? = null) = if (query != null) "explore?query=$query" else "explore"
     const val REELS = "reels"
     const val WISHLIST = "wishlist"
     const val CART = "cart"
@@ -47,7 +51,10 @@ object Routes {
     const val BOOK_DETAIL = "book/{bookId}"
     const val AUTH = "auth"
     const val CHECKOUT = "checkout"
+    const val ORDER_CONFIRMATION = "order_confirmation"
     const val ORDERS = "orders"
+    const val ADDRESSES = "addresses"
+    const val SETTINGS = "settings"
     fun bookDetail(bookId: String) = "book/$bookId"
 }
 
@@ -61,19 +68,14 @@ data class BottomNavItem(
 
 private val bottomNavItems = listOf(
     BottomNavItem(Routes.HOME, "Home", selectedIcon = Icons.Filled.Home, unselectedIcon = Icons.Outlined.Home),
-    BottomNavItem(Routes.EXPLORE, "Explore", selectedIcon = Icons.Filled.Search, unselectedIcon = Icons.Outlined.Search),
+    BottomNavItem(Routes.explore(), "Explore", selectedIcon = Icons.Filled.Search, unselectedIcon = Icons.Outlined.Search),
     BottomNavItem(Routes.REELS, "Reels", iconResId = co.booknook.app.R.drawable.ic_launcher_foreground),
-    BottomNavItem(Routes.WISHLIST, "Wishlist", selectedIcon = Icons.Filled.Favorite, unselectedIcon = Icons.Outlined.FavoriteBorder),
     BottomNavItem(Routes.CART, "Cart", selectedIcon = Icons.Filled.ShoppingCart, unselectedIcon = Icons.Outlined.ShoppingCart),
     BottomNavItem(Routes.PROFILE, "Profile", selectedIcon = Icons.Filled.Person, unselectedIcon = Icons.Outlined.Person)
 )
 
 private val bottomNavRoutes = bottomNavItems.map { it.route }.toSet()
 
-private val DarkBrown = Color(0xFF1A1512)
-private val Cream = Color(0xFFF5F0E8)
-private val WarmBrown = Color(0xFF8B7355)
-private val SoftWhite = Color(0xFFFEFCF9)
 
 @Composable
 fun BookibaNavHost(
@@ -107,11 +109,16 @@ fun BookibaNavHost(
         },
         containerColor = SoftWhite
     ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = Routes.SPLASH,
-            modifier = Modifier.padding(innerPadding)
-        ) {
+        @OptIn(androidx.compose.animation.ExperimentalSharedTransitionApi::class)
+        androidx.compose.animation.SharedTransitionLayout {
+            CompositionLocalProvider(
+                LocalSharedTransitionScope provides this
+            ) {
+                NavHost(
+                    navController = navController,
+                    startDestination = Routes.SPLASH,
+                    modifier = Modifier.padding(innerPadding)
+                ) {
             composable(Routes.SPLASH) {
                 SplashScreen(onSplashFinished = {
                     navController.navigate(Routes.ONBOARDING) {
@@ -129,44 +136,58 @@ fun BookibaNavHost(
             }
 
             composable(Routes.HOME) {
-                HomeScreen(
-                    onBookClick = { bookId -> navController.navigate(Routes.bookDetail(bookId)) },
-                    onSearchClick = { navController.navigate(Routes.EXPLORE) },
-                    onNavigateToAuth = { navController.navigate(Routes.AUTH) }
-                )
+                CompositionLocalProvider(LocalNavAnimatedVisibilityScope provides this) {
+                    HomeScreen(
+                        onBookClick = { bookId -> navController.navigate(Routes.bookDetail(bookId)) },
+                        onSearchClick = { query -> navController.navigate(Routes.explore(query)) },
+                        onNavigateToAuth = { navController.navigate(Routes.AUTH) }
+                    )
+                }
             }
 
-            composable(Routes.EXPLORE) {
-                ExploreScreen(
-                    onBookClick = { bookId -> navController.navigate(Routes.bookDetail(bookId)) },
-                    onGenreClick = { /* navigate to genre */ }
-                )
+            composable(
+                route = Routes.EXPLORE,
+                arguments = listOf(androidx.navigation.navArgument("query") { nullable = true; defaultValue = null })
+            ) {
+                CompositionLocalProvider(LocalNavAnimatedVisibilityScope provides this) {
+                    ExploreScreen(
+                        onBookClick = { bookId -> navController.navigate(Routes.bookDetail(bookId)) }
+                    )
+                }
             }
 
             composable(Routes.REELS) {
-                ReelsScreen(
-                    onBookClick = { bookId -> navController.navigate(Routes.bookDetail(bookId)) }
-                )
+                CompositionLocalProvider(LocalNavAnimatedVisibilityScope provides this) {
+                    ReelsScreen(
+                        onBookClick = { bookId -> navController.navigate(Routes.bookDetail(bookId)) }
+                    )
+                }
             }
 
             composable(Routes.WISHLIST) {
-                WishlistScreen(
-                    onBookClick = { bookId -> navController.navigate(Routes.bookDetail(bookId)) },
-                    onRemove = { /* remove logic */ }
-                )
+                CompositionLocalProvider(LocalNavAnimatedVisibilityScope provides this) {
+                    val wishlistViewModel: WishlistViewModel = hiltViewModel()
+                    WishlistScreen(
+                        viewModel = wishlistViewModel,
+                        onBookClick = { bookId -> navController.navigate(Routes.bookDetail(bookId)) }
+                    )
+                }
             }
 
             composable(Routes.CART) {
-                CartScreen(
-                    onCheckout = { navController.navigate(Routes.CHECKOUT) },
-                    onBookClick = { bookId -> navController.navigate(Routes.bookDetail(bookId)) }
-                )
+                CompositionLocalProvider(LocalNavAnimatedVisibilityScope provides this) {
+                    CartScreen(
+                        onCheckout = { navController.navigate(Routes.CHECKOUT) },
+                        onBookClick = { bookId -> navController.navigate(Routes.bookDetail(bookId)) }
+                    )
+                }
             }
 
             composable(Routes.PROFILE) {
                 ProfileScreen(
                     onOrdersClick = { navController.navigate(Routes.ORDERS) },
-                    onSettingsClick = { /* settings logic */ },
+                    onAddressesClick = { navController.navigate(Routes.ADDRESSES) },
+                    onSettingsClick = { navController.navigate(Routes.SETTINGS) },
                     onLogout = { navController.navigate(Routes.AUTH) { popUpTo(0) } },
                     onNavigateToLogin = { navController.navigate(Routes.AUTH) },
                     onNavigateToSignup = { navController.navigate(Routes.AUTH) }
@@ -174,12 +195,14 @@ fun BookibaNavHost(
             }
 
             composable(Routes.BOOK_DETAIL) {
-                BookDetailScreen(
-                    onBack = { navController.popBackStack() },
-                    onAddToCart = { navController.navigate(Routes.CART) },
-                    onBuyNow = { navController.navigate(Routes.CHECKOUT) },
-                    onNavigateToAuth = { navController.navigate(Routes.AUTH) }
-                )
+                CompositionLocalProvider(LocalNavAnimatedVisibilityScope provides this) {
+                    BookDetailScreen(
+                        onBack = { navController.popBackStack() },
+                        onAddToCart = { navController.navigate(Routes.CART) },
+                        onBuyNow = { navController.navigate(Routes.CHECKOUT) },
+                        onNavigateToAuth = { navController.navigate(Routes.AUTH) }
+                    )
+                }
             }
 
             composable(Routes.AUTH) {
@@ -195,8 +218,23 @@ fun BookibaNavHost(
                 CheckoutScreen(
                     onBack = { navController.popBackStack() },
                     onSuccess = { 
-                        navController.navigate(Routes.ORDERS) {
+                        navController.navigate(Routes.ORDER_CONFIRMATION) {
                             popUpTo(Routes.CART) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
+            composable(Routes.ORDER_CONFIRMATION) {
+                OrderConfirmationScreen(
+                    onContinueShopping = {
+                        navController.navigate(Routes.HOME) {
+                            popUpTo(0)
+                        }
+                    },
+                    onViewOrders = {
+                        navController.navigate(Routes.ORDERS) {
+                            popUpTo(Routes.HOME)
                         }
                     }
                 )
@@ -206,6 +244,23 @@ fun BookibaNavHost(
                 OrdersScreen(
                     onBack = { navController.popBackStack() }
                 )
+            }
+
+            composable(Routes.ADDRESSES) {
+                co.booknook.feature.profile.AddressesScreen(
+                    onBack = { navController.popBackStack() }
+                )
+            }
+
+            composable(Routes.SETTINGS) {
+                co.booknook.feature.profile.SettingsScreen(
+                    onBack = { navController.popBackStack() },
+                    onLogout = {
+                        navController.navigate(Routes.AUTH) { popUpTo(0) }
+                    }
+                )
+            }
+        }
             }
         }
     }
@@ -228,7 +283,7 @@ private fun BookibaBottomBar(
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
-        // ── Nav bar surface ──────────────────────────────────────────
+        // â”€â”€ Nav bar surface â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         NavigationBar(
             containerColor = SoftWhite,
             tonalElevation = 0.dp,
@@ -261,7 +316,7 @@ private fun BookibaBottomBar(
                 )
             }
 
-            // Centre spacer — reserves space for the floating Reels button
+            // Centre spacer â€” reserves space for the floating Reels button
             NavigationBarItem(
                 selected = false,
                 onClick = {},
@@ -314,7 +369,7 @@ private fun BookibaBottomBar(
             }
         }
 
-        // ── Floating Reels button ─────────────────────────────────────
+        // â”€â”€ Floating Reels button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         if (reelsItem != null) {
             val reelsSelected = currentRoute == reelsItem.route
             Row(

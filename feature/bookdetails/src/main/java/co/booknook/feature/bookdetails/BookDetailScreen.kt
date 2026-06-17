@@ -1,7 +1,9 @@
 package co.booknook.feature.bookdetails
 
+import co.booknook.core.designsystem.theme.*
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -13,10 +15,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -30,16 +34,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import co.booknook.core.domain.model.Book
+import co.booknook.core.domain.model.Review
 
-private val Cream = Color(0xFFF5F0E8)
-private val DarkBrown = Color(0xFF1A1512)
-private val WarmBrown = Color(0xFF8B7355)
-private val SoftWhite = Color(0xFFFEFCF9)
-private val AccentGreen = Color(0xFF2D6A4F)
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookDetailScreen(
     onBack: () -> Unit,
@@ -48,13 +48,42 @@ fun BookDetailScreen(
     onNavigateToAuth: () -> Unit,
     viewModel: BookDetailViewModel = hiltViewModel()
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    // Cart feedback
     LaunchedEffect(state.cartSuccess) {
         if (state.cartSuccess) {
             snackbarHostState.showSnackbar("Added to cart")
             viewModel.onEvent(BookDetailEvent.ResetCartSuccess)
+        }
+    }
+
+    // Review submission feedback
+    LaunchedEffect(state.reviewSubmitSuccess) {
+        if (state.reviewSubmitSuccess) {
+            snackbarHostState.showSnackbar("Review submitted — thank you!")
+            viewModel.onEvent(BookDetailEvent.ResetReviewSuccess)
+        }
+    }
+
+    // Review bottom sheet
+    if (state.showReviewSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { viewModel.onEvent(BookDetailEvent.HideReviewSheet) },
+            containerColor = SoftWhite,
+            shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+        ) {
+            ReviewSubmitSheet(
+                rating = state.pendingRating,
+                comment = state.pendingComment,
+                isSubmitting = state.isSubmittingReview,
+                error = state.reviewSubmitError,
+                onRatingChange = { viewModel.onEvent(BookDetailEvent.SetPendingRating(it)) },
+                onCommentChange = { viewModel.onEvent(BookDetailEvent.SetPendingComment(it)) },
+                onSubmit = { viewModel.onEvent(BookDetailEvent.SubmitReview) },
+                onDismiss = { viewModel.onEvent(BookDetailEvent.HideReviewSheet) }
+            )
         }
     }
 
@@ -64,9 +93,10 @@ fun BookDetailScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 100.dp)
             ) {
-                // ── Image Gallery ─────────────────────────────────────
+                // ── Image Gallery ───────────────────────────────────────────
                 item {
                     BookImageGallery(
+                        bookId = book.id,
                         imageUrls = book.imageUrls.ifEmpty { listOf(book.coverUrl) },
                         onBack = onBack,
                         isWishlisted = state.isWishlisted,
@@ -74,24 +104,26 @@ fun BookDetailScreen(
                     )
                 }
 
-                // ── Availability Badge ────────────────────────────────
+                // ── Availability Badge ──────────────────────────────────────
                 item {
-                    Surface(
-                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
-                        shape = RoundedCornerShape(20.dp),
-                        color = Color(0xFFEDE4D6)
-                    ) {
-                        Text(
-                            text = "One copy available",
-                            color = WarmBrown,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                        )
+                    if (book.inventoryCount in 1..4) {
+                        Surface(
+                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
+                            shape = RoundedCornerShape(20.dp),
+                            color = Color(0xFFEDE4D6)
+                        ) {
+                            Text(
+                                text = "Only ${book.inventoryCount} left!",
+                                color = WarmBrown,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                            )
+                        }
                     }
                 }
 
-                // ── Title & Price ─────────────────────────────────────
+                // ── Title, Author & Price ───────────────────────────────────
                 item {
                     Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                         Text(book.title, color = DarkBrown, fontSize = 26.sp, fontWeight = FontWeight.Bold, lineHeight = 32.sp)
@@ -106,23 +138,62 @@ fun BookDetailScreen(
                     }
                 }
 
-                // ── Edition Info Row ──────────────────────────────────
+                // ── Star Rating Summary ─────────────────────────────────────
+                item {
+                    if (book.reviewCount > 0) {
+                        Row(
+                            modifier = Modifier
+                                .padding(horizontal = 20.dp, vertical = 8.dp)
+                                .clickable {
+                                    if (state.isLoggedIn) {
+                                        viewModel.onEvent(BookDetailEvent.ShowReviewSheet)
+                                    } else onNavigateToAuth()
+                                },
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            StarRatingRow(rating = book.averageRating, size = 18.dp)
+                            Text(
+                                text = "${"%.1f".format(book.averageRating)} (${book.reviewCount} reviews)",
+                                color = WarmBrown,
+                                fontSize = 13.sp
+                            )
+                        }
+                    } else {
+                        TextButton(
+                            onClick = {
+                                if (state.isLoggedIn) viewModel.onEvent(BookDetailEvent.ShowReviewSheet)
+                                else onNavigateToAuth()
+                            },
+                            modifier = Modifier.padding(horizontal = 12.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Star,
+                                contentDescription = null,
+                                tint = AccentGreen,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(Modifier.width(4.dp))
+                            Text("Be the first to review", color = AccentGreen, fontSize = 13.sp)
+                        }
+                    }
+                }
+
+                // ── Edition Info Row ────────────────────────────────────────
                 item {
                     Row(
-                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
                         horizontalArrangement = Arrangement.spacedBy(24.dp)
                     ) {
-                        book.edition?.let {
-                            InfoChip(label = it, icon = Icons.Outlined.DateRange)
-                        }
+                        book.edition?.let { InfoChip(label = it, icon = Icons.Outlined.DateRange) }
                         book.condition?.let { InfoChip(label = it, icon = Icons.Outlined.CheckCircle) }
                     }
                 }
 
-                // ── Divider ──────────────────────────────────────────
+                // ── Divider ─────────────────────────────────────────────────
                 item { HorizontalDivider(color = Cream, modifier = Modifier.padding(horizontal = 20.dp)) }
 
-                // ── About Section ─────────────────────────────────────
+                // ── About Section ───────────────────────────────────────────
                 item {
                     var expanded by remember { mutableStateOf(false) }
                     Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
@@ -143,35 +214,63 @@ fun BookDetailScreen(
                     }
                 }
 
-                // ── Similar Books placeholder ─────────────────────────
+                // ── Reviews Section ─────────────────────────────────────────
+                if (state.reviews.isNotEmpty()) {
+                    item {
+                        HorizontalDivider(color = Cream, modifier = Modifier.padding(horizontal = 20.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 20.dp, vertical = 12.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("Customer Reviews", color = DarkBrown, fontSize = 17.sp, fontWeight = FontWeight.Bold)
+                            TextButton(onClick = {
+                                if (state.isLoggedIn) viewModel.onEvent(BookDetailEvent.ShowReviewSheet)
+                                else onNavigateToAuth()
+                            }) {
+                                Text("Write a review", color = AccentGreen, fontSize = 13.sp)
+                            }
+                        }
+                    }
+
+                    items(state.reviews.take(5)) { review ->
+                        ReviewItem(review = review)
+                    }
+                }
+
+                // ── Similar Books ───────────────────────────────────────────
                 item {
-                    Text(
-                        text = "You Might Also Like",
-                        color = DarkBrown,
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
-                    )
-                    LazyRow(
-                        contentPadding = PaddingValues(horizontal = 20.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(state.similarBooks) { similar ->
-                            AsyncImage(
-                                model = similar.coverUrl,
-                                contentDescription = similar.title,
-                                modifier = Modifier
-                                    .width(90.dp)
-                                    .height(120.dp)
-                                    .clip(RoundedCornerShape(10.dp)),
-                                contentScale = ContentScale.Crop
-                            )
+                    if (state.similarBooks.isNotEmpty()) {
+                        Text(
+                            text = "You Might Also Like",
+                            color = DarkBrown,
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
+                        )
+                        LazyRow(
+                            contentPadding = PaddingValues(horizontal = 20.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(state.similarBooks) { similar ->
+                                AsyncImage(
+                                    model = similar.coverUrl,
+                                    contentDescription = similar.title,
+                                    modifier = Modifier
+                                        .width(90.dp)
+                                        .height(120.dp)
+                                        .clip(RoundedCornerShape(10.dp)),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
                         }
                     }
                 }
             }
 
-            // ── Sticky Bottom CTA Bar ─────────────────────────────────
+            // ── Sticky Bottom CTA Bar ───────────────────────────────────────
             Row(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -181,12 +280,9 @@ fun BookDetailScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 OutlinedButton(
-                    onClick = { 
-                        if (state.isLoggedIn) {
-                            viewModel.onEvent(BookDetailEvent.AddToCart)
-                        } else {
-                            onNavigateToAuth()
-                        }
+                    onClick = {
+                        if (state.isLoggedIn) viewModel.onEvent(BookDetailEvent.AddToCart)
+                        else onNavigateToAuth()
                     },
                     modifier = Modifier.weight(1f).height(50.dp),
                     shape = RoundedCornerShape(14.dp),
@@ -196,7 +292,7 @@ fun BookDetailScreen(
                     Text("Add to Cart", fontWeight = FontWeight.SemiBold)
                 }
                 Button(
-                    onClick = { 
+                    onClick = {
                         if (state.isLoggedIn) {
                             viewModel.onEvent(BookDetailEvent.AddToCart)
                             onBuyNow(book.id)
@@ -217,27 +313,207 @@ fun BookDetailScreen(
 
         SnackbarHost(
             hostState = snackbarHostState,
-            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 80.dp)
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 80.dp)
         )
     }
 }
 
-@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
+// ── Composable: Star Rating Row ─────────────────────────────────────────────
+
+@Composable
+fun StarRatingRow(
+    rating: Double,
+    size: androidx.compose.ui.unit.Dp = 16.dp,
+    modifier: Modifier = Modifier
+) {
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        for (i in 1..5) {
+            Icon(
+                imageVector = if (i <= rating) Icons.Filled.Star else Icons.Outlined.Star,
+                contentDescription = null,
+                tint = if (i <= rating) Color(0xFFF5A623) else Cream,
+                modifier = Modifier.size(size)
+            )
+        }
+    }
+}
+
+// ── Composable: Clickable Star Rating Input ─────────────────────────────────
+
+@Composable
+private fun StarRatingInput(
+    rating: Int,
+    onRatingChange: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        for (i in 1..5) {
+            Icon(
+                imageVector = if (i <= rating) Icons.Filled.Star else Icons.Outlined.Star,
+                contentDescription = "Star $i",
+                tint = if (i <= rating) Color(0xFFF5A623) else Cream,
+                modifier = Modifier
+                    .size(36.dp)
+                    .clickable { onRatingChange(i) }
+            )
+        }
+    }
+}
+
+// ── Composable: Review Item ─────────────────────────────────────────────────
+
+@Composable
+private fun ReviewItem(review: Review) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 8.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            StarRatingRow(rating = review.rating.toDouble(), size = 14.dp)
+            Text(
+                text = review.createdAt.take(10),   // show just the date
+                color = WarmBrown,
+                fontSize = 11.sp
+            )
+        }
+        review.comment?.let { comment ->
+            Text(
+                text = comment,
+                color = DarkBrown,
+                fontSize = 13.sp,
+                lineHeight = 20.sp,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+        HorizontalDivider(color = Cream, modifier = Modifier.padding(top = 12.dp))
+    }
+}
+
+// ── Composable: Review Submit Bottom Sheet ──────────────────────────────────
+
+@Composable
+private fun ReviewSubmitSheet(
+    rating: Int,
+    comment: String,
+    isSubmitting: Boolean,
+    error: String?,
+    onRatingChange: (Int) -> Unit,
+    onCommentChange: (String) -> Unit,
+    onSubmit: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+            .padding(bottom = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Handle
+        Box(
+            modifier = Modifier
+                .width(40.dp)
+                .height(4.dp)
+                .clip(CircleShape)
+                .background(Cream)
+        )
+
+        Text(
+            text = "Write a Review",
+            color = DarkBrown,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        Text(
+            text = "Tap a star to rate",
+            color = WarmBrown,
+            fontSize = 13.sp
+        )
+
+        StarRatingInput(rating = rating, onRatingChange = onRatingChange)
+
+        OutlinedTextField(
+            value = comment,
+            onValueChange = onCommentChange,
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = { Text("Share your thoughts (optional)", color = WarmBrown.copy(alpha = 0.6f)) },
+            minLines = 3,
+            maxLines = 5,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = DarkBrown,
+                unfocusedBorderColor = Cream,
+                focusedTextColor = DarkBrown,
+                unfocusedTextColor = DarkBrown
+            ),
+            shape = RoundedCornerShape(12.dp)
+        )
+
+        error?.let {
+            Text(text = it, color = MaterialTheme.colorScheme.error, fontSize = 12.sp)
+        }
+
+        Button(
+            onClick = onSubmit,
+            enabled = rating > 0 && !isSubmitting,
+            modifier = Modifier.fillMaxWidth().height(52.dp),
+            shape = RoundedCornerShape(14.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = DarkBrown)
+        ) {
+            if (isSubmitting) {
+                CircularProgressIndicator(color = Cream, modifier = Modifier.size(22.dp), strokeWidth = 2.dp)
+            } else {
+                Text("Submit Review", color = Cream, fontWeight = FontWeight.SemiBold)
+            }
+        }
+
+        TextButton(onClick = onDismiss) {
+            Text("Cancel", color = WarmBrown)
+        }
+    }
+}
+
+// ── Composable: Image Gallery ───────────────────────────────────────────────
+
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class, androidx.compose.animation.ExperimentalSharedTransitionApi::class)
 @Composable
 private fun BookImageGallery(
+    bookId: String,
     imageUrls: List<String>,
     onBack: () -> Unit,
     isWishlisted: Boolean,
     onToggleWishlist: () -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { imageUrls.size })
+    val sharedTransitionScope = LocalSharedTransitionScope.current
+    val animatedVisibilityScope = LocalNavAnimatedVisibilityScope.current
 
     Box(modifier = Modifier.fillMaxWidth().height(360.dp)) {
         HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { index ->
+            var imageModifier: Modifier = Modifier.fillMaxSize()
+            
+            if (index == 0 && sharedTransitionScope != null && animatedVisibilityScope != null) {
+                with(sharedTransitionScope) {
+                    imageModifier = Modifier
+                        .sharedElement(
+                            state = rememberSharedContentState(key = "cover_$bookId"),
+                            animatedVisibilityScope = animatedVisibilityScope
+                        )
+                        .then(imageModifier)
+                }
+            }
+            
             AsyncImage(
                 model = imageUrls[index],
                 contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
+                modifier = imageModifier,
                 contentScale = ContentScale.Crop
             )
         }
@@ -273,7 +549,15 @@ private fun BookImageGallery(
                     tint = wishlistColor
                 )
             }
-            IconButton(onClick = {}) {
+            val context = androidx.compose.ui.platform.LocalContext.current
+            IconButton(onClick = {
+                val sendIntent = android.content.Intent().apply {
+                    action = android.content.Intent.ACTION_SEND
+                    putExtra(android.content.Intent.EXTRA_TEXT, "Check out this book on Bookiba!")
+                    type = "text/plain"
+                }
+                context.startActivity(android.content.Intent.createChooser(sendIntent, null))
+            }) {
                 Icon(Icons.Default.Share, contentDescription = "Share", tint = Color.White)
             }
         }
@@ -294,6 +578,8 @@ private fun BookImageGallery(
         }
     }
 }
+
+// ── Composable: Info Chip ───────────────────────────────────────────────────
 
 @Composable
 private fun InfoChip(label: String, icon: androidx.compose.ui.graphics.vector.ImageVector) {

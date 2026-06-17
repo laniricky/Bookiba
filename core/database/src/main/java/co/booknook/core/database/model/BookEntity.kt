@@ -15,5 +15,7 @@ data class BookEntity(
     val coverImageUrl: String,
     val isAvailable: Boolean,
     val sellerId: String,
-    val createdAt: Long
+    val createdAt: Long,
+    val averageRating: Double = 0.0,
+    val reviewCount: Int = 0
 )

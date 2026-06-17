@@ -10,6 +10,8 @@ interface BookRepository {
     fun getBooksByGenre(genre: String): Flow<List<Book>>
     fun getBookById(id: String): Flow<Book?>
     suspend fun searchBooks(query: String): List<Book>
+    suspend fun getSuggestions(query: String): List<String>
     suspend fun checkout(items: List<Triple<String, Int, Double>>): Boolean
     fun getBanners(): Flow<List<co.booknook.core.domain.model.Banner>>
+    fun getEditorials(): Flow<List<co.booknook.core.domain.model.Editorial>>
 }

@@ -1,5 +1,6 @@
-package co.booknook.feature.onboarding
+﻿package co.booknook.feature.onboarding
 
+import co.booknook.core.designsystem.theme.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -18,9 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 
-private val DarkBrown = Color(0xFF1A1512)
-private val Cream = Color(0xFFF5F0E8)
-private val WarmBrown = Color(0xFF8B7355)
 
 @Composable
 fun SplashScreen(onSplashFinished: () -> Unit) {

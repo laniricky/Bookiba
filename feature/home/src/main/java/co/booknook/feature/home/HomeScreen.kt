@@ -1,5 +1,6 @@
 package co.booknook.feature.home
 
+import co.booknook.core.designsystem.theme.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -34,18 +35,13 @@ import androidx.compose.runtime.collectAsState
 import coil.compose.AsyncImage
 import co.booknook.core.domain.model.Book
 
-private val Cream = Color(0xFFF5F0E8)
-private val DarkBrown = Color(0xFF1A1512)
-private val WarmBrown = Color(0xFF8B7355)
-private val SoftWhite = Color(0xFFFEFCF9)
-private val AccentGreen = Color(0xFF2D6A4F)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onBookClick: (String) -> Unit,
-    onSearchClick: () -> Unit,
+    onSearchClick: (String?) -> Unit,
     onNavigateToAuth: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
@@ -79,29 +75,23 @@ fun HomeScreen(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 80.dp)
         ) {
-            // ── Top Bar ──────────────────────────────────────────────
+            // â”€â”€ Top Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             item {
                 HomeTopBar(onNotificationsClick = {})
             }
 
-            // ── Story Tray ───────────────────────────────────────────
+            // â”€â”€ Story Tray â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             item {
-                StoryTray(stories = state.stories)
+                StoryTray(stories = state.stories, onClick = { onSearchClick(it) })
             }
 
-            // ── Hero Banners ──────────────────────────────────────────
+            // â”€â”€ Hero Banners â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             item {
-                val banners = if (state.banners.isNotEmpty()) {
-                    state.banners
-                } else {
-                    listOf(
-                        co.booknook.core.domain.model.Banner("b1", "file:///C:/Users/rucom/.gemini/antigravity/brain/8e18155c-0fbc-4bae-8b27-be6e0cb044f0/banner_flash_sale_1781174890145.png", null, null),
-                        co.booknook.core.domain.model.Banner("b2", "file:///C:/Users/rucom/.gemini/antigravity/brain/8e18155c-0fbc-4bae-8b27-be6e0cb044f0/banner_african_voices_1781174913954.png", null, null),
-                        co.booknook.core.domain.model.Banner("b3", "file:///C:/Users/rucom/.gemini/antigravity/brain/8e18155c-0fbc-4bae-8b27-be6e0cb044f0/banner_staff_picks_1781174924594.png", null, null)
-                    )
-                }
-
-                val pagerState = rememberPagerState(pageCount = { banners.size })
+                if (state.isLoading && state.banners.isEmpty()) {
+                    co.booknook.core.designsystem.components.BannerSkeleton(modifier = Modifier.padding(vertical = 16.dp))
+                } else if (state.banners.isNotEmpty()) {
+                    val banners = state.banners
+                    val pagerState = rememberPagerState(pageCount = { banners.size })
                 HorizontalPager(
                     state = pagerState,
                     modifier = Modifier.fillMaxWidth().height(180.dp),
@@ -122,11 +112,12 @@ fun HomeScreen(
                     }
                 }
                 Spacer(Modifier.height(16.dp))
+                }
             }
 
-            // ── "Found Today" Section -> Trending in Nairobi ─────────
+            // â”€â”€ "Found Today" Section -> Trending in Nairobi â”€â”€â”€â”€â”€â”€â”€â”€â”€
             item {
-                SectionHeader(title = "Trending in Nairobi Right Now", onSeeAll = onSearchClick)
+                SectionHeader(title = "Trending in Nairobi Right Now", onSeeAll = { onSearchClick(null) })
             }
             item {
                 LazyRow(
@@ -142,10 +133,10 @@ fun HomeScreen(
                 Spacer(Modifier.height(24.dp))
             }
 
-            // ── Staff Pick ───────────────────────────────────────────
+            // â”€â”€ Staff Pick â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             state.staffPick?.let { pick ->
                 item {
-                    SectionHeader(title = "Staff Pick", onSeeAll = onSearchClick)
+                    SectionHeader(title = "Staff Pick", onSeeAll = { onSearchClick(null) })
                     StaffPickCard(book = pick, onClick = { onBookClick(pick.id) }, onAddToCart = { 
                         if (state.isLoggedIn) viewModel.addToCart(pick) else onNavigateToAuth()
                     })
@@ -153,9 +144,9 @@ fun HomeScreen(
                 }
             }
 
-            // ── New Arrivals ─────────────────────────────────────────
+            // â”€â”€ New Arrivals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             item {
-                SectionHeader(title = "New Arrivals", onSeeAll = onSearchClick)
+                SectionHeader(title = "New Arrivals", onSeeAll = { onSearchClick(null) })
             }
             item {
                 LazyRow(
@@ -181,7 +172,7 @@ fun HomeScreen(
             ) {
                 CircularProgressIndicator(color = WarmBrown)
                 Text(
-                    text = "Loading books…",
+                    text = "Loading booksâ€¦",
                     color = WarmBrown,
                     fontSize = 13.sp
                 )
@@ -196,7 +187,7 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = "⚠️ Couldn't load books",
+                    text = "âš ï¸ Couldn't load books",
                     color = DarkBrown,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold
@@ -219,6 +210,7 @@ fun HomeScreen(
 
 @Composable
 private fun HomeTopBar(onNotificationsClick: () -> Unit) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -243,7 +235,9 @@ private fun HomeTopBar(onNotificationsClick: () -> Unit) {
                     tint = DarkBrown
                 )
             }
-            IconButton(onClick = onNotificationsClick) {
+            IconButton(onClick = {
+                android.widget.Toast.makeText(context, "Coming soon", android.widget.Toast.LENGTH_SHORT).show()
+            }) {
                 Icon(
                     imageVector = Icons.Outlined.Notifications,
                     contentDescription = "Notifications",
@@ -255,7 +249,7 @@ private fun HomeTopBar(onNotificationsClick: () -> Unit) {
 }
 
 @Composable
-private fun StoryTray(stories: List<StoryItem>) {
+private fun StoryTray(stories: List<co.booknook.core.domain.model.Editorial>, onClick: (String) -> Unit) {
     LazyRow(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -263,7 +257,8 @@ private fun StoryTray(stories: List<StoryItem>) {
         items(stories) { story ->
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(6.dp)
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier.clickable { onClick(story.queryTag) }
             ) {
                 Box(
                     modifier = Modifier
@@ -349,9 +344,9 @@ private fun FeaturedBookCard(book: Book, onClick: () -> Unit, onAddToCart: () ->
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
-                if (book.title.length % 3 == 0) {
+                if (book.inventoryCount in 1..4) {
                     Text(
-                        text = "🔥 Only ${(book.title.length % 5) + 1} left!",
+                        text = "ðŸ”¥ Only ${book.inventoryCount} left!",
                         color = Color(0xFFD62828),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
@@ -472,9 +467,9 @@ private fun SmallBookCard(book: Book, onClick: () -> Unit, onAddToCart: () -> Un
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
-        if (book.title.length % 4 == 0) {
+        if (book.inventoryCount in 1..4) {
             Text(
-                text = "⏱️ Sale ends soon",
+                text = "Only ${book.inventoryCount} left",
                 color = Color(0xFFD62828),
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,

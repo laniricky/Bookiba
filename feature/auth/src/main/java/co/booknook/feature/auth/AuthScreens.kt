@@ -1,5 +1,6 @@
-package co.booknook.feature.auth
+﻿package co.booknook.feature.auth
 
+import co.booknook.core.designsystem.theme.*
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -28,10 +29,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.runtime.collectAsState
 
-private val Cream = Color(0xFFF5F0E8)
-private val DarkBrown = Color(0xFF1A1512)
-private val WarmBrown = Color(0xFF8B7355)
-private val SoftWhite = Color(0xFFFEFCF9)
 
 enum class AuthScreen { LOGIN, SIGNUP, FORGOT_PASSWORD, OTP }
 
@@ -162,7 +159,7 @@ private fun PrimaryButton(text: String, isLoading: Boolean, onClick: () -> Unit)
     }
 }
 
-// ── Login Screen ─────────────────────────────────────────────────────────────
+// â”€â”€ Login Screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 @Composable
 fun LoginScreen(
     state: AuthUiState,
@@ -207,7 +204,7 @@ fun LoginScreen(
     }
 }
 
-// ── Sign Up Screen ───────────────────────────────────────────────────────────
+// â”€â”€ Sign Up Screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 @Composable
 fun SignUpScreen(
     state: AuthUiState,
@@ -249,7 +246,7 @@ fun SignUpScreen(
     }
 }
 
-// ── Forgot Password ──────────────────────────────────────────────────────────
+// â”€â”€ Forgot Password â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 @Composable
 fun ForgotPasswordScreen(
     state: AuthUiState,
@@ -274,7 +271,7 @@ fun ForgotPasswordScreen(
     }
 }
 
-// ── OTP Screen ───────────────────────────────────────────────────────────────
+// â”€â”€ OTP Screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 @Composable
 fun OtpScreen(
     state: AuthUiState,

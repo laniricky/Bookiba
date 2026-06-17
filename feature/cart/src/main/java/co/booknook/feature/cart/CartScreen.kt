@@ -1,5 +1,6 @@
-package co.booknook.feature.cart
+﻿package co.booknook.feature.cart
 
+import co.booknook.core.designsystem.theme.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -25,10 +26,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.booknook.core.domain.model.Book
 import co.booknook.core.domain.model.CartItem
 
-private val Cream = Color(0xFFF5F0E8)
-private val DarkBrown = Color(0xFF1A1512)
-private val WarmBrown = Color(0xFF8B7355)
-private val SoftWhite = Color(0xFFFEFCF9)
 
 data class CartUiState(
     val items: List<CartItem> = emptyList(),

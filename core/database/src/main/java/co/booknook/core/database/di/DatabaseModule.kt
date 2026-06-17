@@ -27,7 +27,7 @@ object DatabaseModule {
             BookibaDatabase::class.java,
             "bookiba_database"
         )
-        .addMigrations(BookibaDatabase.MIGRATION_1_2, BookibaDatabase.MIGRATION_2_3)
+        .addMigrations(BookibaDatabase.MIGRATION_1_2, BookibaDatabase.MIGRATION_2_3, BookibaDatabase.MIGRATION_3_4)
         .build()
     }
 

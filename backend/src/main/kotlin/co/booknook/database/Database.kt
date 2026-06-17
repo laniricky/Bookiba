@@ -50,7 +50,10 @@ object DatabaseFactory {
                 co.booknook.database.models.OrderItems,
                 co.booknook.database.models.Wishlists,
                 co.booknook.database.models.Reels,
-                co.booknook.database.models.Banners
+                co.booknook.database.models.Banners,
+                co.booknook.database.models.Reviews,
+                co.booknook.database.models.Addresses,
+                co.booknook.database.models.Editorials
             )
         }
     }

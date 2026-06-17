@@ -14,7 +14,7 @@ import co.booknook.core.database.model.OrderItemEntity
 
 @Database(
     entities = [BookEntity::class, CartItemEntity::class, OrderEntity::class, OrderItemEntity::class],
-    version = 3,
+    version = 4,
     exportSchema = true
 )
 abstract class BookibaDatabase : RoomDatabase() {
@@ -39,6 +39,13 @@ abstract class BookibaDatabase : RoomDatabase() {
                 db.execSQL(
                     "CREATE TABLE IF NOT EXISTS `order_items` (`orderId` TEXT NOT NULL, `bookId` TEXT NOT NULL, `title` TEXT NOT NULL, `author` TEXT NOT NULL, `coverUrl` TEXT NOT NULL, `priceKsh` INTEGER NOT NULL, `quantity` INTEGER NOT NULL, PRIMARY KEY(`orderId`, `bookId`))"
                 )
+            }
+        }
+
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `books` ADD COLUMN `averageRating` REAL NOT NULL DEFAULT 0.0")
+                db.execSQL("ALTER TABLE `books` ADD COLUMN `reviewCount` INTEGER NOT NULL DEFAULT 0")
             }
         }
     }
