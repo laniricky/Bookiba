@@ -48,7 +48,7 @@ fun CartScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var coupon by remember { mutableStateOf("") }
 
-    Box(modifier = Modifier.fillMaxSize().background(SoftWhite)) {
+    Box(modifier = Modifier.fillMaxSize().background(androidx.compose.material3.MaterialTheme.colorScheme.background)) {
         LazyColumn(
             contentPadding = PaddingValues(bottom = 100.dp)
         ) {
@@ -61,12 +61,12 @@ fun CartScreen(
                 ) {
                     Text(
                         "Your Stack (${state.items.size})",
-                        color = DarkBrown,
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold
                     )
                     TextButton(onClick = {}) {
-                        Text("Edit", color = WarmBrown, fontSize = 14.sp)
+                        Text("Edit", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
                     }
                 }
             }
@@ -78,10 +78,10 @@ fun CartScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(Icons.Outlined.Person, contentDescription = null, tint = WarmBrown, modifier = Modifier.size(48.dp))
+                            Icon(Icons.Outlined.Person, contentDescription = null, tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(48.dp))
                             Spacer(Modifier.height(12.dp))
-                            Text("Please sign in", color = DarkBrown, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-                            Text("Sign in to view your cart", color = WarmBrown, fontSize = 13.sp, modifier = Modifier.padding(top = 6.dp))
+                            Text("Please sign in", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                            Text("Sign in to view your cart", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 13.sp, modifier = Modifier.padding(top = 6.dp))
                         }
                     }
                 }
@@ -92,10 +92,10 @@ fun CartScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(Icons.Outlined.ShoppingCart, contentDescription = null, tint = WarmBrown, modifier = Modifier.size(48.dp))
+                            Icon(Icons.Outlined.ShoppingCart, contentDescription = null, tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(48.dp))
                             Spacer(Modifier.height(12.dp))
-                            Text("Your stack is empty", color = DarkBrown, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-                            Text("Add some books to get started", color = WarmBrown, fontSize = 13.sp, modifier = Modifier.padding(top = 6.dp))
+                            Text("Your stack is empty", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                            Text("Add some books to get started", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 13.sp, modifier = Modifier.padding(top = 6.dp))
                         }
                     }
                 }
@@ -108,7 +108,7 @@ fun CartScreen(
                         onRemove = { viewModel.removeItem(item.bookId) },
                         onClick = { onBookClick(item.bookId) }
                     )
-                    HorizontalDivider(color = Cream, modifier = Modifier.padding(horizontal = 16.dp))
+                    HorizontalDivider(color = androidx.compose.material3.MaterialTheme.colorScheme.surface, modifier = Modifier.padding(horizontal = 16.dp))
                 }
 
                 // Coupon
@@ -121,25 +121,25 @@ fun CartScreen(
                         OutlinedTextField(
                             value = coupon,
                             onValueChange = { coupon = it },
-                            placeholder = { Text("Apply coupon code", color = WarmBrown.copy(alpha = 0.5f), fontSize = 13.sp) },
+                            placeholder = { Text("Apply coupon code", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f), fontSize = 13.sp) },
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(12.dp),
                             singleLine = true,
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = DarkBrown,
-                                unfocusedBorderColor = Cream,
-                                focusedContainerColor = Cream,
-                                unfocusedContainerColor = Cream,
-                                cursorColor = DarkBrown,
-                                focusedTextColor = DarkBrown,
-                                unfocusedTextColor = DarkBrown
+                                focusedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                                unfocusedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                                focusedContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                                unfocusedContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                                cursorColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                                focusedTextColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                                unfocusedTextColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
                             )
                         )
                         Button(
                             onClick = {},
                             shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = DarkBrown)
-                        ) { Text("Apply", color = Cream) }
+                            colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground)
+                        ) { Text("Apply", color = androidx.compose.material3.MaterialTheme.colorScheme.surface) }
                     }
                 }
 
@@ -148,16 +148,16 @@ fun CartScreen(
                     Surface(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                         shape = RoundedCornerShape(16.dp),
-                        color = Cream
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.surface
                     ) {
                         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                             SummaryRow("Subtotal", state.subtotal)
                             SummaryRow("Shipping", state.shipping)
                             if (state.couponDiscount > 0) SummaryRow("Discount", -state.couponDiscount, tint = Color(0xFF2D6A4F))
-                            HorizontalDivider(color = WarmBrown.copy(alpha = 0.2f))
+                            HorizontalDivider(color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                Text("Total", color = DarkBrown, fontSize = 17.sp, fontWeight = FontWeight.Bold)
-                                Text("KSh ${"%,d".format(state.total)}", color = DarkBrown, fontSize = 17.sp, fontWeight = FontWeight.ExtraBold)
+                                Text("Total", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 17.sp, fontWeight = FontWeight.Bold)
+                                Text("KSh ${"%,d".format(state.total)}", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 17.sp, fontWeight = FontWeight.ExtraBold)
                             }
                         }
                     }
@@ -175,9 +175,9 @@ fun CartScreen(
                     .padding(16.dp)
                     .height(54.dp),
                 shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = DarkBrown)
+                colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground)
             ) {
-                Text("Checkout", color = Cream, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                Text("Checkout", color = androidx.compose.material3.MaterialTheme.colorScheme.surface, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
             }
         }
     }
@@ -197,25 +197,25 @@ private fun CartItemRow(item: CartItem, onQuantityChange: (Int) -> Unit, onRemov
             contentScale = ContentScale.Crop
         )
         Column(modifier = Modifier.weight(1f)) {
-            Text(item.title, color = DarkBrown, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
-            Text("KSh ${"%,d".format(item.priceKsh)}", color = WarmBrown, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 4.dp))
+            Text(item.title, color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Text("KSh ${"%,d".format(item.priceKsh)}", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 4.dp))
         }
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             IconButton(onClick = { if (item.quantity > 1) onQuantityChange(item.quantity - 1) else onRemove() }, modifier = Modifier.size(32.dp)) {
-                Icon(Icons.Outlined.Clear, contentDescription = "Decrease", tint = DarkBrown, modifier = Modifier.size(18.dp))
+                Icon(Icons.Outlined.Clear, contentDescription = "Decrease", tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, modifier = Modifier.size(18.dp))
             }
-            Text("${item.quantity}", color = DarkBrown, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+            Text("${item.quantity}", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 15.sp, fontWeight = FontWeight.Bold)
             IconButton(onClick = { onQuantityChange(item.quantity + 1) }, modifier = Modifier.size(32.dp)) {
-                Icon(Icons.Outlined.Add, contentDescription = "Increase", tint = DarkBrown, modifier = Modifier.size(18.dp))
+                Icon(Icons.Outlined.Add, contentDescription = "Increase", tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, modifier = Modifier.size(18.dp))
             }
         }
     }
 }
 
 @Composable
-private fun SummaryRow(label: String, amount: Long, tint: Color = WarmBrown) {
+private fun SummaryRow(label: String, amount: Long, tint: Color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface) {
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(label, color = WarmBrown, fontSize = 14.sp)
+        Text(label, color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
         Text("KSh ${"%,d".format(kotlin.math.abs(amount))}", color = tint, fontSize = 14.sp, fontWeight = FontWeight.Medium)
     }
 }

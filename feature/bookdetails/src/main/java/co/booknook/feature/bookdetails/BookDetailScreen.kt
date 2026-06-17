@@ -71,7 +71,7 @@ fun BookDetailScreen(
     if (state.showReviewSheet) {
         ModalBottomSheet(
             onDismissRequest = { viewModel.onEvent(BookDetailEvent.HideReviewSheet) },
-            containerColor = SoftWhite,
+            containerColor = androidx.compose.material3.MaterialTheme.colorScheme.background,
             shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
         ) {
             ReviewSubmitSheet(
@@ -87,7 +87,7 @@ fun BookDetailScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(SoftWhite)) {
+    Box(modifier = Modifier.fillMaxSize().background(androidx.compose.material3.MaterialTheme.colorScheme.background)) {
         state.book?.let { book ->
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -114,7 +114,7 @@ fun BookDetailScreen(
                         ) {
                             Text(
                                 text = "Only ${book.inventoryCount} left!",
-                                color = WarmBrown,
+                                color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Medium,
                                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
@@ -126,11 +126,11 @@ fun BookDetailScreen(
                 // ── Title, Author & Price ───────────────────────────────────
                 item {
                     Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-                        Text(book.title, color = DarkBrown, fontSize = 26.sp, fontWeight = FontWeight.Bold, lineHeight = 32.sp)
-                        Text(book.author, color = WarmBrown, fontSize = 15.sp, modifier = Modifier.padding(top = 4.dp))
+                        Text(book.title, color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 26.sp, fontWeight = FontWeight.Bold, lineHeight = 32.sp)
+                        Text(book.author, color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, modifier = Modifier.padding(top = 4.dp))
                         Text(
                             text = "KSh ${"%,d".format(book.priceKsh)}",
-                            color = DarkBrown,
+                            color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                             fontSize = 24.sp,
                             fontWeight = FontWeight.ExtraBold,
                             modifier = Modifier.padding(top = 12.dp)
@@ -155,7 +155,7 @@ fun BookDetailScreen(
                             StarRatingRow(rating = book.averageRating, size = 18.dp)
                             Text(
                                 text = "${"%.1f".format(book.averageRating)} (${book.reviewCount} reviews)",
-                                color = WarmBrown,
+                                color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                                 fontSize = 13.sp
                             )
                         }
@@ -191,17 +191,17 @@ fun BookDetailScreen(
                 }
 
                 // ── Divider ─────────────────────────────────────────────────
-                item { HorizontalDivider(color = Cream, modifier = Modifier.padding(horizontal = 20.dp)) }
+                item { HorizontalDivider(color = androidx.compose.material3.MaterialTheme.colorScheme.surface, modifier = Modifier.padding(horizontal = 20.dp)) }
 
                 // ── About Section ───────────────────────────────────────────
                 item {
                     var expanded by remember { mutableStateOf(false) }
                     Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
-                        Text("About the book", color = DarkBrown, fontSize = 17.sp, fontWeight = FontWeight.Bold)
+                        Text("About the book", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 17.sp, fontWeight = FontWeight.Bold)
                         Spacer(Modifier.height(8.dp))
                         Text(
                             text = book.description ?: "A timeless classic. This vintage edition is in good condition with minor cover wear and yellowed pages due to age.",
-                            color = WarmBrown,
+                            color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                             fontSize = 14.sp,
                             lineHeight = 22.sp,
                             maxLines = if (expanded) Int.MAX_VALUE else 4,
@@ -217,7 +217,7 @@ fun BookDetailScreen(
                 // ── Reviews Section ─────────────────────────────────────────
                 if (state.reviews.isNotEmpty()) {
                     item {
-                        HorizontalDivider(color = Cream, modifier = Modifier.padding(horizontal = 20.dp))
+                        HorizontalDivider(color = androidx.compose.material3.MaterialTheme.colorScheme.surface, modifier = Modifier.padding(horizontal = 20.dp))
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -225,7 +225,7 @@ fun BookDetailScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("Customer Reviews", color = DarkBrown, fontSize = 17.sp, fontWeight = FontWeight.Bold)
+                            Text("Customer Reviews", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 17.sp, fontWeight = FontWeight.Bold)
                             TextButton(onClick = {
                                 if (state.isLoggedIn) viewModel.onEvent(BookDetailEvent.ShowReviewSheet)
                                 else onNavigateToAuth()
@@ -245,7 +245,7 @@ fun BookDetailScreen(
                     if (state.similarBooks.isNotEmpty()) {
                         Text(
                             text = "You Might Also Like",
-                            color = DarkBrown,
+                            color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                             fontSize = 17.sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
@@ -275,7 +275,7 @@ fun BookDetailScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .background(SoftWhite)
+                    .background(androidx.compose.material3.MaterialTheme.colorScheme.background)
                     .padding(horizontal = 20.dp, vertical = 12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -286,7 +286,7 @@ fun BookDetailScreen(
                     },
                     modifier = Modifier.weight(1f).height(50.dp),
                     shape = RoundedCornerShape(14.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = DarkBrown),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground),
                     border = ButtonDefaults.outlinedButtonBorder
                 ) {
                     Text("Add to Cart", fontWeight = FontWeight.SemiBold)
@@ -300,15 +300,15 @@ fun BookDetailScreen(
                     },
                     modifier = Modifier.weight(1f).height(50.dp),
                     shape = RoundedCornerShape(14.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = DarkBrown)
+                    colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground)
                 ) {
-                    Text("Buy Now", color = Cream, fontWeight = FontWeight.SemiBold)
+                    Text("Buy Now", color = androidx.compose.material3.MaterialTheme.colorScheme.surface, fontWeight = FontWeight.SemiBold)
                 }
             }
         }
 
         if (state.isLoading) {
-            CircularProgressIndicator(color = WarmBrown, modifier = Modifier.align(Alignment.Center))
+            CircularProgressIndicator(color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, modifier = Modifier.align(Alignment.Center))
         }
 
         SnackbarHost(
@@ -333,7 +333,7 @@ fun StarRatingRow(
             Icon(
                 imageVector = if (i <= rating) Icons.Filled.Star else Icons.Outlined.Star,
                 contentDescription = null,
-                tint = if (i <= rating) Color(0xFFF5A623) else Cream,
+                tint = if (i <= rating) Color(0xFFF5A623) else androidx.compose.material3.MaterialTheme.colorScheme.surface,
                 modifier = Modifier.size(size)
             )
         }
@@ -353,7 +353,7 @@ private fun StarRatingInput(
             Icon(
                 imageVector = if (i <= rating) Icons.Filled.Star else Icons.Outlined.Star,
                 contentDescription = "Star $i",
-                tint = if (i <= rating) Color(0xFFF5A623) else Cream,
+                tint = if (i <= rating) Color(0xFFF5A623) else androidx.compose.material3.MaterialTheme.colorScheme.surface,
                 modifier = Modifier
                     .size(36.dp)
                     .clickable { onRatingChange(i) }
@@ -378,20 +378,20 @@ private fun ReviewItem(review: Review) {
             StarRatingRow(rating = review.rating.toDouble(), size = 14.dp)
             Text(
                 text = review.createdAt.take(10),   // show just the date
-                color = WarmBrown,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                 fontSize = 11.sp
             )
         }
         review.comment?.let { comment ->
             Text(
                 text = comment,
-                color = DarkBrown,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                 fontSize = 13.sp,
                 lineHeight = 20.sp,
                 modifier = Modifier.padding(top = 4.dp)
             )
         }
-        HorizontalDivider(color = Cream, modifier = Modifier.padding(top = 12.dp))
+        HorizontalDivider(color = androidx.compose.material3.MaterialTheme.colorScheme.surface, modifier = Modifier.padding(top = 12.dp))
     }
 }
 
@@ -422,19 +422,19 @@ private fun ReviewSubmitSheet(
                 .width(40.dp)
                 .height(4.dp)
                 .clip(CircleShape)
-                .background(Cream)
+                .background(androidx.compose.material3.MaterialTheme.colorScheme.surface)
         )
 
         Text(
             text = "Write a Review",
-            color = DarkBrown,
+            color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold
         )
 
         Text(
             text = "Tap a star to rate",
-            color = WarmBrown,
+            color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
             fontSize = 13.sp
         )
 
@@ -444,14 +444,14 @@ private fun ReviewSubmitSheet(
             value = comment,
             onValueChange = onCommentChange,
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Share your thoughts (optional)", color = WarmBrown.copy(alpha = 0.6f)) },
+            placeholder = { Text("Share your thoughts (optional)", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)) },
             minLines = 3,
             maxLines = 5,
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = DarkBrown,
-                unfocusedBorderColor = Cream,
-                focusedTextColor = DarkBrown,
-                unfocusedTextColor = DarkBrown
+                focusedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                unfocusedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                focusedTextColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                unfocusedTextColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
             ),
             shape = RoundedCornerShape(12.dp)
         )
@@ -465,17 +465,17 @@ private fun ReviewSubmitSheet(
             enabled = rating > 0 && !isSubmitting,
             modifier = Modifier.fillMaxWidth().height(52.dp),
             shape = RoundedCornerShape(14.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = DarkBrown)
+            colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground)
         ) {
             if (isSubmitting) {
-                CircularProgressIndicator(color = Cream, modifier = Modifier.size(22.dp), strokeWidth = 2.dp)
+                CircularProgressIndicator(color = androidx.compose.material3.MaterialTheme.colorScheme.surface, modifier = Modifier.size(22.dp), strokeWidth = 2.dp)
             } else {
-                Text("Submit Review", color = Cream, fontWeight = FontWeight.SemiBold)
+                Text("Submit Review", color = androidx.compose.material3.MaterialTheme.colorScheme.surface, fontWeight = FontWeight.SemiBold)
             }
         }
 
         TextButton(onClick = onDismiss) {
-            Text("Cancel", color = WarmBrown)
+            Text("Cancel", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface)
         }
     }
 }
@@ -583,14 +583,14 @@ private fun BookImageGallery(
 
 @Composable
 private fun InfoChip(label: String, icon: androidx.compose.ui.graphics.vector.ImageVector) {
-    Surface(shape = RoundedCornerShape(8.dp), color = Cream) {
+    Surface(shape = RoundedCornerShape(8.dp), color = androidx.compose.material3.MaterialTheme.colorScheme.surface) {
         Row(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(icon, contentDescription = null, tint = WarmBrown, modifier = Modifier.size(16.dp))
-            Text(label, color = WarmBrown, fontSize = 12.sp, fontWeight = FontWeight.Medium)
+            Icon(icon, contentDescription = null, tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(16.dp))
+            Text(label, color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 12.sp, fontWeight = FontWeight.Medium)
         }
     }
 }

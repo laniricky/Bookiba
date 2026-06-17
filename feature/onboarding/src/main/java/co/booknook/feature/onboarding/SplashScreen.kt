@@ -43,7 +43,7 @@ fun SplashScreen(onSplashFinished: () -> Unit) {
                 Brush.verticalGradient(
                     colors = listOf(
                         Color(0xFF0D0A08),
-                        DarkBrown,
+                        androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                         Color(0xFF2A1F16)
                     )
                 )
@@ -70,7 +70,7 @@ fun SplashScreen(onSplashFinished: () -> Unit) {
             // Logo text
             Text(
                 text = "Bookiba",
-                color = Cream,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.surface,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Light,
                 letterSpacing = 8.sp
@@ -81,7 +81,7 @@ fun SplashScreen(onSplashFinished: () -> Unit) {
             // Hero tagline
             Text(
                 text = "Find Stories\nThat Stay.",
-                color = Cream,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.surface,
                 fontSize = 42.sp,
                 fontWeight = FontWeight.Bold,
                 lineHeight = 48.sp,
@@ -92,7 +92,7 @@ fun SplashScreen(onSplashFinished: () -> Unit) {
 
             Text(
                 text = "Thrifted books.\nTimeless reads.",
-                color = WarmBrown,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                 fontSize = 15.sp,
                 fontStyle = FontStyle.Italic,
                 textAlign = TextAlign.Center,
@@ -103,7 +103,7 @@ fun SplashScreen(onSplashFinished: () -> Unit) {
         // Bottom branding
         Text(
             text = "bookiba.co.ke",
-            color = WarmBrown.copy(alpha = 0.5f),
+            color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
             fontSize = 11.sp,
             letterSpacing = 3.sp,
             modifier = Modifier

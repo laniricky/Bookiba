@@ -31,12 +31,12 @@ private val LightColorScheme = lightColorScheme(
 private val DarkColorScheme = darkColorScheme(
     primary = Accent,
     secondary = Secondary,
-    background = OnSurfaceColor,
-    surface = Color(0xFF2C2C2C),
-    onPrimary = SurfaceColor,
-    onSecondary = SurfaceColor,
-    onBackground = Cream,
-    onSurface = Cream
+    background = Charcoal,           // 0xFF0F0F0F — true black bg
+    surface = DeepCharcoal,          // 0xFF1C1C1E — elevated cards
+    onPrimary = Color.White,
+    onSecondary = Color.White,
+    onBackground = Color(0xFFF0EAE0), // warm off-white text on dark
+    onSurface = Color(0xFFB0A898)     // muted warm grey for secondary text
 )
 
 @OptIn(ExperimentalSharedTransitionApi::class)

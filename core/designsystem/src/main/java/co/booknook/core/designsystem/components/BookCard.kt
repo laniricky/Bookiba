@@ -42,7 +42,7 @@ fun BookCard(
             .width(160.dp)
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Cream),
+        colors = CardDefaults.cardColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column {
@@ -71,7 +71,7 @@ fun BookCard(
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(
                     text = book.title,
-                    color = DarkBrown,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 2,
@@ -89,7 +89,7 @@ fun BookCard(
                 }
                 Text(
                     text = book.author,
-                    color = WarmBrown,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                     fontSize = 12.sp,
                     maxLines = 1
                 )
@@ -112,13 +112,13 @@ fun BookCard(
                             Icon(
                                 imageVector = if (i <= book.averageRating) Icons.Filled.Star else Icons.Outlined.Star,
                                 contentDescription = null,
-                                tint = if (i <= book.averageRating) Color(0xFFF5A623) else Cream,
+                                tint = if (i <= book.averageRating) Color(0xFFF5A623) else androidx.compose.material3.MaterialTheme.colorScheme.surface,
                                 modifier = Modifier.size(12.dp)
                             )
                         }
                         Text(
                             text = "${"%.1f".format(book.averageRating)}",
-                            color = WarmBrown,
+                            color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                             fontSize = 10.sp,
                             modifier = Modifier.padding(start = 2.dp)
                         )
@@ -132,7 +132,7 @@ fun BookCard(
                 ) {
                     Text(
                         text = "KSh ${"%,d".format(book.priceKsh)}",
-                        color = DarkBrown,
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -170,7 +170,7 @@ fun BookListCard(
             .fillMaxWidth()
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Cream),
+        colors = CardDefaults.cardColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(modifier = Modifier.height(100.dp)) {
@@ -205,13 +205,13 @@ fun BookListCard(
                 Column {
                     Text(
                         text = book.title,
-                        color = DarkBrown,
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
-                    Text(text = book.author, color = WarmBrown, fontSize = 12.sp)
+                    Text(text = book.author, color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
                     if (book.reviewCount > 0) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -222,13 +222,13 @@ fun BookListCard(
                                 Icon(
                                     imageVector = if (i <= book.averageRating) Icons.Filled.Star else Icons.Outlined.Star,
                                     contentDescription = null,
-                                    tint = if (i <= book.averageRating) Color(0xFFF5A623) else Cream,
+                                    tint = if (i <= book.averageRating) Color(0xFFF5A623) else androidx.compose.material3.MaterialTheme.colorScheme.surface,
                                     modifier = Modifier.size(11.dp)
                                 )
                             }
                             Text(
                                 text = "${"%,.1f".format(book.averageRating)} (${book.reviewCount})",
-                                color = WarmBrown,
+                                color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                                 fontSize = 10.sp,
                                 modifier = Modifier.padding(start = 2.dp)
                             )
@@ -237,7 +237,7 @@ fun BookListCard(
                 }
                 Text(
                     text = "KSh ${"%,d".format(book.priceKsh)}",
-                    color = DarkBrown,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.ExtraBold
                 )

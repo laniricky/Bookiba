@@ -72,7 +72,7 @@ fun OnboardingScreen(onFinished: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(SoftWhite)
+            .background(androidx.compose.material3.MaterialTheme.colorScheme.background)
     ) {
         HorizontalPager(
             state = pagerState,
@@ -84,7 +84,7 @@ fun OnboardingScreen(onFinished: () -> Unit) {
         // Top Logo
         Text(
             text = "Bookiba",
-            color = DarkBrown,
+            color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
             fontSize = 18.sp,
             letterSpacing = 6.sp,
             fontWeight = FontWeight.Light,
@@ -102,7 +102,7 @@ fun OnboardingScreen(onFinished: () -> Unit) {
         ) {
             Text(
                 text = "Skip",
-                color = WarmBrown,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -126,7 +126,7 @@ fun OnboardingScreen(onFinished: () -> Unit) {
                     Box(
                         modifier = Modifier
                             .clip(CircleShape)
-                            .background(if (isSelected) DarkBrown else WarmBrown.copy(alpha = 0.3f))
+                            .background(if (isSelected) androidx.compose.material3.MaterialTheme.colorScheme.onBackground else androidx.compose.material3.MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f))
                             .size(if (isSelected) 10.dp else 6.dp)
                     )
                 }
@@ -148,11 +148,11 @@ fun OnboardingScreen(onFinished: () -> Unit) {
                     .padding(horizontal = 40.dp)
                     .height(54.dp),
                 shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = DarkBrown)
+                colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground)
             ) {
                 Text(
                     text = if (pagerState.currentPage < pages.size - 1) "Next" else "Get Started",
-                    color = Cream,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.surface,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = 0.5.sp
@@ -210,7 +210,7 @@ private fun OnboardingPageContent(page: OnboardingPage, visible: Boolean) {
                 // Accent label
                 Text(
                     text = page.accent.uppercase(),
-                    color = WarmBrown,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                     fontSize = 10.sp,
                     letterSpacing = 2.sp,
                     fontWeight = FontWeight.Medium
@@ -221,7 +221,7 @@ private fun OnboardingPageContent(page: OnboardingPage, visible: Boolean) {
                 // Main headline
                 Text(
                     text = page.title,
-                    color = DarkBrown,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                     fontSize = 38.sp,
                     fontWeight = FontWeight.Bold,
                     lineHeight = 44.sp
@@ -232,7 +232,7 @@ private fun OnboardingPageContent(page: OnboardingPage, visible: Boolean) {
                 // Subtitle
                 Text(
                     text = page.subtitle,
-                    color = WarmBrown,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                     fontSize = 16.sp,
                     fontStyle = FontStyle.Italic,
                     lineHeight = 24.sp

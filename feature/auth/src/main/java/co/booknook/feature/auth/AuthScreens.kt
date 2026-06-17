@@ -86,14 +86,14 @@ private fun AuthContainer(content: @Composable ColumnScope.() -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(SoftWhite)
+            .background(androidx.compose.material3.MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 28.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.height(64.dp))
         // Bookiba logo mark
-        Text("Bookiba", color = DarkBrown, fontSize = 20.sp, letterSpacing = 6.sp, fontWeight = FontWeight.Light)
+        Text("Bookiba", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, letterSpacing = 6.sp, fontWeight = FontWeight.Light)
         Spacer(Modifier.height(40.dp))
         content()
     }
@@ -113,17 +113,17 @@ private fun BookibaTextField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(label, color = WarmBrown, fontSize = 13.sp) },
+        label = { Text(label, color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 13.sp) },
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(14.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = DarkBrown,
-            unfocusedBorderColor = Cream,
-            focusedContainerColor = Cream,
-            unfocusedContainerColor = Cream,
-            cursorColor = DarkBrown,
-            focusedTextColor = DarkBrown,
-            unfocusedTextColor = DarkBrown
+            focusedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+            unfocusedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+            focusedContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+            cursorColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+            focusedTextColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+            unfocusedTextColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
         ),
         singleLine = true,
         visualTransformation = if (isPassword && !passwordVisible) PasswordVisualTransformation() else VisualTransformation.None,
@@ -134,7 +134,7 @@ private fun BookibaTextField(
                     Icon(
                         imageVector = Icons.Outlined.Lock,
                         contentDescription = null,
-                        tint = WarmBrown
+                        tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -149,12 +149,12 @@ private fun PrimaryButton(text: String, isLoading: Boolean, onClick: () -> Unit)
         enabled = !isLoading,
         modifier = Modifier.fillMaxWidth().height(54.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = DarkBrown)
+        colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground)
     ) {
         if (isLoading) {
-            CircularProgressIndicator(color = Cream, modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+            CircularProgressIndicator(color = androidx.compose.material3.MaterialTheme.colorScheme.surface, modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
         } else {
-            Text(text, color = Cream, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+            Text(text, color = androidx.compose.material3.MaterialTheme.colorScheme.surface, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
         }
     }
 }
@@ -172,15 +172,15 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
 
     AuthContainer {
-        Text("Welcome back.", color = DarkBrown, fontSize = 30.sp, fontWeight = FontWeight.Bold)
-        Text("Sign in to your shelves.", color = WarmBrown, fontSize = 15.sp, fontStyle = FontStyle.Italic, modifier = Modifier.padding(top = 6.dp, bottom = 32.dp))
+        Text("Welcome back.", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 30.sp, fontWeight = FontWeight.Bold)
+        Text("Sign in to your shelves.", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, fontStyle = FontStyle.Italic, modifier = Modifier.padding(top = 6.dp, bottom = 32.dp))
 
         BookibaTextField(value = email, onValueChange = { email = it }, label = "Email address", keyboardType = KeyboardType.Email)
         Spacer(Modifier.height(12.dp))
         BookibaTextField(value = password, onValueChange = { password = it }, label = "Password", isPassword = true, imeAction = ImeAction.Done)
 
         TextButton(onClick = onForgotPassword, modifier = Modifier.align(Alignment.End)) {
-            Text("Forgot password?", color = WarmBrown, fontSize = 13.sp)
+            Text("Forgot password?", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
         }
 
         Spacer(Modifier.height(8.dp))
@@ -188,13 +188,13 @@ fun LoginScreen(
         Spacer(Modifier.height(16.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-            Text("Don't have an account? ", color = WarmBrown, fontSize = 14.sp)
-            Text("Sign up", color = DarkBrown, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier = Modifier.clickable(onClick = onGoSignUp))
+            Text("Don't have an account? ", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
+            Text("Sign up", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier = Modifier.clickable(onClick = onGoSignUp))
         }
 
         Spacer(Modifier.height(24.dp))
         TextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) {
-            Text("Continue browsing without account", color = WarmBrown.copy(alpha = 0.6f), fontSize = 13.sp, textAlign = TextAlign.Center)
+            Text("Continue browsing without account", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f), fontSize = 13.sp, textAlign = TextAlign.Center)
         }
 
         state.error?.let {
@@ -221,8 +221,8 @@ fun SignUpScreen(
     }
 
     AuthContainer {
-        Text("Join the shelves.", color = DarkBrown, fontSize = 30.sp, fontWeight = FontWeight.Bold)
-        Text("Create your Bookiba account.", color = WarmBrown, fontSize = 15.sp, fontStyle = FontStyle.Italic, modifier = Modifier.padding(top = 6.dp, bottom = 32.dp))
+        Text("Join the shelves.", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 30.sp, fontWeight = FontWeight.Bold)
+        Text("Create your Bookiba account.", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, fontStyle = FontStyle.Italic, modifier = Modifier.padding(top = 6.dp, bottom = 32.dp))
 
         BookibaTextField(value = name, onValueChange = { name = it }, label = "Full name")
         Spacer(Modifier.height(12.dp))
@@ -235,8 +235,8 @@ fun SignUpScreen(
         Spacer(Modifier.height(16.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-            Text("Already have an account? ", color = WarmBrown, fontSize = 14.sp)
-            Text("Sign in", color = DarkBrown, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier = Modifier.clickable(onClick = onGoLogin))
+            Text("Already have an account? ", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
+            Text("Sign in", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier = Modifier.clickable(onClick = onGoLogin))
         }
 
         state.error?.let {
@@ -258,15 +258,15 @@ fun ForgotPasswordScreen(
     LaunchedEffect(state.successMessage) { if (state.successMessage != null) onSuccess() }
 
     AuthContainer {
-        Text("Reset password.", color = DarkBrown, fontSize = 30.sp, fontWeight = FontWeight.Bold)
-        Text("We'll send a code to your email.", color = WarmBrown, fontSize = 15.sp, fontStyle = FontStyle.Italic, modifier = Modifier.padding(top = 6.dp, bottom = 32.dp))
+        Text("Reset password.", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 30.sp, fontWeight = FontWeight.Bold)
+        Text("We'll send a code to your email.", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, fontStyle = FontStyle.Italic, modifier = Modifier.padding(top = 6.dp, bottom = 32.dp))
 
         BookibaTextField(value = email, onValueChange = { email = it }, label = "Email address", keyboardType = KeyboardType.Email, imeAction = ImeAction.Done)
         Spacer(Modifier.height(24.dp))
         PrimaryButton("Send Code", isLoading = state.isLoading) { onSubmit(email) }
         Spacer(Modifier.height(16.dp))
         TextButton(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
-            Text("Back to login", color = WarmBrown, fontSize = 14.sp)
+            Text("Back to login", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
         }
     }
 }
@@ -281,24 +281,24 @@ fun OtpScreen(
     var code by remember { mutableStateOf("") }
 
     AuthContainer {
-        Text("Enter code.", color = DarkBrown, fontSize = 30.sp, fontWeight = FontWeight.Bold)
-        Text("Check your email for the 6-digit code.", color = WarmBrown, fontSize = 15.sp, fontStyle = FontStyle.Italic, modifier = Modifier.padding(top = 6.dp, bottom = 32.dp))
+        Text("Enter code.", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 30.sp, fontWeight = FontWeight.Bold)
+        Text("Check your email for the 6-digit code.", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, fontStyle = FontStyle.Italic, modifier = Modifier.padding(top = 6.dp, bottom = 32.dp))
 
         OutlinedTextField(
             value = code,
             onValueChange = { if (it.length <= 6) code = it },
-            label = { Text("6-digit code", color = WarmBrown) },
+            label = { Text("6-digit code", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface) },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(14.dp),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = DarkBrown,
-                unfocusedBorderColor = Cream,
-                focusedContainerColor = Cream,
-                unfocusedContainerColor = Cream,
-                cursorColor = DarkBrown,
-                focusedTextColor = DarkBrown,
-                unfocusedTextColor = DarkBrown
+                focusedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                unfocusedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                focusedContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                cursorColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                focusedTextColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                unfocusedTextColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
             ),
             singleLine = true
         )
@@ -307,7 +307,7 @@ fun OtpScreen(
         PrimaryButton("Verify", isLoading = state.isLoading) { onVerify(code) }
         Spacer(Modifier.height(16.dp))
         TextButton(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
-            Text("Back", color = WarmBrown, fontSize = 14.sp)
+            Text("Back", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
         }
     }
 }

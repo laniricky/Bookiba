@@ -34,23 +34,23 @@ fun AddressesScreen(
     var showAddDialog by remember { mutableStateOf(false) }
 
     Scaffold(
-        containerColor = SoftWhite,
+        containerColor = androidx.compose.material3.MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text("Addresses", color = DarkBrown, fontWeight = FontWeight.Bold) },
+                title = { Text("Addresses", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = DarkBrown)
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = SoftWhite)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.background)
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddDialog = true },
-                containerColor = DarkBrown,
-                contentColor = Cream
+                containerColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                contentColor = androidx.compose.material3.MaterialTheme.colorScheme.surface
             ) {
                 Icon(Icons.Outlined.Add, contentDescription = "Add Address")
             }
@@ -58,11 +58,11 @@ fun AddressesScreen(
     ) { padding ->
         if (state.isLoading && state.addresses.isEmpty()) {
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = WarmBrown)
+                CircularProgressIndicator(color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface)
             }
         } else if (state.addresses.isEmpty()) {
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                Text("No saved addresses yet.", color = WarmBrown, fontSize = 16.sp)
+                Text("No saved addresses yet.", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 16.sp)
             }
         } else {
             LazyColumn(
@@ -101,7 +101,7 @@ private fun AddressItemCard(
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        color = Cream,
+        color = androidx.compose.material3.MaterialTheme.colorScheme.surface,
         shadowElevation = 2.dp
     ) {
         Row(
@@ -109,10 +109,10 @@ private fun AddressItemCard(
             verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Icon(Icons.Outlined.LocationOn, contentDescription = null, tint = DarkBrown, modifier = Modifier.padding(top = 2.dp))
+            Icon(Icons.Outlined.LocationOn, contentDescription = null, tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, modifier = Modifier.padding(top = 2.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(address.label, color = DarkBrown, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(address.label, color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     if (address.isDefault) {
                         Spacer(Modifier.width(8.dp))
                         Box(
@@ -125,12 +125,12 @@ private fun AddressItemCard(
                         }
                     }
                 }
-                Text(address.fullAddress, color = WarmBrown, fontSize = 14.sp, modifier = Modifier.padding(top = 4.dp))
+                Text(address.fullAddress, color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 14.sp, modifier = Modifier.padding(top = 4.dp))
                 
                 if (!address.isDefault) {
                     Text(
                         text = "Set as Default",
-                        color = DarkBrown,
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(top = 8.dp).clickable { onSetDefault() }
@@ -155,8 +155,8 @@ private fun AddAddressDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = SoftWhite,
-        title = { Text("Add New Address", color = DarkBrown, fontWeight = FontWeight.Bold) },
+        containerColor = androidx.compose.material3.MaterialTheme.colorScheme.background,
+        title = { Text("Add New Address", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedTextField(
@@ -166,9 +166,9 @@ private fun AddAddressDialog(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Cream,
-                        unfocusedContainerColor = Cream,
-                        focusedIndicatorColor = DarkBrown,
+                        focusedContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                        focusedIndicatorColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                         unfocusedIndicatorColor = Color.Transparent
                     )
                 )
@@ -178,9 +178,9 @@ private fun AddAddressDialog(
                     label = { Text("Full Address") },
                     modifier = Modifier.fillMaxWidth().height(100.dp),
                     colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Cream,
-                        unfocusedContainerColor = Cream,
-                        focusedIndicatorColor = DarkBrown,
+                        focusedContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                        focusedIndicatorColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                         unfocusedIndicatorColor = Color.Transparent
                     )
                 )
@@ -188,23 +188,23 @@ private fun AddAddressDialog(
                     Checkbox(
                         checked = isDefault,
                         onCheckedChange = { isDefault = it },
-                        colors = CheckboxDefaults.colors(checkedColor = DarkBrown)
+                        colors = CheckboxDefaults.colors(checkedColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground)
                     )
-                    Text("Set as default address", color = DarkBrown)
+                    Text("Set as default address", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground)
                 }
             }
         },
         confirmButton = {
             Button(
                 onClick = { if (label.isNotBlank() && fullAddress.isNotBlank()) onAdd(label, fullAddress, isDefault) },
-                colors = ButtonDefaults.buttonColors(containerColor = DarkBrown)
+                colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground)
             ) {
-                Text("Save", color = Cream)
+                Text("Save", color = androidx.compose.material3.MaterialTheme.colorScheme.surface)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = WarmBrown)
+                Text("Cancel", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface)
             }
         }
     )

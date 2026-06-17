@@ -107,7 +107,7 @@ fun BookibaNavHost(
                 )
             }
         },
-        containerColor = SoftWhite
+        containerColor = MaterialTheme.colorScheme.background
     ) { innerPadding ->
         @OptIn(androidx.compose.animation.ExperimentalSharedTransitionApi::class)
         androidx.compose.animation.SharedTransitionLayout {
@@ -285,7 +285,7 @@ private fun BookibaBottomBar(
     ) {
         // â”€â”€ Nav bar surface â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         NavigationBar(
-            containerColor = SoftWhite,
+            containerColor = MaterialTheme.colorScheme.surface,
             tonalElevation = 0.dp,
             modifier = Modifier
                 .fillMaxWidth()
@@ -307,11 +307,11 @@ private fun BookibaBottomBar(
                     },
                     label = { Text(item.label, style = MaterialTheme.typography.labelSmall) },
                     colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = DarkBrown,
-                        selectedTextColor = DarkBrown,
-                        unselectedIconColor = WarmBrown.copy(alpha = 0.6f),
-                        unselectedTextColor = WarmBrown.copy(alpha = 0.6f),
-                        indicatorColor = Cream
+                        selectedIconColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                        selectedTextColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                        unselectedIconColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                        unselectedTextColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                        indicatorColor = androidx.compose.material3.MaterialTheme.colorScheme.surface
                     )
                 )
             }
@@ -338,7 +338,7 @@ private fun BookibaBottomBar(
                         if (item.route == Routes.CART && cartCount > 0) {
                             BadgedBox(
                                 badge = {
-                                    Badge(containerColor = Color(0xFF2D6A4F), contentColor = Color.White) {
+                                    Badge(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary) {
                                         Text(cartCount.toString())
                                     }
                                 }
@@ -359,11 +359,11 @@ private fun BookibaBottomBar(
                     },
                     label = { Text(item.label, style = MaterialTheme.typography.labelSmall) },
                     colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = DarkBrown,
-                        selectedTextColor = DarkBrown,
-                        unselectedIconColor = WarmBrown.copy(alpha = 0.6f),
-                        unselectedTextColor = WarmBrown.copy(alpha = 0.6f),
-                        indicatorColor = Cream
+                        selectedIconColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                        selectedTextColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                        unselectedIconColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                        unselectedTextColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                        indicatorColor = androidx.compose.material3.MaterialTheme.colorScheme.surface
                     )
                 )
             }
@@ -387,19 +387,19 @@ private fun BookibaBottomBar(
                             .offset(y = (-10).dp)
                             .size(64.dp)
                             .clip(androidx.compose.foundation.shape.CircleShape)
-                            .background(if (reelsSelected) DarkBrown else WarmBrown)
+                            .background(if (reelsSelected) androidx.compose.material3.MaterialTheme.colorScheme.onBackground else androidx.compose.material3.MaterialTheme.colorScheme.onSurface)
                             .clickable { onItemClick(reelsItem) },
                         contentAlignment = androidx.compose.ui.Alignment.Center
                     ) {
                         Icon(
                             painter = painterResource(id = reelsItem.iconResId!!),
                             contentDescription = reelsItem.label,
-                            tint = Cream,
+                            tint = androidx.compose.material3.MaterialTheme.colorScheme.surface,
                             modifier = Modifier.size(38.dp)
                         )
                     }
                 }
-                Spacer(modifier = Modifier.weight(3f))
+                Spacer(modifier = Modifier.weight(2f))
             }
         }
     }

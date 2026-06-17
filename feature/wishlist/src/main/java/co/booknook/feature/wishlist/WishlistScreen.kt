@@ -35,7 +35,7 @@ fun WishlistScreen(
     PullToRefreshBox(
         isRefreshing = state.isRefreshing,
         onRefresh = { viewModel.refresh() },
-        modifier = Modifier.fillMaxSize().background(SoftWhite)
+        modifier = Modifier.fillMaxSize().background(androidx.compose.material3.MaterialTheme.colorScheme.background)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             // Header
@@ -44,17 +44,17 @@ fun WishlistScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Wishlist", color = DarkBrown, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-                Text("${state.books.size} books", color = WarmBrown, fontSize = 14.sp)
+                Text("Wishlist", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                Text("${state.books.size} books", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
             }
 
             if (state.books.isEmpty() && !state.isLoading) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Outlined.MenuBook, contentDescription = null, tint = WarmBrown, modifier = Modifier.size(48.dp))
+                        Icon(Icons.Outlined.MenuBook, contentDescription = null, tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(48.dp))
                         Spacer(Modifier.height(12.dp))
-                        Text("Your wishlist is empty", color = DarkBrown, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-                        Text("Save books you love to find them later", color = WarmBrown, fontSize = 13.sp, modifier = Modifier.padding(top = 6.dp))
+                        Text("Your wishlist is empty", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                        Text("Save books you love to find them later", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 13.sp, modifier = Modifier.padding(top = 6.dp))
                     }
                 }
             } else {
@@ -96,8 +96,8 @@ private fun WishlistBookCard(book: Book, onClick: () -> Unit, onRemove: () -> Un
                 }
             }
             Spacer(Modifier.height(6.dp))
-            Text(book.title, color = DarkBrown, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
-            Text("KSh ${"%,d".format(book.priceKsh)}", color = WarmBrown, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+            Text(book.title, color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Text("KSh ${"%,d".format(book.priceKsh)}", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 13.sp, fontWeight = FontWeight.Bold)
         }
     }
 }

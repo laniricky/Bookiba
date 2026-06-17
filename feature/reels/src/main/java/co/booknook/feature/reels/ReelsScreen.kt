@@ -36,8 +36,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 
-private val Cream = Color(0xFFF5F0E8)
-private val WarmBrown = Color(0xFF8B7355)
+
 
 @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -55,14 +54,14 @@ fun ReelsScreen(
 
     if (state.error != null) {
         Box(Modifier.fillMaxSize().background(Color.Black), contentAlignment = Alignment.Center) {
-            Text(state.error ?: "Error", color = Cream, fontSize = 16.sp, modifier = Modifier.padding(16.dp))
+            Text(state.error ?: "Error", color = Color.White, fontSize = 16.sp, modifier = Modifier.padding(16.dp))
         }
         return
     }
 
     if (state.reels.isEmpty() && !state.isLoading) {
         Box(Modifier.fillMaxSize().background(Color.Black), contentAlignment = Alignment.Center) {
-            Text("No reels yet", color = Cream, fontSize = 16.sp)
+            Text("No reels yet", color = Color.White, fontSize = 16.sp)
         }
         return
     }
@@ -213,8 +212,8 @@ private fun ReelPage(
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Outlined.ShoppingCart, contentDescription = null, tint = Cream, modifier = Modifier.size(14.dp))
-                        Text(title, color = Cream, fontSize = 12.sp, fontWeight = FontWeight.Medium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Icon(Icons.Outlined.ShoppingCart, contentDescription = null, tint = Color.White, modifier = Modifier.size(14.dp))
+                        Text(title, color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Medium, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     }
                 }
             }

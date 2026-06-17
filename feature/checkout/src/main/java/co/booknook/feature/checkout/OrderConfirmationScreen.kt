@@ -39,7 +39,7 @@ fun OrderConfirmationScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(SoftWhite),
+            .background(androidx.compose.material3.MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -65,7 +65,7 @@ fun OrderConfirmationScreen(
 
             Text(
                 "Order Placed! 🎉",
-                color = DarkBrown,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -73,11 +73,11 @@ fun OrderConfirmationScreen(
             orderId?.let {
                 Surface(
                     shape = RoundedCornerShape(8.dp),
-                    color = Cream
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.surface
                 ) {
                     Text(
                         text = "Order #${it.take(8).uppercase()}",
-                        color = WarmBrown,
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
@@ -87,7 +87,7 @@ fun OrderConfirmationScreen(
 
             Text(
                 text = "Thank you for your order. We'll send you updates as your books make their way to you.",
-                color = WarmBrown,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                 fontSize = 14.sp,
                 lineHeight = 22.sp,
                 textAlign = TextAlign.Center
@@ -101,9 +101,9 @@ fun OrderConfirmationScreen(
                     .fillMaxWidth()
                     .height(54.dp),
                 shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = DarkBrown)
+                colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground)
             ) {
-                Text("Track My Order", color = Cream, fontWeight = FontWeight.SemiBold)
+                Text("Track My Order", color = androidx.compose.material3.MaterialTheme.colorScheme.surface, fontWeight = FontWeight.SemiBold)
             }
 
             OutlinedButton(
@@ -112,7 +112,7 @@ fun OrderConfirmationScreen(
                     .fillMaxWidth()
                     .height(54.dp),
                 shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = DarkBrown)
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground)
             ) {
                 Text("Continue Shopping", fontWeight = FontWeight.SemiBold)
             }

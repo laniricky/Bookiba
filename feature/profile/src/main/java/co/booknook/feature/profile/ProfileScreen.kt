@@ -62,22 +62,22 @@ fun ProfileScreen(
         )
     }
 
-    Column(modifier = Modifier.fillMaxSize().background(SoftWhite)) {
+    Column(modifier = Modifier.fillMaxSize().background(androidx.compose.material3.MaterialTheme.colorScheme.background)) {
         // Top bar
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 14.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Profile", color = DarkBrown, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Text("Profile", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 22.sp, fontWeight = FontWeight.Bold)
             IconButton(onClick = onSettingsClick) {
-                Icon(Icons.Outlined.Settings, contentDescription = "Settings", tint = DarkBrown)
+                Icon(Icons.Outlined.Settings, contentDescription = "Settings", tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground)
             }
         }
 
         if (state.isLoading) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = WarmBrown)
+                CircularProgressIndicator(color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface)
             }
             return
         }
@@ -89,14 +89,14 @@ fun ProfileScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Box(
-                    modifier = Modifier.size(80.dp).clip(CircleShape).background(WarmBrown),
+                    modifier = Modifier.size(80.dp).clip(CircleShape).background(androidx.compose.material3.MaterialTheme.colorScheme.onSurface),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(state.name.firstOrNull()?.toString() ?: "U", color = Cream, fontSize = 32.sp, fontWeight = FontWeight.Bold)
+                    Text(state.name.firstOrNull()?.toString() ?: "U", color = androidx.compose.material3.MaterialTheme.colorScheme.surface, fontSize = 32.sp, fontWeight = FontWeight.Bold)
                 }
                 Spacer(Modifier.height(12.dp))
-                Text(state.name, color = DarkBrown, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                Text(state.bio, color = WarmBrown, fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp))
+                Text(state.name, color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text(state.bio, color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp))
 
                 Spacer(Modifier.height(20.dp))
 
@@ -106,15 +106,15 @@ fun ProfileScreen(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     StatItem(count = state.ordersCount, label = "Orders")
-                    VerticalDivider(modifier = Modifier.height(40.dp), color = Cream)
+                    VerticalDivider(modifier = Modifier.height(40.dp), color = androidx.compose.material3.MaterialTheme.colorScheme.surface)
                     StatItem(count = state.wishlistCount, label = "Wishlist")
-                    VerticalDivider(modifier = Modifier.height(40.dp), color = Cream)
+                    VerticalDivider(modifier = Modifier.height(40.dp), color = androidx.compose.material3.MaterialTheme.colorScheme.surface)
                     StatItem(count = state.reviewsCount, label = "Reviews")
                 }
             }
 
             Spacer(Modifier.height(24.dp))
-            HorizontalDivider(color = Cream, modifier = Modifier.padding(horizontal = 20.dp))
+            HorizontalDivider(color = androidx.compose.material3.MaterialTheme.colorScheme.surface, modifier = Modifier.padding(horizontal = 20.dp))
             Spacer(Modifier.height(16.dp))
 
             // My Shelves
@@ -122,8 +122,8 @@ fun ProfileScreen(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("My Shelves", color = DarkBrown, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                Text("See all", color = WarmBrown, fontSize = 13.sp)
+                Text("My Shelves", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text("See all", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
             }
             Spacer(Modifier.height(12.dp))
 
@@ -140,7 +140,7 @@ fun ProfileScreen(
             }
 
             Spacer(Modifier.height(20.dp))
-            HorizontalDivider(color = Cream, modifier = Modifier.padding(horizontal = 20.dp))
+            HorizontalDivider(color = androidx.compose.material3.MaterialTheme.colorScheme.surface, modifier = Modifier.padding(horizontal = 20.dp))
 
             // Menu items
             ProfileMenuItem(icon = Icons.Outlined.List, label = "Order History", onClick = onOrdersClick)
@@ -153,7 +153,7 @@ fun ProfileScreen(
                 onNavigateToSignup = onNavigateToSignup
             )
             Spacer(Modifier.height(20.dp))
-            HorizontalDivider(color = Cream, modifier = Modifier.padding(horizontal = 20.dp))
+            HorizontalDivider(color = androidx.compose.material3.MaterialTheme.colorScheme.surface, modifier = Modifier.padding(horizontal = 20.dp))
         }
 
         ProfileMenuItem(icon = Icons.Outlined.Info, label = "Help & Support", onClick = {})
@@ -182,22 +182,22 @@ private fun GuestProfileContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
-            modifier = Modifier.size(80.dp).clip(CircleShape).background(Cream),
+            modifier = Modifier.size(80.dp).clip(CircleShape).background(androidx.compose.material3.MaterialTheme.colorScheme.surface),
             contentAlignment = Alignment.Center
         ) {
-            Icon(Icons.Outlined.Person, contentDescription = null, tint = WarmBrown, modifier = Modifier.size(40.dp))
+            Icon(Icons.Outlined.Person, contentDescription = null, tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(40.dp))
         }
         Spacer(Modifier.height(16.dp))
         Text(
             text = "Unlock your rare book collection",
-            color = DarkBrown,
+            color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
         Spacer(Modifier.height(8.dp))
         Text(
             text = "Sign in to track orders, build your shelves, and save your favorite finds.",
-            color = WarmBrown,
+            color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
             fontSize = 14.sp,
             textAlign = androidx.compose.ui.text.style.TextAlign.Center
         )
@@ -206,7 +206,7 @@ private fun GuestProfileContent(
             onClick = onNavigateToLogin,
             modifier = Modifier.fillMaxWidth().height(50.dp),
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = DarkBrown, contentColor = SoftWhite)
+            colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, contentColor = androidx.compose.material3.MaterialTheme.colorScheme.background)
         ) {
             Text("Sign In", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
         }
@@ -215,8 +215,8 @@ private fun GuestProfileContent(
             onClick = onNavigateToSignup,
             modifier = Modifier.fillMaxWidth().height(50.dp),
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = DarkBrown),
-            border = androidx.compose.foundation.BorderStroke(1.dp, DarkBrown)
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground),
+            border = androidx.compose.foundation.BorderStroke(1.dp, androidx.compose.material3.MaterialTheme.colorScheme.onBackground)
         ) {
             Text("Create Account", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
         }
@@ -226,8 +226,8 @@ private fun GuestProfileContent(
 @Composable
 private fun StatItem(count: Int, label: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(count.toString(), color = DarkBrown, fontSize = 22.sp, fontWeight = FontWeight.ExtraBold)
-        Text(label, color = WarmBrown, fontSize = 12.sp)
+        Text(count.toString(), color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 22.sp, fontWeight = FontWeight.ExtraBold)
+        Text(label, color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
     }
 }
 
@@ -235,24 +235,24 @@ private fun StatItem(count: Int, label: String) {
 private fun ShelfCard(shelf: ShelfItem) {
     Surface(
         shape = RoundedCornerShape(14.dp),
-        color = Cream,
+        color = androidx.compose.material3.MaterialTheme.colorScheme.surface,
         modifier = Modifier.fillMaxWidth().height(90.dp)
     ) {
         Column(
             modifier = Modifier.padding(14.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Icon(shelf.icon, contentDescription = null, tint = DarkBrown, modifier = Modifier.size(24.dp))
+            Icon(shelf.icon, contentDescription = null, tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, modifier = Modifier.size(24.dp))
             Column {
-                Text(shelf.label, color = DarkBrown, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-                Text("${shelf.count} books", color = WarmBrown, fontSize = 12.sp)
+                Text(shelf.label, color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+                Text("${shelf.count} books", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
             }
         }
     }
 }
 
 @Composable
-private fun ProfileMenuItem(icon: ImageVector, label: String, onClick: () -> Unit, tint: Color = DarkBrown) {
+private fun ProfileMenuItem(icon: ImageVector, label: String, onClick: () -> Unit, tint: Color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground) {
     Row(
         modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 20.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -260,6 +260,6 @@ private fun ProfileMenuItem(icon: ImageVector, label: String, onClick: () -> Uni
     ) {
         Icon(icon, contentDescription = label, tint = tint, modifier = Modifier.size(22.dp))
         Text(label, color = tint, fontSize = 15.sp, fontWeight = FontWeight.Medium, modifier = Modifier.weight(1f))
-        Icon(Icons.Outlined.ArrowForward, contentDescription = null, tint = WarmBrown.copy(alpha = 0.5f), modifier = Modifier.size(18.dp))
+        Icon(Icons.Outlined.ArrowForward, contentDescription = null, tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f), modifier = Modifier.size(18.dp))
     }
 }

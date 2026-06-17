@@ -31,19 +31,19 @@ fun EmptyState(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = WarmBrown.copy(alpha = 0.5f),
+                tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                 modifier = Modifier.size(52.dp)
             )
             Text(
                 text = title,
-                color = DarkBrown,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold
             )
             if (subtitle != null) {
                 Text(
                     text = subtitle,
-                    color = WarmBrown,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                     fontSize = 13.sp
                 )
             }

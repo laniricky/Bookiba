@@ -30,9 +30,9 @@ fun rememberShimmerBrush(): Brush {
     )
     return Brush.linearGradient(
         colors = listOf(
-            Cream,
-            Cream.copy(alpha = 0.4f),
-            Cream
+            androidx.compose.material3.MaterialTheme.colorScheme.surface,
+            androidx.compose.material3.MaterialTheme.colorScheme.surface.copy(alpha = 0.4f),
+            androidx.compose.material3.MaterialTheme.colorScheme.surface
         ),
         start = Offset(translateAnim - 200f, 0f),
         end = Offset(translateAnim, 0f)

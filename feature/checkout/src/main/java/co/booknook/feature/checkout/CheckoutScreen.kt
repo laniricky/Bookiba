@@ -53,9 +53,9 @@ fun CheckoutScreen(
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        containerColor = SoftWhite
+        containerColor = androidx.compose.material3.MaterialTheme.colorScheme.background
     ) { innerPadding ->
-        Box(modifier = Modifier.fillMaxSize().background(SoftWhite).padding(innerPadding)) {
+        Box(modifier = Modifier.fillMaxSize().background(androidx.compose.material3.MaterialTheme.colorScheme.background).padding(innerPadding)) {
             LazyColumn(contentPadding = PaddingValues(bottom = 100.dp)) {
                 item {
                     Row(
@@ -63,16 +63,16 @@ fun CheckoutScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         IconButton(onClick = onBack) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = DarkBrown)
+                            Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground)
                         }
-                        Text("Checkout", color = DarkBrown, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                        Text("Checkout", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 22.sp, fontWeight = FontWeight.Bold)
                     }
                 }
 
                 item {
                     Text(
                         text = "Shipping Address",
-                        color = DarkBrown,
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
@@ -86,10 +86,10 @@ fun CheckoutScreen(
                                 Surface(
                                     modifier = Modifier.fillMaxWidth().clickable { viewModel.selectAddress(address) },
                                     shape = RoundedCornerShape(12.dp),
-                                    color = if (isSelected) Cream else SoftWhite,
+                                    color = if (isSelected) androidx.compose.material3.MaterialTheme.colorScheme.surface else androidx.compose.material3.MaterialTheme.colorScheme.background,
                                     border = androidx.compose.foundation.BorderStroke(
                                         width = if (isSelected) 2.dp else 1.dp,
-                                        color = if (isSelected) DarkBrown else Cream
+                                        color = if (isSelected) androidx.compose.material3.MaterialTheme.colorScheme.onBackground else androidx.compose.material3.MaterialTheme.colorScheme.surface
                                     )
                                 ) {
                                     Row(
@@ -100,11 +100,11 @@ fun CheckoutScreen(
                                         Icon(
                                             imageVector = Icons.Outlined.LocationOn,
                                             contentDescription = null,
-                                            tint = if (isSelected) DarkBrown else WarmBrown
+                                            tint = if (isSelected) androidx.compose.material3.MaterialTheme.colorScheme.onBackground else androidx.compose.material3.MaterialTheme.colorScheme.onSurface
                                         )
                                         Column(modifier = Modifier.weight(1f)) {
                                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                                Text(address.label, color = DarkBrown, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                                                Text(address.label, color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
                                                 if (address.isDefault) {
                                                     Spacer(Modifier.width(8.dp))
                                                     Box(
@@ -117,12 +117,12 @@ fun CheckoutScreen(
                                                     }
                                                 }
                                             }
-                                            Text(address.fullAddress, color = WarmBrown, fontSize = 13.sp, modifier = Modifier.padding(top = 2.dp))
+                                            Text(address.fullAddress, color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 13.sp, modifier = Modifier.padding(top = 2.dp))
                                         }
                                         RadioButton(
                                             selected = isSelected,
                                             onClick = { viewModel.selectAddress(address) },
-                                            colors = RadioButtonDefaults.colors(selectedColor = DarkBrown, unselectedColor = WarmBrown)
+                                            colors = RadioButtonDefaults.colors(selectedColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, unselectedColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface)
                                         )
                                     }
                                 }
@@ -133,7 +133,7 @@ fun CheckoutScreen(
                         Surface(
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                             shape = RoundedCornerShape(16.dp),
-                            color = Cream
+                            color = androidx.compose.material3.MaterialTheme.colorScheme.surface
                         ) {
                             OutlinedTextField(
                                 value = state.shippingAddress,
@@ -144,8 +144,8 @@ fun CheckoutScreen(
                                 colors = TextFieldDefaults.colors(
                                     focusedContainerColor = Color.Transparent,
                                     unfocusedContainerColor = Color.Transparent,
-                                    focusedIndicatorColor = DarkBrown,
-                                    unfocusedIndicatorColor = WarmBrown
+                                    focusedIndicatorColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                                    unfocusedIndicatorColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
                                 )
                             )
                         }
@@ -155,7 +155,7 @@ fun CheckoutScreen(
                 item {
                     Text(
                         text = "Payment Method",
-                        color = DarkBrown,
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 8.dp)
@@ -178,9 +178,9 @@ fun CheckoutScreen(
                                 singleLine = true,
                                 shape = RoundedCornerShape(12.dp),
                                 colors = TextFieldDefaults.colors(
-                                    focusedContainerColor = Cream,
-                                    unfocusedContainerColor = Cream,
-                                    focusedIndicatorColor = DarkBrown,
+                                    focusedContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                                    unfocusedContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                                    focusedIndicatorColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                                     unfocusedIndicatorColor = Color.Transparent
                                 )
                             )
@@ -199,24 +199,24 @@ fun CheckoutScreen(
             // Pay button
             Surface(
                 modifier = Modifier.align(Alignment.BottomCenter),
-                color = SoftWhite,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.background,
                 shadowElevation = 8.dp
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(Modifier.fillMaxWidth().padding(bottom = 12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("Total Payment", color = WarmBrown, fontSize = 15.sp)
-                        Text("KSh ${"%,d".format(state.totalAmount)}", color = DarkBrown, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
+                        Text("Total Payment", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 15.sp)
+                        Text("KSh ${"%,d".format(state.totalAmount)}", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
                     }
                     Button(
                         onClick = { viewModel.payNow(selectedPayment, phoneNumber, state.shippingAddress) },
                         modifier = Modifier.fillMaxWidth().height(54.dp),
                         shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = DarkBrown)
+                        colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground)
                     ) {
                         if (state.isProcessing) {
-                            CircularProgressIndicator(color = Cream, modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
+                            CircularProgressIndicator(color = androidx.compose.material3.MaterialTheme.colorScheme.surface, modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
                         } else {
-                            Text("Pay Now", color = Cream, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                            Text("Pay Now", color = androidx.compose.material3.MaterialTheme.colorScheme.surface, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
                         }
                     }
                 }
@@ -230,23 +230,23 @@ private fun PaymentOptionRow(title: String, subtitle: String, icon: androidx.com
     Surface(
         modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
-        color = Cream,
-        border = if (selected) androidx.compose.foundation.BorderStroke(2.dp, DarkBrown) else null
+        color = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+        border = if (selected) androidx.compose.foundation.BorderStroke(2.dp, androidx.compose.material3.MaterialTheme.colorScheme.onBackground) else null
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Icon(icon, contentDescription = null, tint = DarkBrown)
+            Icon(icon, contentDescription = null, tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground)
             Column(modifier = Modifier.weight(1f)) {
-                Text(title, color = DarkBrown, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
-                Text(subtitle, color = WarmBrown, fontSize = 13.sp)
+                Text(title, color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                Text(subtitle, color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
             }
             RadioButton(
                 selected = selected,
                 onClick = onClick,
-                colors = RadioButtonDefaults.colors(selectedColor = DarkBrown, unselectedColor = WarmBrown)
+                colors = RadioButtonDefaults.colors(selectedColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, unselectedColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface)
             )
         }
     }

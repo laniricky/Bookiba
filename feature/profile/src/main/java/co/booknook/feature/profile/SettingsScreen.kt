@@ -37,9 +37,9 @@ fun SettingsScreen(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Delete Account", color = DarkBrown, fontWeight = FontWeight.Bold) },
-            text = { Text("Are you sure you want to delete your account? This action is permanent and will remove all your data, including wishlists and reviews.", color = WarmBrown) },
-            containerColor = SoftWhite,
+            title = { Text("Delete Account", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold) },
+            text = { Text("Are you sure you want to delete your account? This action is permanent and will remove all your data, including wishlists and reviews.", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface) },
+            containerColor = androidx.compose.material3.MaterialTheme.colorScheme.background,
             confirmButton = {
                 Button(
                     onClick = {
@@ -48,13 +48,13 @@ fun SettingsScreen(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Red.copy(alpha = 0.8f))
                 ) {
-                    Text("Delete", color = Cream)
+                    Text("Delete", color = androidx.compose.material3.MaterialTheme.colorScheme.surface)
                 }
             },
             dismissButton = {
                 OutlinedButton(
                     onClick = { showDeleteDialog = false },
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = DarkBrown)
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground)
                 ) {
                     Text("Cancel")
                 }
@@ -72,7 +72,7 @@ fun SettingsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(SoftWhite)
+            .background(androidx.compose.material3.MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
     ) {
         Row(
@@ -82,9 +82,9 @@ fun SettingsScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBack) {
-                Icon(Icons.Outlined.ArrowBack, contentDescription = "Back", tint = DarkBrown)
+                Icon(Icons.Outlined.ArrowBack, contentDescription = "Back", tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground)
             }
-            Text("Settings", color = DarkBrown, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Text("Settings", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 22.sp, fontWeight = FontWeight.Bold)
         }
 
         Spacer(Modifier.height(16.dp))
@@ -92,7 +92,7 @@ fun SettingsScreen(
         // Preferences Group
         Text(
             text = "Preferences",
-            color = WarmBrown,
+            color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
@@ -101,7 +101,7 @@ fun SettingsScreen(
         Card(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Cream)
+            colors = CardDefaults.cardColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface)
         ) {
             Column {
                 Row(
@@ -110,23 +110,23 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
-                        Text("Dark Mode", color = DarkBrown, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-                        Text("Switch to dark theme", color = WarmBrown, fontSize = 12.sp)
+                        Text("Dark Mode", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                        Text("Switch to dark theme", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
                     }
                     Switch(
                         checked = state.isDarkMode,
                         onCheckedChange = { viewModel.toggleDarkMode(it) },
                         colors = SwitchDefaults.colors(
-                            checkedThumbColor = Cream,
-                            checkedTrackColor = DarkBrown,
-                            uncheckedThumbColor = WarmBrown,
-                            uncheckedTrackColor = Cream,
-                            uncheckedBorderColor = WarmBrown
+                            checkedThumbColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                            checkedTrackColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                            uncheckedThumbColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
+                            uncheckedTrackColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                            uncheckedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
                         )
                     )
                 }
                 
-                HorizontalDivider(color = SoftWhite, modifier = Modifier.padding(horizontal = 20.dp))
+                HorizontalDivider(color = androidx.compose.material3.MaterialTheme.colorScheme.background, modifier = Modifier.padding(horizontal = 20.dp))
                 
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 16.dp),
@@ -134,18 +134,18 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
-                        Text("Notifications", color = DarkBrown, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-                        Text("Receive updates & offers", color = WarmBrown, fontSize = 12.sp)
+                        Text("Notifications", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                        Text("Receive updates & offers", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
                     }
                     Switch(
                         checked = state.notificationsEnabled,
                         onCheckedChange = { viewModel.toggleNotifications(it) },
                         colors = SwitchDefaults.colors(
-                            checkedThumbColor = Cream,
-                            checkedTrackColor = DarkBrown,
-                            uncheckedThumbColor = WarmBrown,
-                            uncheckedTrackColor = Cream,
-                            uncheckedBorderColor = WarmBrown
+                            checkedThumbColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                            checkedTrackColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                            uncheckedThumbColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
+                            uncheckedTrackColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                            uncheckedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
                         )
                     )
                 }
@@ -157,7 +157,7 @@ fun SettingsScreen(
         // Account Group
         Text(
             text = "Account",
-            color = WarmBrown,
+            color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
@@ -166,7 +166,7 @@ fun SettingsScreen(
         Card(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Cream)
+            colors = CardDefaults.cardColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface)
         ) {
             Column {
                 Row(

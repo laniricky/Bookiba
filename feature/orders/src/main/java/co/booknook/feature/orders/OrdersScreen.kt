@@ -42,7 +42,7 @@ fun OrdersScreen(
     PullToRefreshBox(
         isRefreshing = state.isRefreshing,
         onRefresh = { viewModel.refresh() },
-        modifier = Modifier.fillMaxSize().background(SoftWhite)
+        modifier = Modifier.fillMaxSize().background(androidx.compose.material3.MaterialTheme.colorScheme.background)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Row(
@@ -50,19 +50,19 @@ fun OrdersScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.Outlined.ArrowBack, contentDescription = "Back", tint = DarkBrown)
+                    Icon(Icons.Outlined.ArrowBack, contentDescription = "Back", tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground)
                 }
-                Text("Order History", color = DarkBrown, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                Text("Order History", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 22.sp, fontWeight = FontWeight.Bold)
             }
             ScrollableTabRow(
                 selectedTabIndex = tabs.indexOf(selectedTab),
-                containerColor = SoftWhite,
-                contentColor = DarkBrown,
+                containerColor = androidx.compose.material3.MaterialTheme.colorScheme.background,
+                contentColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                 edgePadding = 16.dp,
                 indicator = { tabPositions ->
                     TabRowDefaults.SecondaryIndicator(
                         Modifier.tabIndicatorOffset(tabPositions[tabs.indexOf(selectedTab)]),
-                        color = DarkBrown
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
                     )
                 },
                 divider = {}
@@ -72,8 +72,8 @@ fun OrdersScreen(
                         selected = selectedTab == title,
                         onClick = { selectedTab = title },
                         text = { Text(title, fontWeight = if (selectedTab == title) FontWeight.Bold else FontWeight.Normal) },
-                        selectedContentColor = DarkBrown,
-                        unselectedContentColor = WarmBrown
+                        selectedContentColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                        unselectedContentColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -84,13 +84,13 @@ fun OrdersScreen(
                 if (state.isLoading) {
                     item {
                         Box(modifier = Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator(color = WarmBrown)
+                            CircularProgressIndicator(color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface)
                         }
                     }
                 } else if (filteredOrders.isEmpty()) {
                     item {
                         Box(modifier = Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) {
-                            Text("No orders found.", color = WarmBrown)
+                            Text("No orders found.", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface)
                         }
                     }
                 } else {
@@ -109,14 +109,14 @@ private fun OrderCard(order: Order) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        color = Cream
+        color = androidx.compose.material3.MaterialTheme.colorScheme.surface
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("Order #${order.id}", color = DarkBrown, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                Text("Order #${order.id}", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 15.sp, fontWeight = FontWeight.Bold)
                 // Format the long dateMs string
                 val dateStr = java.text.SimpleDateFormat("MMM dd, yyyy", java.util.Locale.getDefault()).format(java.util.Date(order.dateMs))
-                Text(dateStr, color = WarmBrown, fontSize = 13.sp)
+                Text(dateStr, color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
             }
             Spacer(Modifier.height(12.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -130,19 +130,19 @@ private fun OrderCard(order: Order) {
                 }
                 if (order.items.size > 3) {
                     Box(
-                        modifier = Modifier.size(60.dp).clip(RoundedCornerShape(8.dp)).background(SoftWhite),
+                        modifier = Modifier.size(60.dp).clip(RoundedCornerShape(8.dp)).background(androidx.compose.material3.MaterialTheme.colorScheme.background),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("+${order.items.size - 3}", color = DarkBrown, fontWeight = FontWeight.Bold)
+                        Text("+${order.items.size - 3}", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold)
                     }
                 }
             }
             Spacer(Modifier.height(12.dp))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Text("KSh ${"%,d".format(order.totalAmount)}", color = DarkBrown, fontSize = 16.sp, fontWeight = FontWeight.ExtraBold)
+                Text("KSh ${"%,d".format(order.totalAmount)}", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 16.sp, fontWeight = FontWeight.ExtraBold)
                 
                 val statusColor = when (order.status) {
-                    OrderStatus.PROCESSING -> WarmBrown
+                    OrderStatus.PROCESSING -> androidx.compose.material3.MaterialTheme.colorScheme.onSurface
                     OrderStatus.SHIPPED -> Color(0xFFD97706)
                     OrderStatus.DELIVERED -> AccentGreen
                 }

@@ -29,14 +29,14 @@ fun SectionHeader(
     ) {
         Text(
             text = title,
-            color = DarkBrown,
+            color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold
         )
         if (onSeeAll != null) {
             Text(
                 text = "See all",
-                color = WarmBrown,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.clickable(onClick = onSeeAll)

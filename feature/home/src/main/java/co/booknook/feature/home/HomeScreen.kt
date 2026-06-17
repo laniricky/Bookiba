@@ -69,7 +69,7 @@ fun HomeScreen(
         },
         modifier = Modifier
             .fillMaxSize()
-            .background(SoftWhite)
+            .background(androidx.compose.material3.MaterialTheme.colorScheme.background)
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -170,10 +170,10 @@ fun HomeScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                CircularProgressIndicator(color = WarmBrown)
+                CircularProgressIndicator(color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface)
                 Text(
                     text = "Loading booksâ€¦",
-                    color = WarmBrown,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                     fontSize = 13.sp
                 )
             }
@@ -188,20 +188,20 @@ fun HomeScreen(
             ) {
                 Text(
                     text = "âš ï¸ Couldn't load books",
-                    color = DarkBrown,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
                     text = state.error ?: "Unknown error",
-                    color = WarmBrown,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                     fontSize = 12.sp
                 )
                 Button(
                     onClick = { viewModel.refresh() },
-                    colors = ButtonDefaults.buttonColors(containerColor = WarmBrown)
+                    colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface)
                 ) {
-                    Text("Retry", color = Cream)
+                    Text("Retry", color = androidx.compose.material3.MaterialTheme.colorScheme.surface)
                 }
             }
         }
@@ -221,7 +221,7 @@ private fun HomeTopBar(onNotificationsClick: () -> Unit) {
         Column {
             Text(
                 text = "Bookiba",
-                color = DarkBrown,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                 fontSize = 16.sp,
                 letterSpacing = 4.sp,
                 fontWeight = FontWeight.Light
@@ -232,7 +232,7 @@ private fun HomeTopBar(onNotificationsClick: () -> Unit) {
                 Icon(
                     imageVector = Icons.Outlined.FavoriteBorder,
                     contentDescription = "Wishlist",
-                    tint = DarkBrown
+                    tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
                 )
             }
             IconButton(onClick = {
@@ -241,7 +241,7 @@ private fun HomeTopBar(onNotificationsClick: () -> Unit) {
                 Icon(
                     imageVector = Icons.Outlined.Notifications,
                     contentDescription = "Notifications",
-                    tint = DarkBrown
+                    tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
                 )
             }
         }
@@ -266,21 +266,21 @@ private fun StoryTray(stories: List<co.booknook.core.domain.model.Editorial>, on
                         .clip(CircleShape)
                         .background(
                             Brush.linearGradient(
-                                listOf(WarmBrown, Color(0xFF5C3D2E))
+                                listOf(androidx.compose.material3.MaterialTheme.colorScheme.onSurface, Color(0xFF5C3D2E))
                             )
                         ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = story.label.first().toString(),
-                        color = Cream,
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.surface,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
                 Text(
                     text = story.label,
-                    color = DarkBrown,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Medium,
                     maxLines = 2
@@ -301,13 +301,13 @@ private fun SectionHeader(title: String, onSeeAll: () -> Unit) {
     ) {
         Text(
             text = title,
-            color = DarkBrown,
+            color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold
         )
         Text(
             text = "See all",
-            color = WarmBrown,
+            color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.clickable(onClick = onSeeAll)
@@ -322,7 +322,7 @@ private fun FeaturedBookCard(book: Book, onClick: () -> Unit, onAddToCart: () ->
             .width(160.dp)
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Cream),
+        colors = CardDefaults.cardColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column {
@@ -338,7 +338,7 @@ private fun FeaturedBookCard(book: Book, onClick: () -> Unit, onAddToCart: () ->
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(
                     text = book.title,
-                    color = DarkBrown,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 2,
@@ -355,7 +355,7 @@ private fun FeaturedBookCard(book: Book, onClick: () -> Unit, onAddToCart: () ->
                 }
                 Text(
                     text = book.author,
-                    color = WarmBrown,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                     fontSize = 12.sp,
                     maxLines = 1
                 )
@@ -371,7 +371,7 @@ private fun FeaturedBookCard(book: Book, onClick: () -> Unit, onAddToCart: () ->
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = "KSh ${"%,d".format(book.priceKsh)}",
-                        color = DarkBrown,
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -392,7 +392,7 @@ private fun StaffPickCard(book: Book, onClick: () -> Unit, onAddToCart: () -> Un
             .padding(horizontal = 16.dp)
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Cream),
+        colors = CardDefaults.cardColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(modifier = Modifier.height(160.dp)) {
@@ -414,7 +414,7 @@ private fun StaffPickCard(book: Book, onClick: () -> Unit, onAddToCart: () -> Un
                 Column {
                     Text(
                         text = book.title,
-                        color = DarkBrown,
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Bold,
                         maxLines = 2,
@@ -422,14 +422,14 @@ private fun StaffPickCard(book: Book, onClick: () -> Unit, onAddToCart: () -> Un
                     )
                     Text(
                         text = book.author,
-                        color = WarmBrown,
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                         fontSize = 13.sp
                     )
                 }
                 Row(modifier = Modifier.fillMaxWidth().padding(end = 8.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = "KSh ${"%,d".format(book.priceKsh)}",
-                        color = DarkBrown,
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.ExtraBold
                     )
@@ -461,7 +461,7 @@ private fun SmallBookCard(book: Book, onClick: () -> Unit, onAddToCart: () -> Un
         )
         Text(
             text = book.title,
-            color = DarkBrown,
+            color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
             fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold,
             maxLines = 2,
@@ -479,7 +479,7 @@ private fun SmallBookCard(book: Book, onClick: () -> Unit, onAddToCart: () -> Un
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "KSh ${"%,d".format(book.priceKsh)}",
-                color = WarmBrown,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold
             )

@@ -83,7 +83,7 @@ fun ExploreScreen(
     PullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = { isRefreshing = true; viewModel.refresh() },
-        modifier = Modifier.fillMaxSize().background(SoftWhite)
+        modifier = Modifier.fillMaxSize().background(androidx.compose.material3.MaterialTheme.colorScheme.background)
     ) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
@@ -98,7 +98,7 @@ fun ExploreScreen(
                         .padding(horizontal = 16.dp, vertical = 12.dp)
                         .clickable { },
                     shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = DarkBrown),
+                    colors = CardDefaults.cardColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground),
                     elevation = CardDefaults.cardElevation(6.dp)
                 ) {
                     Row(
@@ -107,11 +107,11 @@ fun ExploreScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
-                            Text("🏆 2026 Reading Challenge", color = Cream, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                            Text("Read 12 books this year. Join 4,200 readers!", color = Cream.copy(alpha = 0.8f), fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp))
+                            Text("🏆 2026 Reading Challenge", color = androidx.compose.material3.MaterialTheme.colorScheme.surface, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                            Text("Read 12 books this year. Join 4,200 readers!", color = androidx.compose.material3.MaterialTheme.colorScheme.surface.copy(alpha = 0.8f), fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp))
                         }
-                        Button(onClick = { }, colors = ButtonDefaults.buttonColors(containerColor = WarmBrown)) {
-                            Text("Join", color = Cream, fontWeight = FontWeight.Bold)
+                        Button(onClick = { }, colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface)) {
+                            Text("Join", color = androidx.compose.material3.MaterialTheme.colorScheme.surface, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -178,7 +178,7 @@ fun ExploreScreen(
                 if (state.isSearching) {
                     item(span = { GridItemSpan(2) }) {
                         Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator(color = WarmBrown)
+                            CircularProgressIndicator(color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface)
                         }
                     }
                 } else if (displayResults.isEmpty()) {
@@ -188,11 +188,11 @@ fun ExploreScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Icon(Icons.Outlined.SearchOff, contentDescription = null, tint = WarmBrown.copy(alpha = 0.5f), modifier = Modifier.size(48.dp))
-                            Text("No results for \"${state.searchQuery}\"", color = WarmBrown, fontSize = 15.sp)
+                            Icon(Icons.Outlined.SearchOff, contentDescription = null, tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f), modifier = Modifier.size(48.dp))
+                            Text("No results for \"${state.searchQuery}\"", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 15.sp)
                             if (state.filters.isActive) {
                                 TextButton(onClick = { viewModel.onClearFilters() }) {
-                                    Text("Clear filters", color = WarmBrown)
+                                    Text("Clear filters", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface)
                                 }
                             }
                         }
@@ -204,9 +204,9 @@ fun ExploreScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("${displayResults.size} result${if (displayResults.size != 1) "s" else ""}", color = DarkBrown, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                            Text("${displayResults.size} result${if (displayResults.size != 1) "s" else ""}", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                             if (state.filters.isActive) {
-                                Text("Filtered", color = WarmBrown, fontSize = 13.sp)
+                                Text("Filtered", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
                             }
                         }
                     }
@@ -222,8 +222,8 @@ fun ExploreScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Moods & Themes", color = DarkBrown, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                        Text("See all", color = WarmBrown, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                        Text("Moods & Themes", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Text("See all", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 13.sp, fontWeight = FontWeight.Medium)
                     }
                 }
 
@@ -244,8 +244,8 @@ fun ExploreScreen(
                 // ── CEO's Bookshelf ───────────────────────────────────────────
                 item(span = { GridItemSpan(2) }) {
                     Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("CEO's Bookshelf", color = DarkBrown, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                        Text("See all", color = WarmBrown, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                        Text("CEO's Bookshelf", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Text("See all", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 13.sp, fontWeight = FontWeight.Medium)
                     }
                 }
 
@@ -254,7 +254,7 @@ fun ExploreScreen(
                         items(state.newArrivals.asReversed()) { book ->
                             Column(modifier = Modifier.width(130.dp).clickable { onBookClick(book.id) }, verticalArrangement = Arrangement.spacedBy(6.dp)) {
                                 AsyncImage(model = book.coverUrl, contentDescription = book.title, modifier = Modifier.fillMaxWidth().height(170.dp).clip(RoundedCornerShape(12.dp)), contentScale = ContentScale.Crop)
-                                Text(book.title, color = DarkBrown, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                                Text(book.title, color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
                             }
                         }
                     }
@@ -264,8 +264,8 @@ fun ExploreScreen(
                 // ── New Arrivals ──────────────────────────────────────────────
                 item(span = { GridItemSpan(2) }) {
                     Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("New Arrivals", color = DarkBrown, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                        Text("See all", color = WarmBrown, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                        Text("New Arrivals", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Text("See all", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 13.sp, fontWeight = FontWeight.Medium)
                     }
                 }
 
@@ -274,8 +274,8 @@ fun ExploreScreen(
                         items(state.newArrivals) { book ->
                             Column(modifier = Modifier.width(110.dp).clickable { onBookClick(book.id) }, verticalArrangement = Arrangement.spacedBy(6.dp)) {
                                 AsyncImage(model = book.coverUrl, contentDescription = book.title, modifier = Modifier.fillMaxWidth().height(140.dp).clip(RoundedCornerShape(12.dp)), contentScale = ContentScale.Crop)
-                                Text(book.title, color = DarkBrown, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                                Text("KSh ${"%,d".format(book.priceKsh)}", color = WarmBrown, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                Text(book.title, color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                                Text("KSh ${"%,d".format(book.priceKsh)}", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                             }
                         }
                     }
@@ -295,7 +295,7 @@ private fun SuggestionsPanel(
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        color = Cream,
+        color = androidx.compose.material3.MaterialTheme.colorScheme.surface,
         shadowElevation = 4.dp
     ) {
         Column(modifier = Modifier.padding(vertical = 8.dp)) {
@@ -308,8 +308,8 @@ private fun SuggestionsPanel(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Icon(Icons.Outlined.Search, contentDescription = null, tint = WarmBrown.copy(alpha = 0.6f), modifier = Modifier.size(16.dp))
-                    Text(suggestion, color = DarkBrown, fontSize = 14.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Icon(Icons.Outlined.Search, contentDescription = null, tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f), modifier = Modifier.size(16.dp))
+                    Text(suggestion, color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 14.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
             }
         }
@@ -327,7 +327,7 @@ private fun SearchHistoryPanel(
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        color = Cream,
+        color = androidx.compose.material3.MaterialTheme.colorScheme.surface,
         shadowElevation = 4.dp
     ) {
         Column(modifier = Modifier.padding(vertical = 8.dp)) {
@@ -336,9 +336,9 @@ private fun SearchHistoryPanel(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Recent Searches", color = DarkBrown, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                Text("Recent Searches", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
                 TextButton(onClick = onClearAll, contentPadding = PaddingValues(horizontal = 4.dp)) {
-                    Text("Clear all", color = WarmBrown, fontSize = 12.sp)
+                    Text("Clear all", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
                 }
             }
             history.take(6).forEach { term ->
@@ -351,11 +351,11 @@ private fun SearchHistoryPanel(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Icon(Icons.Outlined.History, contentDescription = null, tint = WarmBrown.copy(alpha = 0.7f), modifier = Modifier.size(18.dp))
-                        Text(term, color = DarkBrown, fontSize = 14.sp)
+                        Icon(Icons.Outlined.History, contentDescription = null, tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f), modifier = Modifier.size(18.dp))
+                        Text(term, color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 14.sp)
                     }
                     IconButton(onClick = { onRemoveItem(term) }, modifier = Modifier.size(24.dp)) {
-                        Icon(Icons.Default.Close, contentDescription = "Remove", tint = WarmBrown.copy(alpha = 0.5f), modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.Close, contentDescription = "Remove", tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f), modifier = Modifier.size(16.dp))
                     }
                 }
             }
@@ -384,9 +384,9 @@ private fun ActiveFilterChips(
                     label = { Text(genre, fontSize = 12.sp) },
                     trailingIcon = { Icon(Icons.Default.Close, contentDescription = null, modifier = Modifier.size(14.dp)) },
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = DarkBrown,
-                        selectedLabelColor = Cream,
-                        selectedTrailingIconColor = Cream
+                        selectedContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                        selectedLabelColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                        selectedTrailingIconColor = androidx.compose.material3.MaterialTheme.colorScheme.surface
                     )
                 )
             }
@@ -399,9 +399,9 @@ private fun ActiveFilterChips(
                     label = { Text(condition, fontSize = 12.sp) },
                     trailingIcon = { Icon(Icons.Default.Close, contentDescription = null, modifier = Modifier.size(14.dp)) },
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = DarkBrown,
-                        selectedLabelColor = Cream,
-                        selectedTrailingIconColor = Cream
+                        selectedContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                        selectedLabelColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                        selectedTrailingIconColor = androidx.compose.material3.MaterialTheme.colorScheme.surface
                     )
                 )
             }
@@ -419,9 +419,9 @@ private fun ActiveFilterChips(
                     label = { Text(label, fontSize = 12.sp) },
                     trailingIcon = { Icon(Icons.Default.Close, contentDescription = null, modifier = Modifier.size(14.dp)) },
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = DarkBrown,
-                        selectedLabelColor = Cream,
-                        selectedTrailingIconColor = Cream
+                        selectedContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                        selectedLabelColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                        selectedTrailingIconColor = androidx.compose.material3.MaterialTheme.colorScheme.surface
                     )
                 )
             }
@@ -438,12 +438,12 @@ private fun FilterIconButton(active: Boolean, onClick: () -> Unit) {
             modifier = Modifier
                 .size(48.dp)
                 .clip(RoundedCornerShape(12.dp))
-                .background(if (active) DarkBrown else Cream)
+                .background(if (active) androidx.compose.material3.MaterialTheme.colorScheme.onBackground else androidx.compose.material3.MaterialTheme.colorScheme.surface)
         ) {
             Icon(
                 Icons.Outlined.Tune,
                 contentDescription = "Filters",
-                tint = if (active) Cream else WarmBrown
+                tint = if (active) androidx.compose.material3.MaterialTheme.colorScheme.surface else androidx.compose.material3.MaterialTheme.colorScheme.onSurface
             )
         }
         if (active) {
@@ -477,8 +477,8 @@ private fun FilterBottomSheet(
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        containerColor = SoftWhite,
-        dragHandle = { BottomSheetDefaults.DragHandle(color = WarmBrown.copy(alpha = 0.4f)) }
+        containerColor = androidx.compose.material3.MaterialTheme.colorScheme.background,
+        dragHandle = { BottomSheetDefaults.DragHandle(color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)) }
     ) {
         Column(
             modifier = Modifier
@@ -488,14 +488,14 @@ private fun FilterBottomSheet(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Text("Filter Results", color = DarkBrown, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text("Filter Results", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 TextButton(onClick = { draft = SearchFilters(); minPriceText = ""; maxPriceText = "" }) {
-                    Text("Clear all", color = WarmBrown)
+                    Text("Clear all", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface)
                 }
             }
 
             // Genre
-            Text("Genre", color = DarkBrown, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+            Text("Genre", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
             LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(genreOptions) { genre ->
                     FilterChip(
@@ -503,15 +503,15 @@ private fun FilterBottomSheet(
                         onClick = { draft = if (draft.selectedGenre == genre) draft.copy(selectedGenre = null) else draft.copy(selectedGenre = genre) },
                         label = { Text(genre, fontSize = 13.sp) },
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = DarkBrown,
-                            selectedLabelColor = Cream
+                            selectedContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                            selectedLabelColor = androidx.compose.material3.MaterialTheme.colorScheme.surface
                         )
                     )
                 }
             }
 
             // Condition
-            Text("Condition", color = DarkBrown, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+            Text("Condition", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
             LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(availableConditions) { condition ->
                     FilterChip(
@@ -519,15 +519,15 @@ private fun FilterBottomSheet(
                         onClick = { draft = if (draft.selectedCondition == condition) draft.copy(selectedCondition = null) else draft.copy(selectedCondition = condition) },
                         label = { Text(condition, fontSize = 13.sp) },
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = DarkBrown,
-                            selectedLabelColor = Cream
+                            selectedContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                            selectedLabelColor = androidx.compose.material3.MaterialTheme.colorScheme.surface
                         )
                     )
                 }
             }
 
             // Price Range
-            Text("Price Range (KSh)", color = DarkBrown, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+            Text("Price Range (KSh)", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedTextField(
                     value = minPriceText,
@@ -537,10 +537,10 @@ private fun FilterBottomSheet(
                     shape = RoundedCornerShape(12.dp),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = DarkBrown,
-                        unfocusedBorderColor = WarmBrown.copy(alpha = 0.4f),
-                        focusedLabelColor = DarkBrown,
-                        cursorColor = DarkBrown
+                        focusedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                        unfocusedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+                        focusedLabelColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                        cursorColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
                     )
                 )
                 OutlinedTextField(
@@ -551,10 +551,10 @@ private fun FilterBottomSheet(
                     shape = RoundedCornerShape(12.dp),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = DarkBrown,
-                        unfocusedBorderColor = WarmBrown.copy(alpha = 0.4f),
-                        focusedLabelColor = DarkBrown,
-                        cursorColor = DarkBrown
+                        focusedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                        unfocusedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+                        focusedLabelColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                        cursorColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
                     )
                 )
             }
@@ -569,9 +569,9 @@ private fun FilterBottomSheet(
                 },
                 modifier = Modifier.fillMaxWidth().height(52.dp),
                 shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = DarkBrown)
+                colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground)
             ) {
-                Text("Apply Filters", color = Cream, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                Text("Apply Filters", color = androidx.compose.material3.MaterialTheme.colorScheme.surface, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
             }
         }
     }
@@ -603,16 +603,16 @@ private fun SearchBarField(
             .fillMaxWidth()
             .onFocusChanged { onFocusChange(it.isFocused) },
         placeholder = {
-            Text("Search books, authors, moods...", color = WarmBrown.copy(alpha = 0.6f), fontSize = 14.sp)
+            Text("Search books, authors, moods...", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f), fontSize = 14.sp)
         },
         leadingIcon = {
-            Icon(Icons.Outlined.Search, contentDescription = null, tint = WarmBrown)
+            Icon(Icons.Outlined.Search, contentDescription = null, tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurface)
         },
         trailingIcon = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (query.isNotEmpty()) {
                     IconButton(onClick = onClear) {
-                        Icon(Icons.Default.Close, contentDescription = "Clear", tint = WarmBrown)
+                        Icon(Icons.Default.Close, contentDescription = "Clear", tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurface)
                     }
                 }
                 IconButton(onClick = {
@@ -625,17 +625,17 @@ private fun SearchBarField(
                         }
                         .addOnFailureListener { }
                 }) {
-                    Icon(imageVector = Icons.Outlined.DocumentScanner, contentDescription = "Scan Barcode", tint = WarmBrown)
+                    Icon(imageVector = Icons.Outlined.DocumentScanner, contentDescription = "Scan Barcode", tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurface)
                 }
             }
         },
         shape = RoundedCornerShape(16.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = WarmBrown,
-            unfocusedBorderColor = Cream,
-            focusedContainerColor = Cream,
-            unfocusedContainerColor = Cream,
-            cursorColor = DarkBrown
+            focusedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
+            unfocusedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+            focusedContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+            cursorColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
         ),
         singleLine = true,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
@@ -651,7 +651,7 @@ private fun SearchResultCard(book: Book, onClick: () -> Unit) {
             .padding(horizontal = 16.dp, vertical = 6.dp)
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Cream),
+        colors = CardDefaults.cardColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(modifier = Modifier.height(120.dp)) {
@@ -669,14 +669,14 @@ private fun SearchResultCard(book: Book, onClick: () -> Unit) {
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Column {
-                    Text(book.title, color = DarkBrown, fontSize = 15.sp, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                    Text(book.author, color = WarmBrown, fontSize = 13.sp)
+                    Text(book.title, color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 15.sp, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                    Text(book.author, color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                    Text("KSh ${"%,d".format(book.priceKsh)}", color = DarkBrown, fontSize = 15.sp, fontWeight = FontWeight.ExtraBold)
+                    Text("KSh ${"%,d".format(book.priceKsh)}", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 15.sp, fontWeight = FontWeight.ExtraBold)
                     book.condition?.let { cond ->
-                        Surface(shape = RoundedCornerShape(8.dp), color = WarmBrown.copy(alpha = 0.15f)) {
-                            Text(cond, color = WarmBrown, fontSize = 11.sp, modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp))
+                        Surface(shape = RoundedCornerShape(8.dp), color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)) {
+                            Text(cond, color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 11.sp, modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp))
                         }
                     }
                 }
@@ -703,7 +703,7 @@ private fun MoodCard(
     ) {
         Text(
             text = genre.name,
-            color = Cream,
+            color = androidx.compose.material3.MaterialTheme.colorScheme.surface,
             fontSize = 15.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(12.dp),
