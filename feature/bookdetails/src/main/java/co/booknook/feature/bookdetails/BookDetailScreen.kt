@@ -598,7 +598,7 @@ private fun BookImageGallery(
                         onClick = { showFullscreen = false },
                         modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
                     ) {
-                        Icon(androidx.compose.material.icons.Icons.Default.Close, contentDescription = "Close", tint = Color.White)
+                        Icon(androidx.compose.material.icons.filled.Close, contentDescription = "Close", tint = Color.White)
                     }
                     Row(
                         modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 32.dp),
