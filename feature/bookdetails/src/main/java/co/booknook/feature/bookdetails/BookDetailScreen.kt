@@ -13,6 +13,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
@@ -598,7 +599,7 @@ private fun BookImageGallery(
                         onClick = { showFullscreen = false },
                         modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
                     ) {
-                        Icon(androidx.compose.material.icons.filled.Close, contentDescription = "Close", tint = Color.White)
+                        Icon(Icons.Default.Close, contentDescription = "Close", tint = Color.White)
                     }
                     Row(
                         modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 32.dp),
