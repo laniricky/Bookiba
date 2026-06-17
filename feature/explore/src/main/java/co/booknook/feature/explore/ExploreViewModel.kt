@@ -18,7 +18,8 @@ data class GenreCollection(
     val id: String,
     val name: String,
     val imageUrl: String? = null,
-    val bookCount: Int = 0
+    val bookCount: Int = 0,
+    val tag: String? = null  // search tag, e.g. "thriller"
 )
 
 data class SearchFilters(
@@ -35,7 +36,7 @@ data class ExploreUiState(
     val searchQuery: String = "",
     val searchResults: List<Book> = emptyList(),
     val filteredResults: List<Book> = emptyList(),
-    val genres: List<GenreCollection> = defaultGenres(),
+    val genres: List<GenreCollection> = emptyList(),
     val newArrivals: List<Book> = emptyList(),
     val isSearching: Boolean = false,
     val selectedGenre: String? = null,
@@ -49,15 +50,6 @@ data class ExploreUiState(
     val filters: SearchFilters = SearchFilters(),
     val showFilterSheet: Boolean = false,
     val availableConditions: List<String> = listOf("New", "Like New", "Good", "Fair")
-)
-
-private fun defaultGenres() = listOf(
-    GenreCollection("thriller", "Keep me up all night"),
-    GenreCollection("business", "Make me 1% better"),
-    GenreCollection("fantasy", "Escape reality"),
-    GenreCollection("romance", "Cry your eyes out"),
-    GenreCollection("rare", "Vintage aesthetic"),
-    GenreCollection("philosophy", "Deep thoughts")
 )
 
 @HiltViewModel
@@ -84,10 +76,33 @@ class ExploreViewModel @Inject constructor(
                 _state.update { it.copy(searchHistory = history) }
             }
         }
+        loadThemes()
+        loadNewArrivals()
         observeSearch()
         savedStateHandle.get<String>("query")?.let { initialQuery ->
             if (initialQuery.isNotBlank()) {
                 onSearchQueryChange(initialQuery)
+            }
+        }
+    }
+
+    private fun loadThemes() {
+        viewModelScope.launch {
+            try {
+                val themes = bookRepository.getThemes()
+                _state.update { it.copy(genres = themes) }
+            } catch (_: Exception) { }
+        }
+    }
+
+    private fun loadNewArrivals() {
+        viewModelScope.launch {
+            try {
+                bookRepository.getNewArrivals().collect { books ->
+                    _state.update { it.copy(newArrivals = books, isLoading = false) }
+                }
+            } catch (_: Exception) {
+                _state.update { it.copy(isLoading = false) }
             }
         }
     }

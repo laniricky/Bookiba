@@ -114,6 +114,9 @@ interface BookibaApi {
     @GET("editorials")
     suspend fun getEditorials(): NetworkEditorialsResponse
 
+    @GET("themes")
+    suspend fun getThemes(): NetworkThemesResponse
+
     @DELETE("user/account")
     suspend fun deleteAccount(
         @Header("Authorization") token: String

@@ -26,6 +26,7 @@ fun Application.configureRouting() {
             reviewRoutes()
             addressRoutes()
             editorialRoutes()
+            themeRoutes()
         }
     }
 }

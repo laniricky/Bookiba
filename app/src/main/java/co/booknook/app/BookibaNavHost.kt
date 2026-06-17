@@ -88,7 +88,10 @@ fun BookibaNavHost(
 
     val cartCount by viewModel.cartCount.collectAsStateWithLifecycle()
 
-    val showBottomBar = bottomNavRoutes.any { currentRoute == it }
+    val showBottomBar = bottomNavRoutes.any { route ->
+        currentRoute == route ||
+        (route == Routes.explore() && currentRoute?.startsWith("explore") == true)
+    }
 
     Scaffold(
         bottomBar = {
@@ -294,7 +297,8 @@ private fun BookibaBottomBar(
         ) {
             // Left items
             leftItems.forEach { item ->
-                val selected = currentRoute == item.route
+                val selected = currentRoute == item.route ||
+                    (item.route == Routes.explore() && currentRoute?.startsWith("explore") == true)
                 NavigationBarItem(
                     selected = selected,
                     onClick = { onItemClick(item) },

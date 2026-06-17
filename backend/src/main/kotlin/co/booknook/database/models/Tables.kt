@@ -125,3 +125,14 @@ object Editorials : Table("editorials") {
 
     override val primaryKey = PrimaryKey(id)
 }
+
+// ── Explore Themes (Moods & Themes on the Explore page) ──────────────────────
+object Themes : Table("themes") {
+    val id = integer("id").autoIncrement()
+    val name = varchar("name", 150)             // Display label e.g. "Keep me up all night"
+    val tag = varchar("tag", 100).nullable()    // Search tag e.g. "thriller"
+    val sortOrder = integer("sort_order").default(0)
+    val isActive = bool("is_active").default(true)
+
+    override val primaryKey = PrimaryKey(id)
+}

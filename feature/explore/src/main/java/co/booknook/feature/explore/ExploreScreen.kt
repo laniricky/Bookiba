@@ -90,33 +90,6 @@ fun ExploreScreen(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 80.dp)
         ) {
-            // ── Gamification Banner ────────────────────────────────────────────
-            item(span = { GridItemSpan(2) }) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp)
-                        .clickable { },
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground),
-                    elevation = CardDefaults.cardElevation(6.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("🏆 2026 Reading Challenge", color = androidx.compose.material3.MaterialTheme.colorScheme.surface, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                            Text("Read 12 books this year. Join 4,200 readers!", color = androidx.compose.material3.MaterialTheme.colorScheme.surface.copy(alpha = 0.8f), fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp))
-                        }
-                        Button(onClick = { }, colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface)) {
-                            Text("Join", color = androidx.compose.material3.MaterialTheme.colorScheme.surface, fontWeight = FontWeight.Bold)
-                        }
-                    }
-                }
-            }
-
             // ── Search Bar ────────────────────────────────────────────────────
             item(span = { GridItemSpan(2) }) {
                 Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
@@ -232,33 +205,17 @@ fun ExploreScreen(
                     MoodCard(
                         genre = genre,
                         gradient = genreGradients[index % genreGradients.size],
-                        onClick = { viewModel.onSearchQueryChange(genre.name) },
+                        onClick = {
+                            val searchTerm = genre.tag ?: genre.name
+                            viewModel.onSearchQueryChange(searchTerm)
+                            viewModel.onSearchSubmit(searchTerm)
+                        },
                         modifier = Modifier.padding(
                             start = if (index % 2 == 0) 16.dp else 6.dp,
                             end = if (index % 2 == 1) 16.dp else 6.dp,
                             bottom = 12.dp
                         )
                     )
-                }
-
-                // ── CEO's Bookshelf ───────────────────────────────────────────
-                item(span = { GridItemSpan(2) }) {
-                    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("CEO's Bookshelf", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                        Text("See all", color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 13.sp, fontWeight = FontWeight.Medium)
-                    }
-                }
-
-                item(span = { GridItemSpan(2) }) {
-                    LazyRow(contentPadding = PaddingValues(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                        items(state.newArrivals.asReversed()) { book ->
-                            Column(modifier = Modifier.width(130.dp).clickable { onBookClick(book.id) }, verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                                AsyncImage(model = book.coverUrl, contentDescription = book.title, modifier = Modifier.fillMaxWidth().height(170.dp).clip(RoundedCornerShape(12.dp)), contentScale = ContentScale.Crop)
-                                Text(book.title, color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                            }
-                        }
-                    }
-                    Spacer(Modifier.height(16.dp))
                 }
 
                 // ── New Arrivals ──────────────────────────────────────────────

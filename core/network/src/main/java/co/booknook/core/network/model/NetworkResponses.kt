@@ -93,3 +93,16 @@ data class NetworkEditorial(
 data class NetworkEditorialsResponse(
     val editorials: List<NetworkEditorial> = emptyList()
 )
+
+@Serializable
+data class NetworkTheme(
+    val id: Int,
+    val name: String,
+    val tag: String? = null,
+    val sortOrder: Int = 0
+)
+
+@Serializable
+data class NetworkThemesResponse(
+    val themes: List<NetworkTheme> = emptyList()
+)
