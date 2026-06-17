@@ -68,3 +68,13 @@ $pdo->exec("
     )
 ");
 
+// 5. themes table
+$pdo->exec("
+    CREATE TABLE IF NOT EXISTS themes (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(150) NOT NULL,
+        tag VARCHAR(100),
+        sort_order INTEGER DEFAULT 0,
+        is_active BOOLEAN DEFAULT true
+    )
+");
