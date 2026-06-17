@@ -13,6 +13,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -37,7 +38,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val mainViewModel: MainViewModel = androidx.hilt.navigation.compose.hiltViewModel()
-            val isDarkMode = mainViewModel.isDarkMode.androidx.lifecycle.compose.collectAsStateWithLifecycle().value
+            val isDarkMode = mainViewModel.isDarkMode.collectAsStateWithLifecycle().value
 
             co.booknook.core.designsystem.theme.BookibaTheme(darkTheme = isDarkMode) {
                 Surface(
