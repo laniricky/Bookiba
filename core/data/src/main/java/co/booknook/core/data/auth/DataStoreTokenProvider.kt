@@ -2,17 +2,30 @@ package co.booknook.core.data.auth
 
 import co.booknook.core.datastore.BookibaPreferencesDataSource
 import co.booknook.core.network.di.NetworkModule
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class DataStoreTokenProvider @Inject constructor(
-    private val preferencesDataSource: BookibaPreferencesDataSource
+    preferencesDataSource: BookibaPreferencesDataSource
 ) : NetworkModule.TokenProvider {
     
-    override fun getToken(): String {
-        return runBlocking { 
-            preferencesDataSource.authToken.first() ?: "" 
+    @Volatile
+    private var currentToken: String = ""
+
+    init {
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            preferencesDataSource.authToken.collect { token ->
+                currentToken = token ?: ""
+            }
         }
+    }
+
+    override fun getToken(): String {
+        return currentToken
     }
 }

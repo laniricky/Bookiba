@@ -55,10 +55,10 @@ fun Route.reviewRoutes() {
         }
 
         // POST /api/v1/books/{bookId}/reviews (Requires Auth)
-        authenticate {
+        authenticate("auth-jwt") {
             post {
                 val principal = call.principal<JWTPrincipal>()
-                val userId = principal?.payload?.getClaim("userId")?.asString()
+                val userId = principal?.payload?.getClaim("id")?.asString()
                 if (userId == null) {
                     call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Unauthorized"))
                     return@post

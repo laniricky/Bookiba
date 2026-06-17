@@ -37,11 +37,8 @@ class NetworkReviewRepository @Inject constructor(
 
     override suspend fun submitReview(bookId: String, rating: Int, comment: String?): Result<Unit> {
         return try {
-            val token = preferencesDataSource.authToken.first()
-                ?: return Result.failure(IllegalStateException("Not logged in"))
             api.submitReview(
                 bookId = bookId,
-                token = "Bearer $token",
                 request = NetworkSubmitReviewRequest(rating = rating, comment = comment)
             )
             Result.success(Unit)

@@ -495,7 +495,9 @@ private fun BookImageGallery(
     val sharedTransitionScope = LocalSharedTransitionScope.current
     val animatedVisibilityScope = LocalNavAnimatedVisibilityScope.current
 
-    Box(modifier = Modifier.fillMaxWidth().height(360.dp)) {
+        // Fullscreen Overlay
+        var showFullscreen by remember { mutableStateOf(false) }
+
         HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { index ->
             var imageModifier: Modifier = Modifier.fillMaxSize()
             
@@ -513,7 +515,7 @@ private fun BookImageGallery(
             AsyncImage(
                 model = imageUrls[index],
                 contentDescription = null,
-                modifier = imageModifier,
+                modifier = imageModifier.clickable { showFullscreen = true },
                 contentScale = ContentScale.Crop
             )
         }
@@ -574,6 +576,43 @@ private fun BookImageGallery(
                         .background(if (pagerState.currentPage == index) Color.White else Color.White.copy(alpha = 0.4f))
                         .size(if (pagerState.currentPage == index) 8.dp else 5.dp)
                 )
+            }
+        }
+
+        if (showFullscreen) {
+            androidx.compose.ui.window.Dialog(
+                onDismissRequest = { showFullscreen = false },
+                properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false)
+            ) {
+                Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+                    HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { index ->
+                        AsyncImage(
+                            model = imageUrls[index],
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Fit
+                        )
+                    }
+                    IconButton(
+                        onClick = { showFullscreen = false },
+                        modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
+                    ) {
+                        Icon(androidx.compose.material.icons.Icons.Default.Close, contentDescription = "Close", tint = Color.White)
+                    }
+                    Row(
+                        modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 32.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        repeat(imageUrls.size) { index ->
+                            Box(
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .background(if (pagerState.currentPage == index) Color.White else Color.White.copy(alpha = 0.4f))
+                                    .size(if (pagerState.currentPage == index) 10.dp else 6.dp)
+                            )
+                        }
+                    }
+                }
             }
         }
     }

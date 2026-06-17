@@ -185,7 +185,12 @@ $low_stock_count = count(array_filter($books, fn($b) => $b['inventory_count'] > 
             </div>
             <div class="form-group"><label>Description</label><textarea id="f_description" class="form-input" rows="3"></textarea></div>
             <div class="form-group"><label>Tags (Comma separated)</label><input type="text" id="f_tags" class="form-input" placeholder="Vintage, Bestseller"></div>
-            <div class="form-group"><label>Additional Image URLs (Comma separated)</label><input type="text" id="f_image_urls" class="form-input"></div>
+            <div class="form-group">
+                <label>Additional Images</label>
+                <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px;" id="additional-images-preview"></div>
+                <button type="button" class="btn btn-outline" onclick="openMultiWidget()" style="width:100%; border:1px dashed var(--border-color); background:#FAFAFA;">+ Add Images</button>
+                <input type="hidden" id="f_image_urls" class="form-input">
+            </div>
             <div style="display:flex; gap: 16px; margin-bottom: 20px;">
                 <label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" id="f_is_rare"> <span style="font-size:13px; font-weight:600">Rare</span></label>
                 <label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" id="f_is_featured"> <span style="font-size:13px; font-weight:600">Featured</span></label>
@@ -400,12 +405,43 @@ $low_stock_count = count(array_filter($books, fn($b) => $b['inventory_count'] > 
 
         function openCoverWidget() { coverWidget.open(); }
 
+        let multiWidget = cloudinary.createUploadWidget({
+            cloudName: CLOUDINARY_CLOUD,
+            uploadPreset: CLOUDINARY_PRESET,
+            sources: ['local', 'url', 'camera'],
+            resourceType: 'image',
+            multiple: true,
+            maxFileSize: 10000000,
+            styles: coverWidget.styles // Reuse styles
+        }, (error, result) => {
+            if (!error && result && result.event === 'success') {
+                const url = result.info.secure_url;
+                const hiddenInput = document.getElementById('f_image_urls');
+                let currentUrls = hiddenInput.value ? hiddenInput.value.split(',') : [];
+                currentUrls.push(url);
+                hiddenInput.value = currentUrls.join(',');
+                
+                const previewContainer = document.getElementById('additional-images-preview');
+                const img = document.createElement('img');
+                img.src = url;
+                img.style.width = '60px';
+                img.style.height = '60px';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '4px';
+                previewContainer.appendChild(img);
+            }
+        });
+
+        function openMultiWidget() { multiWidget.open(); }
+
         // Reset widget state when slide-over closes
         function resetCoverWidget() {
             document.getElementById('f_cover').value = '';
             document.getElementById('cover-preview').style.display = 'none';
             document.getElementById('cover-placeholder').style.display = 'block';
             document.getElementById('cover-upload-area').style.borderColor = '';
+            document.getElementById('f_image_urls').value = '';
+            document.getElementById('additional-images-preview').innerHTML = '';
         }
 
         // Hover effect on upload area

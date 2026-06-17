@@ -84,7 +84,6 @@ interface BookibaApi {
     @POST("books/{bookId}/reviews")
     suspend fun submitReview(
         @Path("bookId") bookId: String,
-        @Header("Authorization") token: String,
         @Body request: NetworkSubmitReviewRequest
     ): Map<String, String>
 

@@ -28,12 +28,19 @@ fun Route.userRoutes() {
                     return@get
                 }
 
+                val stats = transaction {
+                    val orders = Orders.select { Orders.userId eq userId }.count()
+                    val wishlist = Wishlists.select { Wishlists.userId eq userId }.count()
+                    val reviews = Reviews.select { Reviews.userId eq userId }.count()
+                    Triple(orders, wishlist, reviews)
+                }
+
                 call.respond(mapOf(
                     "name" to user[Users.name],
                     "email" to user[Users.email],
-                    "ordersCount" to 0,
-                    "wishlistCount" to 0,
-                    "reviewsCount" to 0
+                    "ordersCount" to stats.first,
+                    "wishlistCount" to stats.second,
+                    "reviewsCount" to stats.third
                 ))
             }
 
