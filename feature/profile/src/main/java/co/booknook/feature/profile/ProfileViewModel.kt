@@ -58,7 +58,12 @@ class ProfileViewModel @Inject constructor(
                     _state.update { it.copy(isLoading = false, error = response.error) }
                 }
             } catch (e: Exception) {
-                _state.update { it.copy(isLoading = false, error = e.message) }
+                val msg = e.message ?: ""
+                if (msg.contains("HTTP 401") || msg.contains("HTTP 404")) {
+                    logout()
+                } else {
+                    _state.update { it.copy(isLoading = false, error = msg) }
+                }
             }
         }
     }

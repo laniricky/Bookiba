@@ -10,6 +10,7 @@ import io.ktor.server.routing.*
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 fun Route.userRoutes() {
     route("/user") {

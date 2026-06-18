@@ -206,7 +206,7 @@ fun ExploreScreen(
                         genre = genre,
                         gradient = genreGradients[index % genreGradients.size],
                         onClick = {
-                            val searchTerm = genre.tag ?: genre.name
+                            val searchTerm = genre.tags.joinToString(" ").takeIf { it.isNotBlank() } ?: genre.name
                             viewModel.onSearchQueryChange(searchTerm)
                             viewModel.onSearchSubmit(searchTerm)
                         },

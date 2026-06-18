@@ -19,7 +19,7 @@ data class GenreCollection(
     val name: String,
     val imageUrl: String? = null,
     val bookCount: Int = 0,
-    val tag: String? = null  // search tag, e.g. "thriller"
+    val tags: List<String> = emptyList()  // search tags, e.g. ["thriller", "mystery"]
 )
 
 data class SearchFilters(
@@ -89,7 +89,13 @@ class ExploreViewModel @Inject constructor(
     private fun loadThemes() {
         viewModelScope.launch {
             try {
-                val themes = bookRepository.getThemes()
+                val themes = bookRepository.getThemes().map {
+                    GenreCollection(
+                        id = it.id,
+                        name = it.name,
+                        tags = it.tags
+                    )
+                }
                 _state.update { it.copy(genres = themes) }
             } catch (_: Exception) { }
         }

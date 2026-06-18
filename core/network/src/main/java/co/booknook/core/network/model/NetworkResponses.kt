@@ -98,7 +98,7 @@ data class NetworkEditorialsResponse(
 data class NetworkTheme(
     val id: Int,
     val name: String,
-    val tag: String? = null,
+    val tags: List<String> = emptyList(),
     val sortOrder: Int = 0
 )
 

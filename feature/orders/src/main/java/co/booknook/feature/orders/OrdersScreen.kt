@@ -112,11 +112,21 @@ private fun OrderCard(order: Order) {
         color = androidx.compose.material3.MaterialTheme.colorScheme.surface
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("Order #${order.id}", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-                // Format the long dateMs string
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Top) {
+                Text(
+                    text = "Order #${order.id.take(8).uppercase()}", 
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, 
+                    fontSize = 16.sp, 
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1f)
+                )
                 val dateStr = java.text.SimpleDateFormat("MMM dd, yyyy", java.util.Locale.getDefault()).format(java.util.Date(order.dateMs))
-                Text(dateStr, color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
+                Text(
+                    text = dateStr, 
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface, 
+                    fontSize = 13.sp,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
             }
             Spacer(Modifier.height(12.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {

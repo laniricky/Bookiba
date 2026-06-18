@@ -83,6 +83,16 @@ fun ProfileScreen(
         }
 
         if (state.isLoggedIn) {
+            state.error?.let { errorMsg ->
+                Surface(
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.errorContainer, 
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp), 
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(errorMsg, color = androidx.compose.material3.MaterialTheme.colorScheme.onErrorContainer, modifier = Modifier.padding(12.dp))
+                }
+            }
+
             // Avatar + info
             Column(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),

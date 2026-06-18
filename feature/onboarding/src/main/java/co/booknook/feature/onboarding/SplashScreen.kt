@@ -1,4 +1,4 @@
-﻿package co.booknook.feature.onboarding
+package co.booknook.feature.onboarding
 
 import co.booknook.core.designsystem.theme.*
 import androidx.compose.animation.core.animateFloatAsState
@@ -42,9 +42,9 @@ fun SplashScreen(onSplashFinished: () -> Unit) {
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFF0D0A08),
-                        androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
-                        Color(0xFF2A1F16)
+                        androidx.compose.material3.MaterialTheme.colorScheme.background,
+                        androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                        androidx.compose.material3.MaterialTheme.colorScheme.background
                     )
                 )
             ),
@@ -61,7 +61,7 @@ fun SplashScreen(onSplashFinished: () -> Unit) {
             androidx.compose.material3.Icon(
                 painter = androidx.compose.ui.res.painterResource(id = co.booknook.core.designsystem.R.drawable.ic_bookiba_logo),
                 contentDescription = "Bookiba Logo",
-                tint = Color.Unspecified, // Uses the original colors from XML
+                tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, // Use onBackground for adaptive color
                 modifier = Modifier.size(80.dp)
             )
             
@@ -70,7 +70,7 @@ fun SplashScreen(onSplashFinished: () -> Unit) {
             // Logo text
             Text(
                 text = "Bookiba",
-                color = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Light,
                 letterSpacing = 8.sp
@@ -81,7 +81,7 @@ fun SplashScreen(onSplashFinished: () -> Unit) {
             // Hero tagline
             Text(
                 text = "Find Stories\nThat Stay.",
-                color = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                 fontSize = 42.sp,
                 fontWeight = FontWeight.Bold,
                 lineHeight = 48.sp,

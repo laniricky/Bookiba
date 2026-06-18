@@ -14,5 +14,5 @@ interface BookRepository {
     suspend fun checkout(items: List<Triple<String, Int, Double>>): Boolean
     fun getBanners(): Flow<List<co.booknook.core.domain.model.Banner>>
     fun getEditorials(): Flow<List<co.booknook.core.domain.model.Editorial>>
-    suspend fun getThemes(): List<co.booknook.feature.explore.GenreCollection>
+    suspend fun getThemes(): List<co.booknook.core.domain.model.Theme>
 }

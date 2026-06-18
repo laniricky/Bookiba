@@ -1,4 +1,4 @@
-﻿package co.booknook.feature.onboarding
+package co.booknook.feature.onboarding
 
 import co.booknook.core.designsystem.theme.*
 import androidx.compose.animation.AnimatedVisibility
@@ -170,8 +170,8 @@ private fun OnboardingPageContent(page: OnboardingPage, visible: Boolean) {
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFFF5F0E8),
-                        Color(0xFFFEFCF9)
+                        androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                        androidx.compose.material3.MaterialTheme.colorScheme.background
                     )
                 )
             )
@@ -183,7 +183,7 @@ private fun OnboardingPageContent(page: OnboardingPage, visible: Boolean) {
                 .align(Alignment.TopCenter)
                 .offset(y = 60.dp)
                 .clip(CircleShape)
-                .background(Color(0xFFEDE4D6)),
+                .background(androidx.compose.material3.MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center
         ) {
             androidx.compose.foundation.Image(

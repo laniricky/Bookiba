@@ -116,15 +116,14 @@ class OfflineFirstBookRepository @Inject constructor(
         }
     }
 
-    override suspend fun getThemes(): List<co.booknook.feature.explore.GenreCollection> {
+    override suspend fun getThemes(): List<co.booknook.core.domain.model.Theme> {
         return try {
             val response = bookibaApi.getThemes()
             response.themes.map {
-                co.booknook.feature.explore.GenreCollection(
+                co.booknook.core.domain.model.Theme(
                     id = it.id.toString(),
                     name = it.name,
-                    imageUrl = null,
-                    tag = it.tag
+                    tags = it.tags
                 )
             }
         } catch (e: Exception) {
