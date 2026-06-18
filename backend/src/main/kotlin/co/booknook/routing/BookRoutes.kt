@@ -76,9 +76,14 @@ fun Route.bookRoutes() {
             val books = transaction {
                 var query = Books.selectAll()
                 if (!search.isNullOrBlank()) {
+                    val q = "%${search.lowercase()}%"
                     query = query.andWhere {
-                        (Books.title.lowerCase() like "%${search.lowercase()}%") or
-                        (Books.author.lowerCase() like "%${search.lowercase()}%")
+                        (Books.title.lowerCase() like q) or
+                        (Books.author.lowerCase() like q) or
+                        (Books.category.lowerCase() like q) or
+                        (Books.genre.lowerCase() like q) or
+                        (Books.tags.lowerCase() like q) or
+                        (Books.publisher.lowerCase() like q)
                     }
                 }
                 if (!genre.isNullOrBlank()) query = query.andWhere { Books.genre eq genre }
@@ -143,16 +148,25 @@ fun Route.bookRoutes() {
         get("/suggestions") {
             val q = call.request.queryParameters["q"] ?: ""
             if (q.length < 2) { call.respond(mapOf("suggestions" to emptyList<String>())); return@get }
+            val likeQ = "%${q.lowercase()}%"
             val suggestions = transaction {
                 val titleMatches = Books.slice(Books.title)
-                    .select { Books.title.lowerCase() like "%${q.lowercase()}%" }
+                    .select { Books.title.lowerCase() like likeQ }
                     .limit(5)
                     .map { it[Books.title] }
                 val authorMatches = Books.slice(Books.author)
-                    .select { Books.author.lowerCase() like "%${q.lowercase()}%" }
+                    .select { Books.author.lowerCase() like likeQ }
                     .limit(3)
                     .map { it[Books.author] }
-                (titleMatches + authorMatches).distinct().take(8)
+                val categoryMatches = Books.slice(Books.category)
+                    .select { Books.category.lowerCase() like likeQ }
+                    .limit(3)
+                    .map { it[Books.category] }
+                val genreMatches = Books.slice(Books.genre)
+                    .select { Books.genre.lowerCase() like likeQ }
+                    .limit(3)
+                    .mapNotNull { it[Books.genre] }
+                (titleMatches + authorMatches + categoryMatches + genreMatches).distinct().take(8)
             }
             call.respond(mapOf("suggestions" to suggestions))
         }
