@@ -36,12 +36,12 @@ fun Route.userRoutes() {
                     Triple(orders, wishlist, reviews)
                 }
 
-                call.respond(mapOf(
-                    "name" to user[Users.name],
-                    "email" to user[Users.email],
-                    "ordersCount" to stats.first,
-                    "wishlistCount" to stats.second,
-                    "reviewsCount" to stats.third
+                call.respond(UserProfileResponse(
+                    name = user[Users.name],
+                    email = user[Users.email],
+                    ordersCount = stats.first,
+                    wishlistCount = stats.second,
+                    reviewsCount = stats.third
                 ))
             }
 
@@ -66,3 +66,11 @@ fun Route.userRoutes() {
     }
 }
 
+@kotlinx.serialization.Serializable
+data class UserProfileResponse(
+    val name: String,
+    val email: String,
+    val ordersCount: Long,
+    val wishlistCount: Long,
+    val reviewsCount: Long
+)
