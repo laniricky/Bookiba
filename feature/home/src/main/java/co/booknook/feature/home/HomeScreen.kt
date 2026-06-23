@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -133,7 +134,7 @@ fun HomeScreen(
                 Spacer(Modifier.height(24.dp))
             }
 
-            // â”€â”€ Staff Pick â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // ── Staff Pick ──────────────────────────────────────────────────────
             state.staffPick?.let { pick ->
                 item {
                     SectionHeader(title = "Staff Pick", onSeeAll = { onSearchClick(null) })
@@ -144,7 +145,7 @@ fun HomeScreen(
                 }
             }
 
-            // â”€â”€ New Arrivals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // ── New Arrivals ────────────────────────────────────────────────────
             item {
                 SectionHeader(title = "New Arrivals", onSeeAll = { onSearchClick(null) })
             }
@@ -161,6 +162,37 @@ fun HomeScreen(
                 }
                 Spacer(Modifier.height(24.dp))
             }
+
+            // ── Discover – random 2×3 grid ──────────────────────────────────
+            if (state.randomBooks.isNotEmpty()) {
+                item {
+                    SectionHeader(title = "Discover", onSeeAll = { onSearchClick(null) })
+                }
+                val chunks = state.randomBooks.chunked(2)
+                items(chunks) { row ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        row.forEach { book ->
+                            GridBookCard(
+                                book = book,
+                                modifier = Modifier.weight(1f),
+                                onClick = { onBookClick(book.id) },
+                                onAddToCart = {
+                                    if (state.isLoggedIn) viewModel.addToCart(book) else onNavigateToAuth()
+                                }
+                            )
+                        }
+                        // Fill the gap if the last row has only 1 book
+                        if (row.size == 1) Spacer(Modifier.weight(1f))
+                    }
+                    Spacer(Modifier.height(12.dp))
+                }
+                item { Spacer(Modifier.height(12.dp)) }
+            }
         }
 
         // Loading
@@ -172,7 +204,7 @@ fun HomeScreen(
             ) {
                 CircularProgressIndicator(color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface)
                 Text(
-                    text = "Loading booksâ€¦",
+                    text = "Loading books...",
                     color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                     fontSize = 13.sp
                 )
@@ -187,7 +219,7 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = "âš ï¸ Couldn't load books",
+                    text = "⚠️ Couldn't load books",
                     color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold
@@ -485,6 +517,81 @@ private fun SmallBookCard(book: Book, onClick: () -> Unit, onAddToCart: () -> Un
             )
             IconButton(onClick = onAddToCart, modifier = Modifier.size(20.dp)) {
                 Icon(Icons.Outlined.ShoppingCart, contentDescription = "Add to Cart", tint = AccentGreen, modifier = Modifier.size(16.dp))
+            }
+        }
+    }
+}
+
+@Composable
+private fun GridBookCard(
+    book: Book,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    onAddToCart: () -> Unit
+) {
+    Card(
+        modifier = modifier.clickable(onClick = onClick),
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column {
+            AsyncImage(
+                model = book.coverUrl,
+                contentDescription = book.title,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(180.dp)
+                    .clip(RoundedCornerShape(topStart = 14.dp, topEnd = 14.dp)),
+                contentScale = ContentScale.Crop
+            )
+            Column(modifier = Modifier.padding(10.dp)) {
+                Text(
+                    text = book.title,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = book.author,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
+                    fontSize = 11.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(top = 2.dp)
+                )
+                if (book.inventoryCount in 1..4) {
+                    Text(
+                        text = "Only ${book.inventoryCount} left",
+                        color = Color(0xFFD62828),
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 2.dp)
+                    )
+                }
+                Spacer(Modifier.height(6.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "KSh ${"%,d".format(book.priceKsh)}",
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    IconButton(onClick = onAddToCart, modifier = Modifier.size(24.dp)) {
+                        Icon(
+                            Icons.Outlined.ShoppingCart,
+                            contentDescription = "Add to Cart",
+                            tint = AccentGreen,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
             }
         }
     }

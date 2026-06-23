@@ -125,16 +125,37 @@ class ExploreViewModel @Inject constructor(
                     } else {
                         _state.update { it.copy(isSearching = true) }
                         try {
-                            val results = bookRepository.searchBooks(query)
-                            val filtered = applyFilters(results, _state.value.filters)
-                            _state.update { it.copy(isSearching = false, searchResults = results, filteredResults = filtered, suggestions = emptyList()) }
+                            // Direct search by title/author/category/genre/tags
+                            val directResults = bookRepository.searchBooks(query)
+
+                            // Theme/mood search: if query matches a theme name, also search by its tags
+                            val matchingThemeTags = _state.value.genres
+                                .filter { theme ->
+                                    theme.name.lowercase().contains(query.lowercase()) ||
+                                    query.lowercase().split(" ").any { word ->
+                                        word.length >= 3 && theme.name.lowercase().contains(word)
+                                    }
+                                }
+                                .flatMap { it.tags }
+                                .distinct()
+
+                            val themeResults = matchingThemeTags.flatMap { tag ->
+                                try { bookRepository.searchBooks(tag) } catch (_: Exception) { emptyList() }
+                            }
+
+                            // Merge and dedupe by book ID
+                            val merged = (directResults + themeResults)
+                                .distinctBy { it.id }
+
+                            val filtered = applyFilters(merged, _state.value.filters)
+                            _state.update { it.copy(isSearching = false, searchResults = merged, filteredResults = filtered, suggestions = emptyList()) }
                         } catch (e: Exception) {
                             _state.update { it.copy(isSearching = false, error = e.message) }
                         }
                     }
                 }
         }
-        // Suggestions flow: fires on shorter debounce, clears once real results arrive
+        // Suggestions flow: fires on shorter debounce, also includes matching theme names
         viewModelScope.launch {
             searchQueryFlow
                 .debounce(150)
@@ -142,8 +163,13 @@ class ExploreViewModel @Inject constructor(
                 .collect { query ->
                     if (query.length >= 2 && !_state.value.isSearching) {
                         try {
-                            val suggestions = bookRepository.getSuggestions(query)
-                            _state.update { it.copy(suggestions = suggestions) }
+                            val apiSuggestions = bookRepository.getSuggestions(query)
+                            // Add matching theme names as suggestions
+                            val themeSuggestions = _state.value.genres
+                                .filter { it.name.lowercase().contains(query.lowercase()) }
+                                .map { it.name }
+                            val combined = (themeSuggestions + apiSuggestions).distinct().take(8)
+                            _state.update { it.copy(suggestions = combined) }
                         } catch (_: Exception) { }
                     } else if (query.isBlank()) {
                         _state.update { it.copy(suggestions = emptyList()) }

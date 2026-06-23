@@ -17,6 +17,7 @@ data class HomeUiState(
     val featuredBooks: List<Book> = emptyList(),
     val staffPick: Book? = null,
     val newArrivals: List<Book> = emptyList(),
+    val randomBooks: List<Book> = emptyList(),
     val stories: List<Editorial> = emptyList(),
     val isLoading: Boolean = true,
     val cartSuccess: Boolean = false,
@@ -71,6 +72,7 @@ class HomeViewModel @Inject constructor(
                                 featuredBooks = books,
                                 staffPick = books.firstOrNull(),
                                 newArrivals = books.drop(1).take(6),
+                                randomBooks = books.shuffled().take(12),
                                 error = null
                             )
                         }
