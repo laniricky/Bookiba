@@ -20,3 +20,8 @@ services:
     envVars:
       - key: DATABASE_URL
         value: postgresql://neondb_owner:npg_Oe5MjQgky8wv@ep-delicate-dust-aq9c1mft.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require
+      # Internal Render private network URL — avoids public internet + cold-start delays
+      - key: KTOR_WEBHOOK_URL
+        value: http://bookiba-backend:8080/api/v1/internal/notify-order
+      - key: INTERNAL_WEBHOOK_SECRET
+        value: my-internal-secret
