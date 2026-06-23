@@ -63,6 +63,16 @@ class HomeViewModel @Inject constructor(
                     }
                 }
                 
+                // Fetch a larger pool of books for the Discover section
+                launch {
+                    try {
+                        val allBooks = bookRepository.searchBooks("")
+                        _state.update { it.copy(randomBooks = allBooks.shuffled()) }
+                    } catch (e: Exception) {
+                        // ignore error for random books or log it
+                    }
+                }
+                
                 getFeaturedBooksUseCase()
                     .catch { e -> _state.update { it.copy(isLoading = false, error = e.message) } }
                     .collect { books ->
@@ -72,7 +82,6 @@ class HomeViewModel @Inject constructor(
                                 featuredBooks = books,
                                 staffPick = books.firstOrNull(),
                                 newArrivals = books.drop(1).take(6),
-                                randomBooks = books.shuffled(),
                                 error = null
                             )
                         }
