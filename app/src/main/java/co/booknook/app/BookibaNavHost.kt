@@ -44,6 +44,8 @@ object Routes {
     const val HOME = "home"
     const val EXPLORE = "explore?query={query}"
     fun explore(query: String? = null) = if (query != null) "explore?query=$query" else "explore"
+    const val STORY_VIEWER = "story_viewer/{queryTag}?title={title}"
+    fun storyViewer(queryTag: String, title: String) = "story_viewer/$queryTag?title=$title"
     const val REELS = "reels"
     const val WISHLIST = "wishlist"
     const val CART = "cart"
@@ -143,6 +145,7 @@ fun BookibaNavHost(
                     HomeScreen(
                         onBookClick = { bookId -> navController.navigate(Routes.bookDetail(bookId)) },
                         onSearchClick = { query -> navController.navigate(Routes.explore(query)) },
+                        onStoryClick = { queryTag, title -> navController.navigate(Routes.storyViewer(queryTag, title)) },
                         onNavigateToAuth = { navController.navigate(Routes.AUTH) }
                     )
                 }
@@ -155,6 +158,21 @@ fun BookibaNavHost(
                 CompositionLocalProvider(LocalNavAnimatedVisibilityScope provides this) {
                     ExploreScreen(
                         onBookClick = { bookId -> navController.navigate(Routes.bookDetail(bookId)) }
+                    )
+                }
+            }
+
+            composable(
+                route = Routes.STORY_VIEWER,
+                arguments = listOf(
+                    androidx.navigation.navArgument("queryTag") { type = androidx.navigation.NavType.StringType },
+                    androidx.navigation.navArgument("title") { type = androidx.navigation.NavType.StringType; nullable = true; defaultValue = null }
+                )
+            ) {
+                CompositionLocalProvider(LocalNavAnimatedVisibilityScope provides this) {
+                    co.booknook.feature.explore.StoryViewerScreen(
+                        onNavigateBack = { navController.popBackStack() },
+                        onNavigateToAuth = { navController.navigate(Routes.AUTH) }
                     )
                 }
             }

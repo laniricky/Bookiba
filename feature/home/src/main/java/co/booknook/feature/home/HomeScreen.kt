@@ -40,10 +40,11 @@ import co.booknook.core.domain.model.Book
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel(),
     onBookClick: (String) -> Unit,
     onSearchClick: (String?) -> Unit,
-    onNavigateToAuth: () -> Unit
+    onStoryClick: (String, String) -> Unit,
+    onNavigateToAuth: () -> Unit,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -78,17 +79,19 @@ fun HomeScreen(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 80.dp)
         ) {
-            // â”€â”€ Top Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // ──────────────────────────────────────────────────────────────────
             item {
                 HomeTopBar(onNotificationsClick = {})
             }
 
-            // â”€â”€ Story Tray â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // ──────────────────────────────────────────────────────────────────
             item {
-                StoryTray(stories = state.stories, onClick = { onSearchClick(it) })
+                StoryTray(stories = state.stories, onClick = { queryTag, label ->
+                    onStoryClick(queryTag, label)
+                })
             }
 
-            // â”€â”€ Hero Banners â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // ──────────────────────────────────────────────────────────────────
             item {
                 if (state.isLoading && state.banners.isEmpty()) {
                     co.booknook.core.designsystem.components.BannerSkeleton(modifier = Modifier.padding(vertical = 16.dp))
@@ -118,7 +121,7 @@ fun HomeScreen(
                 }
             }
 
-            // â”€â”€ "Found Today" Section -> Trending in Nairobi â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // ── "Found Today" Section -> Trending in Nairobi ──────────────────
             item {
                 SectionHeader(title = "Trending in Nairobi Right Now", onSeeAll = { onSearchClick(null) })
             }
@@ -304,7 +307,7 @@ private fun HomeTopBar(onNotificationsClick: () -> Unit) {
 }
 
 @Composable
-private fun StoryTray(stories: List<co.booknook.core.domain.model.Editorial>, onClick: (String) -> Unit) {
+private fun StoryTray(stories: List<co.booknook.core.domain.model.Editorial>, onClick: (String, String) -> Unit) {
     LazyRow(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -313,7 +316,7 @@ private fun StoryTray(stories: List<co.booknook.core.domain.model.Editorial>, on
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(6.dp),
-                modifier = Modifier.clickable { onClick(story.queryTag) }
+                modifier = Modifier.clickable { onClick(story.queryTag, story.label) }
             ) {
                 Box(
                     modifier = Modifier
@@ -326,12 +329,21 @@ private fun StoryTray(stories: List<co.booknook.core.domain.model.Editorial>, on
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = story.label.first().toString(),
-                        color = androidx.compose.material3.MaterialTheme.colorScheme.surface,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    if (story.imageUrl != null) {
+                        AsyncImage(
+                            model = story.imageUrl,
+                            contentDescription = story.label,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Text(
+                            text = story.label.first().toString(),
+                            color = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
                 Text(
                     text = story.label,
