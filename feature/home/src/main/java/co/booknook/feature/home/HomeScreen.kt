@@ -48,6 +48,7 @@ fun HomeScreen(
     val state by viewModel.state.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     var isRefreshing by remember { mutableStateOf(false) }
+    var discoverVisibleCount by remember { mutableIntStateOf(6) }
 
     LaunchedEffect(state.isLoading) {
         if (!state.isLoading) {
@@ -66,6 +67,7 @@ fun HomeScreen(
         isRefreshing = isRefreshing,
         onRefresh = {
             isRefreshing = true
+            discoverVisibleCount = 6
             viewModel.refresh()
         },
         modifier = Modifier
@@ -168,7 +170,7 @@ fun HomeScreen(
                 item {
                     SectionHeader(title = "Discover", onSeeAll = { onSearchClick(null) })
                 }
-                val chunks = state.randomBooks.chunked(2)
+                val chunks = state.randomBooks.take(discoverVisibleCount).chunked(2)
                 items(chunks) { row ->
                     Row(
                         modifier = Modifier
@@ -191,7 +193,28 @@ fun HomeScreen(
                     }
                     Spacer(Modifier.height(12.dp))
                 }
-                item { Spacer(Modifier.height(12.dp)) }
+                if (discoverVisibleCount < state.randomBooks.size) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 12.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            OutlinedButton(
+                                onClick = { discoverVisibleCount += 6 },
+                                shape = RoundedCornerShape(50)
+                            ) {
+                                Text(
+                                    text = "Load More",
+                                    color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    item { Spacer(Modifier.height(12.dp)) }
+                }
             }
         }
 

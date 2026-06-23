@@ -72,7 +72,7 @@ class HomeViewModel @Inject constructor(
                                 featuredBooks = books,
                                 staffPick = books.firstOrNull(),
                                 newArrivals = books.drop(1).take(6),
-                                randomBooks = books.shuffled().take(12),
+                                randomBooks = books.shuffled(),
                                 error = null
                             )
                         }
