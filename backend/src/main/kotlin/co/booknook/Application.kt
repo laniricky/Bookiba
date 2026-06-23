@@ -57,7 +57,30 @@ fun Application.module() {
 
     co.booknook.database.DatabaseFactory.init()
 
-    val serviceAccount = this::class.java.classLoader.getResourceAsStream("firebase-service-account.json")
+    val envPath = System.getenv("FIREBASE_CREDENTIALS_PATH")
+    val possiblePaths = listOfNotNull(
+        envPath,
+        "/etc/secrets/firebase-service-account.json",
+        "firebase-service-account.json"
+    )
+
+    var serviceAccount: java.io.InputStream? = null
+    for (path in possiblePaths) {
+        val file = java.io.File(path)
+        if (file.exists()) {
+            serviceAccount = file.inputStream()
+            println("Loading firebase credentials from $path")
+            break
+        }
+    }
+
+    if (serviceAccount == null) {
+        serviceAccount = this::class.java.classLoader.getResourceAsStream("firebase-service-account.json")
+        if (serviceAccount != null) {
+            println("Loading firebase credentials from classpath")
+        }
+    }
+
     if (serviceAccount != null) {
         val options = FirebaseOptions.builder()
             .setCredentials(GoogleCredentials.fromStream(serviceAccount))
@@ -66,7 +89,7 @@ fun Application.module() {
             FirebaseApp.initializeApp(options)
         }
     } else {
-        println("WARNING: firebase-service-account.json not found in resources!")
+        println("WARNING: firebase-service-account.json not found in secrets or resources!")
     }
 
     configureSecurity()
