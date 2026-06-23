@@ -2,6 +2,7 @@ package co.booknook.routing
 
 import co.booknook.database.models.Orders
 import co.booknook.database.models.UserTokens
+import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.Message
 import com.google.firebase.messaging.Notification
@@ -61,9 +62,9 @@ fun Route.fcmRoutes() {
 
     // Internal webhook endpoint for PHP dashboard
     post("/internal/notify-order") {
-        // Simple security check
+        val expectedSecret = System.getenv("INTERNAL_WEBHOOK_SECRET") ?: "my-internal-secret"
         val authHeader = call.request.header("Authorization")
-        if (authHeader != "Bearer my-internal-secret") {
+        if (authHeader != "Bearer $expectedSecret") {
             call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Invalid token"))
             return@post
         }
@@ -128,5 +129,32 @@ fun Route.fcmRoutes() {
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError, mapOf("error" to e.localizedMessage))
         }
+    }
+
+    // Debug endpoint — returns Firebase init status and token count, no side effects
+    get("/internal/debug-fcm") {
+        val expectedSecret = System.getenv("INTERNAL_WEBHOOK_SECRET") ?: "my-internal-secret"
+        val authHeader = call.request.header("Authorization")
+        if (authHeader != "Bearer $expectedSecret") {
+            call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Invalid token"))
+            return@get
+        }
+
+        val firebaseInitialized = try { FirebaseApp.getApps().isNotEmpty() } catch (e: Exception) { false }
+        val totalTokenCount = try { transaction { UserTokens.selectAll().count() } } catch (e: Exception) { -1L }
+        val recentTokens = try {
+            transaction {
+                UserTokens.selectAll()
+                    .orderBy(UserTokens.updatedAt, org.jetbrains.exposed.sql.SortOrder.DESC)
+                    .limit(5)
+                    .map { mapOf("userId" to it[UserTokens.userId], "updatedAt" to it[UserTokens.updatedAt].toString()) }
+            }
+        } catch (e: Exception) { listOf(mapOf("error" to e.localizedMessage)) }
+
+        call.respond(HttpStatusCode.OK, mapOf(
+            "firebaseInitialized" to firebaseInitialized,
+            "totalFcmTokens" to totalTokenCount,
+            "recentTokens" to recentTokens
+        ))
     }
 }
