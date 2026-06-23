@@ -27,7 +27,7 @@ class LocalOrderRepository @Inject constructor(
                     id = orderWithItems.order.id,
                     dateMs = orderWithItems.order.dateMs,
                     totalAmount = orderWithItems.order.totalAmount,
-                    status = OrderStatus.valueOf(orderWithItems.order.status),
+                    status = OrderStatus.fromBackendString(orderWithItems.order.status),
                     items = orderWithItems.items.map { item ->
                         OrderItem(
                             bookId = item.bookId,
@@ -40,6 +40,51 @@ class LocalOrderRepository @Inject constructor(
                     }
                 )
             }
+        }
+    }
+
+    override suspend fun syncOrders() {
+        try {
+            val response = bookibaApi.getOrders()
+            val orderEntities = mutableListOf<OrderEntity>()
+            val itemEntities = mutableListOf<OrderItemEntity>()
+
+            response.orders.forEach { networkOrder ->
+                val dateMs = try {
+                    java.time.LocalDateTime.parse(networkOrder.createdAt).atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli()
+                } catch (e: Exception) {
+                    System.currentTimeMillis()
+                }
+
+                orderEntities.add(
+                    OrderEntity(
+                        id = networkOrder.id,
+                        dateMs = dateMs,
+                        totalAmount = networkOrder.totalAmount,
+                        status = networkOrder.status
+                    )
+                )
+
+                networkOrder.items.forEach { item ->
+                    itemEntities.add(
+                        OrderItemEntity(
+                            orderId = networkOrder.id,
+                            bookId = item.bookId,
+                            title = item.title,
+                            author = "", // backend might not send author, fallback empty
+                            coverUrl = "", // fallback empty
+                            priceKsh = item.priceKsh,
+                            quantity = item.quantity
+                        )
+                    )
+                }
+            }
+            if (orderEntities.isNotEmpty()) {
+                orderDao.insertOrders(orderEntities)
+                orderDao.insertOrderItems(itemEntities)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

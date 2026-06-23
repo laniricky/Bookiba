@@ -35,7 +35,7 @@ fun OrdersScreen(
     val orders = state.orders
     
     var selectedTab by remember { mutableStateOf("All") }
-    val tabs = listOf("All", "Processing", "Shipped", "Delivered")
+    val tabs = listOf("All", "Pending Payment", "Processing", "Shipped", "Delivered")
 
     val filteredOrders = if (selectedTab == "All") orders else orders.filter { it.status.label == selectedTab }
 
@@ -152,6 +152,7 @@ private fun OrderCard(order: Order) {
                 Text("KSh ${"%,d".format(order.totalAmount)}", color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground, fontSize = 16.sp, fontWeight = FontWeight.ExtraBold)
                 
                 val statusColor = when (order.status) {
+                    OrderStatus.PENDING_PAYMENT -> Color(0xFFEF4444) // Red for pending payment
                     OrderStatus.PROCESSING -> androidx.compose.material3.MaterialTheme.colorScheme.onSurface
                     OrderStatus.SHIPPED -> Color(0xFFD97706)
                     OrderStatus.DELIVERED -> AccentGreen

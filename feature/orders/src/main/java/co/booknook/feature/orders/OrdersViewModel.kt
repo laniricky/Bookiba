@@ -33,6 +33,12 @@ class OrdersViewModel @Inject constructor(
     private fun load(isRefresh: Boolean = false) {
         viewModelScope.launch {
             if (isRefresh) _state.update { it.copy(isRefreshing = true) }
+            
+            // Trigger sync in background or await
+            launch {
+                orderRepository.syncOrders()
+            }
+
             orderRepository.getOrders().collect { orderList ->
                 _state.update { it.copy(orders = orderList, isLoading = false, isRefreshing = false) }
             }

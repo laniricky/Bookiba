@@ -43,6 +43,9 @@ interface BookibaApi {
         @Body request: NetworkCheckoutRequest
     ): NetworkCheckoutResponse
 
+    @GET("orders")
+    suspend fun getOrders(): NetworkOrdersResponse
+
     @POST("auth/login")
     suspend fun login(
         @Body request: NetworkLoginRequest
