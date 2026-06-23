@@ -55,6 +55,7 @@ backend/*.zip
 *.env
 local.properties
 secrets.properties
+firebase-service-account.json
 
 # Logs
 *.log

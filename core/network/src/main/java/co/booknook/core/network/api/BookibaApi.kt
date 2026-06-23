@@ -125,6 +125,11 @@ interface BookibaApi {
         @Header("Authorization") token: String
     ): Map<String, String>
 
+    @POST("fcm-token")
+    suspend fun uploadFcmToken(
+        @Body request: FcmTokenRequest
+    ): Map<String, String>
+
     companion object {
         const val BASE_URL = "https://bookiba-backend.onrender.com"
     }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "47261112233",
+    "project_id": "bookiba-98373",
+    "storage_bucket": "bookiba-98373.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:47261112233:android:9f0e72af05d4d97690d6b8",
+        "android_client_info": {
+          "package_name": "co.booknook.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAE_mkV7tuGALd2bYWIVcMkXdKUXK7Vw9s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

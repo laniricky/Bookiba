@@ -1,6 +1,7 @@
 <?php
 require 'db.php';
 require 'includes/auth_gate.php';
+require_once 'includes/webhook.php';
 
 // Handle AJAX status update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -8,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($_POST['action'] === 'update_status') {
         $stmt = $pdo->prepare("UPDATE orders SET status = ? WHERE id = ?");
         $stmt->execute([$_POST['status'], $_POST['id']]);
+        notifyKtorWebhook($_POST['id'], $_POST['status']);
         echo json_encode(['ok' => true]);
     } elseif ($_POST['action'] === 'bulk_update') {
         $ids = json_decode($_POST['ids'], true) ?: [];
@@ -15,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         foreach ($ids as $id) {
             $stmt = $pdo->prepare("UPDATE orders SET status = ? WHERE id = ?");
             $stmt->execute([$status, $id]);
+            notifyKtorWebhook($id, $status);
         }
         echo json_encode(['ok' => true, 'updated' => count($ids)]);
     }

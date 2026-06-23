@@ -16,6 +16,9 @@ import io.ktor.server.response.*
 import io.ktor.http.HttpStatusCode
 import co.booknook.security.configureSecurity
 import co.booknook.routing.configureRouting
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
+import com.google.auth.oauth2.GoogleCredentials
 
 fun main() {
     val port = System.getenv("PORT")?.toIntOrNull() ?: 8081
@@ -53,6 +56,19 @@ fun Application.module() {
     }
 
     co.booknook.database.DatabaseFactory.init()
+
+    val serviceAccount = this::class.java.classLoader.getResourceAsStream("firebase-service-account.json")
+    if (serviceAccount != null) {
+        val options = FirebaseOptions.builder()
+            .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+            .build()
+        if (FirebaseApp.getApps().isEmpty()) {
+            FirebaseApp.initializeApp(options)
+        }
+    } else {
+        println("WARNING: firebase-service-account.json not found in resources!")
+    }
+
     configureSecurity()
     configureRouting()
 }

@@ -106,3 +106,10 @@ data class NetworkTheme(
 data class NetworkThemesResponse(
     val themes: List<NetworkTheme> = emptyList()
 )
+
+// ── Notifications ────────────────────────────────────────────────────────────
+
+@Serializable
+data class FcmTokenRequest(
+    val fcmToken: String
+)

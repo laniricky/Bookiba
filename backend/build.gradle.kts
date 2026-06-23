@@ -18,6 +18,10 @@ repositories {
     mavenCentral()
 }
 
+configurations.all {
+    exclude(group = "com.google.guava", module = "listenablefuture")
+}
+
 dependencies {
     // Ktor Core & Server
     implementation("io.ktor:ktor-server-core-jvm")
@@ -49,6 +53,9 @@ dependencies {
 
     // Logging
     implementation("ch.qos.logback:logback-classic:1.5.6")
+
+    // Firebase
+    implementation("com.google.firebase:firebase-admin:9.2.0")
 
     // Testing
     testImplementation("io.ktor:ktor-server-tests-jvm")

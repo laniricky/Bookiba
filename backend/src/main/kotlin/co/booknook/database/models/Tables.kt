@@ -136,3 +136,11 @@ object Themes : Table("themes") {
 
     override val primaryKey = PrimaryKey(id)
 }
+
+object UserTokens : Table("user_tokens") {
+    val userId = varchar("user_id", 36).references(Users.id)
+    val fcmToken = varchar("fcm_token", 500)
+    val updatedAt = datetime("updated_at").default(LocalDateTime.now())
+
+    override val primaryKey = PrimaryKey(userId, fcmToken)
+}

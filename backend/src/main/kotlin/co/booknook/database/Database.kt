@@ -54,7 +54,8 @@ object DatabaseFactory {
                 co.booknook.database.models.Reviews,
                 co.booknook.database.models.Addresses,
                 co.booknook.database.models.Editorials,
-                co.booknook.database.models.Themes
+                co.booknook.database.models.Themes,
+                co.booknook.database.models.UserTokens
             )
         }
     }

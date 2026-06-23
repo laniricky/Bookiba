@@ -35,6 +35,7 @@ fun Application.configureRouting() {
             addressRoutes()
             editorialRoutes()
             themeRoutes()
+            fcmRoutes()
         }
     }
 }
