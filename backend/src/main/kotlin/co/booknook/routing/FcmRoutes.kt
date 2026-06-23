@@ -95,15 +95,32 @@ fun Route.fcmRoutes() {
         }
 
         try {
+            val notificationTitle = "Order Update"
+            val notificationBody = when (request.status) {
+                "Processing" -> "Your order #${request.orderId.take(8)} is now being processed."
+                "Shipped"    -> "Your order #${request.orderId.take(8)} has shipped! 🚚"
+                "Delivered"  -> "Your order #${request.orderId.take(8)} has been delivered. 📦"
+                "Cancelled"  -> "Your order #${request.orderId.take(8)} was cancelled."
+                else         -> "Order #${request.orderId.take(8)} status changed to ${request.status}"
+            }
+
             var sentCount = 0
             for (token in tokens) {
                 val message = Message.builder()
+                    // Notification payload → Android shows the notification in ALL app states
+                    .setNotification(
+                        Notification.builder()
+                            .setTitle(notificationTitle)
+                            .setBody(notificationBody)
+                            .build()
+                    )
+                    // Data payload → available in onMessageReceived for deep-linking
                     .putData("orderId", request.orderId)
                     .putData("status", request.status)
                     .putData("target_route", "orders")
                     .setToken(token)
                     .build()
-                
+
                 FirebaseMessaging.getInstance().send(message)
                 sentCount++
             }

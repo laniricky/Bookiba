@@ -42,16 +42,29 @@ class BookibaFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
+        // Data payload is available in all states; notification payload only in foreground
         val orderId = message.data["orderId"]
-        val status = message.data["status"]
+        val status  = message.data["status"]
         val targetRoute = message.data["target_route"]
 
-        if (orderId != null && status != null) {
-            showNotification(orderId, status, targetRoute)
-        }
+        // Prefer data-driven text; fall back to the FCM notification body if present
+        val title = message.notification?.title ?: "Order Update"
+        val body  = message.notification?.body
+            ?: if (orderId != null && status != null) buildText(orderId, status)
+            else return
+
+        showNotification(orderId ?: "", title, body, targetRoute)
     }
 
-    private fun showNotification(orderId: String, status: String, targetRoute: String?) {
+    private fun buildText(orderId: String, status: String): String = when (status) {
+        "Processing" -> "Your order #${orderId.take(8)} is now being processed."
+        "Shipped"    -> "Your order #${orderId.take(8)} has shipped! \uD83D\uDE9A"
+        "Delivered"  -> "Your order #${orderId.take(8)} has been delivered. \uD83D\uDCE6"
+        "Cancelled"  -> "Your order #${orderId.take(8)} was cancelled."
+        else         -> "Order #${orderId.take(8)} status changed to $status"
+    }
+
+    private fun showNotification(orderId: String, title: String, body: String, targetRoute: String?) {
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -59,19 +72,18 @@ class BookibaFirebaseMessagingService : FirebaseMessagingService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
-                "Order Updates (Instant)",
+                "Order Updates",
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 description = "Real-time updates about your orders"
+                enableVibration(true)
             }
             notificationManager.createNotificationChannel(channel)
         }
 
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            if (targetRoute != null) {
-                putExtra("target_route", targetRoute)
-            }
+            if (targetRoute != null) putExtra("target_route", targetRoute)
         }
 
         val pendingIntent = PendingIntent.getActivity(
@@ -81,19 +93,17 @@ class BookibaFirebaseMessagingService : FirebaseMessagingService() {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        val text = when (status) {
-            "Processing" -> "Your order #${orderId.take(8)} is now being processed."
-            "Shipped" -> "Your order #${orderId.take(8)} has shipped!"
-            "Delivered" -> "Your order #${orderId.take(8)} has been delivered."
-            "Cancelled" -> "Your order #${orderId.take(8)} was cancelled."
-            else -> "Order #${orderId.take(8)} status changed to $status"
+        val smallIconRes = try {
+            co.booknook.core.designsystem.R.drawable.ic_bookiba_logo
+        } catch (e: Exception) {
+            co.booknook.app.R.mipmap.ic_launcher
         }
 
         val notification = NotificationCompat.Builder(this, channelId)
-            // Use standard app icon instead of missing ic_notification
-            .setSmallIcon(co.booknook.app.R.mipmap.ic_launcher)
-            .setContentTitle("Order Update")
-            .setContentText(text)
+            .setSmallIcon(smallIconRes)
+            .setContentTitle(title)
+            .setContentText(body)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
