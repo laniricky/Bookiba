@@ -81,9 +81,16 @@ private val bottomNavRoutes = bottomNavItems.map { it.route }.toSet()
 
 @Composable
 fun BookibaNavHost(
-    viewModel: MainViewModel = hiltViewModel()
+    viewModel: MainViewModel = hiltViewModel(),
+    startRoute: String? = null
 ) {
     val navController = rememberNavController()
+    
+    LaunchedEffect(startRoute) {
+        if (startRoute != null) {
+            navController.navigate(startRoute)
+        }
+    }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val currentRoute = currentDestination?.route

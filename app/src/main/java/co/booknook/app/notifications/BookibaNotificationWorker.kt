@@ -45,6 +45,9 @@ class BookibaNotificationWorker @AssistedInject constructor(
     }
 
     private suspend fun checkOrderUpdates() {
+        // Fetch the absolute latest from remote before checking local DB
+        orderRepository.syncOrders()
+        
         val currentOrders = orderRepository.getOrders().first()
         val lastKnownStatuses = notificationPreferences.lastKnownOrderStatuses.first()
         
@@ -54,12 +57,21 @@ class BookibaNotificationWorker @AssistedInject constructor(
         for (order in currentOrders) {
             val oldStatus = lastKnownStatuses[order.id]
             if (oldStatus != null && oldStatus != order.status.name && order.status.name != "PENDING") {
+                val statusColor = when (order.status) {
+                    co.booknook.core.domain.model.OrderStatus.PENDING_PAYMENT -> android.graphics.Color.parseColor("#EF4444")
+                    co.booknook.core.domain.model.OrderStatus.SHIPPED -> android.graphics.Color.parseColor("#D97706")
+                    co.booknook.core.domain.model.OrderStatus.DELIVERED -> android.graphics.Color.parseColor("#10B981")
+                    else -> android.graphics.Color.parseColor("#3B82F6")
+                }
+
                 // Status changed! Fire notification
                 showNotification(
                     id = order.id.hashCode(),
                     channelId = CHANNEL_ORDERS,
                     title = "Order Update",
-                    text = "Your order status changed to ${order.status.name}"
+                    text = "Your order #${order.id.take(8).uppercase()} is now ${order.status.label}!",
+                    color = statusColor,
+                    targetRoute = "orders"
                 )
             }
             if (newStatuses[order.id] != order.status.name) {
@@ -89,7 +101,9 @@ class BookibaNotificationWorker @AssistedInject constructor(
                     id = book.id.hashCode(),
                     channelId = CHANNEL_WISHLIST,
                     title = "Price Drop Alert! \uD83D\uDD25",
-                    text = "${book.title} has dropped from KSh $oldPrice to KSh $newPrice"
+                    text = "${book.title} has dropped from KSh $oldPrice to KSh $newPrice",
+                    color = android.graphics.Color.parseColor("#F59E0B"),
+                    targetRoute = "book/${book.id}"
                 )
             }
             if (newPrices[book.id] != newPrice) {
@@ -103,7 +117,7 @@ class BookibaNotificationWorker @AssistedInject constructor(
         }
     }
 
-    private fun showNotification(id: Int, channelId: String, title: String, text: String) {
+    private fun showNotification(id: Int, channelId: String, title: String, text: String, color: Int? = null, targetRoute: String? = null) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 return
@@ -112,20 +126,28 @@ class BookibaNotificationWorker @AssistedInject constructor(
 
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            if (targetRoute != null) {
+                putExtra("target_route", targetRoute)
+            }
         }
         val pendingIntent = PendingIntent.getActivity(
-            context, 0, intent,
+            context, id, intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         val builder = NotificationCompat.Builder(context, channelId)
-            // fallback to default android icon since we don't have a custom one yet
-            .setSmallIcon(android.R.drawable.ic_dialog_info) 
+            .setSmallIcon(R.drawable.ic_launcher_foreground) 
             .setContentTitle(title)
             .setContentText(text)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setPriority(NotificationCompat.PRIORITY_MAX)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
+
+        if (color != null) {
+            builder.setColor(color)
+            builder.setColorized(true)
+        }
 
         with(NotificationManagerCompat.from(context)) {
             notify(id, builder.build())

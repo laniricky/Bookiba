@@ -35,6 +35,8 @@ class MainActivity : ComponentActivity() {
         )
         
         askNotificationPermission()
+        
+        val targetRoute = intent.getStringExtra("target_route")
 
         setContent {
             val mainViewModel: MainViewModel = androidx.hilt.navigation.compose.hiltViewModel()
@@ -45,7 +47,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = androidx.compose.material3.MaterialTheme.colorScheme.background
                 ) {
-                    BookibaNavHost(viewModel = mainViewModel)
+                    BookibaNavHost(viewModel = mainViewModel, startRoute = targetRoute)
                 }
             }
         }
