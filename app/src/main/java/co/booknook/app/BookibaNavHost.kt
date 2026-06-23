@@ -96,6 +96,7 @@ fun BookibaNavHost(
     val currentRoute = currentDestination?.route
 
     val cartCount by viewModel.cartCount.collectAsStateWithLifecycle()
+    val hasCompletedOnboarding by viewModel.hasCompletedOnboarding.collectAsStateWithLifecycle()
 
     val showBottomBar = bottomNavRoutes.any { route ->
         currentRoute == route ||
@@ -132,15 +133,25 @@ fun BookibaNavHost(
                     modifier = Modifier.padding(innerPadding)
                 ) {
             composable(Routes.SPLASH) {
-                SplashScreen(onSplashFinished = {
-                    navController.navigate(Routes.ONBOARDING) {
-                        popUpTo(Routes.SPLASH) { inclusive = true }
+                SplashScreen(
+                    hasCompletedOnboarding = hasCompletedOnboarding,
+                    onSplashFinished = { completed ->
+                        if (completed) {
+                            navController.navigate(Routes.HOME) {
+                                popUpTo(Routes.SPLASH) { inclusive = true }
+                            }
+                        } else {
+                            navController.navigate(Routes.ONBOARDING) {
+                                popUpTo(Routes.SPLASH) { inclusive = true }
+                            }
+                        }
                     }
-                })
+                )
             }
 
             composable(Routes.ONBOARDING) {
                 OnboardingScreen(onFinished = {
+                    viewModel.completeOnboarding()
                     navController.navigate(Routes.HOME) {
                         popUpTo(Routes.ONBOARDING) { inclusive = true }
                     }

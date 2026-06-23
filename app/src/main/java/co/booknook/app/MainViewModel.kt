@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class MainViewModel @Inject constructor(
     cartRepository: CartRepository,
-    preferencesDataSource: co.booknook.core.datastore.BookibaPreferencesDataSource,
+    private val preferencesDataSource: co.booknook.core.datastore.BookibaPreferencesDataSource,
     private val api: BookibaApi
 ) : ViewModel() {
 
@@ -59,4 +59,17 @@ class MainViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = false
         )
+
+    val hasCompletedOnboarding: StateFlow<Boolean?> = preferencesDataSource.hasCompletedOnboarding
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
+
+    fun completeOnboarding() {
+        viewModelScope.launch {
+            preferencesDataSource.setOnboardingCompleted(true)
+        }
+    }
 }

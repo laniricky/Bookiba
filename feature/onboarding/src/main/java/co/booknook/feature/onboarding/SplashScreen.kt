@@ -21,7 +21,10 @@ import kotlinx.coroutines.delay
 
 
 @Composable
-fun SplashScreen(onSplashFinished: () -> Unit) {
+fun SplashScreen(
+    hasCompletedOnboarding: Boolean?,
+    onSplashFinished: (Boolean) -> Unit
+) {
     var visible by remember { mutableStateOf(false) }
 
     val alpha by animateFloatAsState(
@@ -30,10 +33,12 @@ fun SplashScreen(onSplashFinished: () -> Unit) {
         label = "splash_alpha"
     )
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(hasCompletedOnboarding) {
         visible = true
-        delay(2500)
-        onSplashFinished()
+        if (hasCompletedOnboarding != null) {
+            delay(2500)
+            onSplashFinished(hasCompletedOnboarding)
+        }
     }
 
     Box(
