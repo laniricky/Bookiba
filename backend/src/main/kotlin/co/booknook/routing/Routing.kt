@@ -10,7 +10,15 @@ fun Application.configureRouting() {
             call.respondText("📚 Bookiba API v1 is running!")
         }
 
+        head("/") {
+            call.respondText("OK")
+        }
+
         get("/health") {
+            call.respondText("OK")
+        }
+
+        head("/health") {
             call.respondText("OK")
         }
 
