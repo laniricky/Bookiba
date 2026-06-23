@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class SettingsUiState(
+    val isLoggedIn: Boolean = false,
     val isDarkMode: Boolean = false,
     val notificationsEnabled: Boolean = true,
     val isLoading: Boolean = false,
@@ -32,6 +33,11 @@ class SettingsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            launch {
+                preferencesDataSource.authToken.collect { token ->
+                    _state.update { it.copy(isLoggedIn = token != null) }
+                }
+            }
             launch {
                 preferencesDataSource.isDarkMode.collect { isDark ->
                     _state.update { it.copy(isDarkMode = isDark) }
@@ -82,5 +88,11 @@ class SettingsViewModel @Inject constructor(
 
     fun clearError() {
         _state.update { it.copy(error = null) }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            preferencesDataSource.clearAuthToken()
+        }
     }
 }

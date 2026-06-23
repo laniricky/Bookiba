@@ -121,6 +121,7 @@ object Editorials : Table("editorials") {
     val queryTag = varchar("query_tag", 100)    // search term to trigger on click
     val sortOrder = integer("sort_order").default(0)
     val isActive = bool("is_active").default(true)
+    val expiresAt = datetime("expires_at").nullable()
     val createdAt = datetime("created_at").default(LocalDateTime.now())
 
     override val primaryKey = PrimaryKey(id)

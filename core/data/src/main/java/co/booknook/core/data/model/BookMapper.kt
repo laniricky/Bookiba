@@ -46,6 +46,7 @@ fun NetworkBook.toDomain(): Book {
         priceKsh = priceKsh,
         condition = condition ?: "Good",
         coverUrl = coverUrl,
+        imageUrls = imageUrls,
         category = category,
         sellerId = "",
         averageRating = averageRating ?: 0.0,

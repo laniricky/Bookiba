@@ -10,6 +10,8 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.or
 import java.util.UUID
 
 @Serializable
@@ -18,7 +20,8 @@ data class EditorialDto(
     val label: String,
     val imageUrl: String?,
     val queryTag: String,
-    val sortOrder: Int
+    val sortOrder: Int,
+    val expiresAt: String? = null
 )
 
 @Serializable
@@ -26,7 +29,8 @@ data class CreateEditorialRequest(
     val label: String,
     val imageUrl: String? = null,
     val queryTag: String,
-    val sortOrder: Int = 0
+    val sortOrder: Int = 0,
+    val expiresAt: String? = null
 )
 
 fun Route.editorialRoutes() {
@@ -34,7 +38,11 @@ fun Route.editorialRoutes() {
         // Public: list all active editorials for the Story Tray
         get {
             val editorials = transaction {
-                Editorials.select { Editorials.isActive eq true }
+                val now = java.time.LocalDateTime.now()
+                Editorials.select { 
+                    (Editorials.isActive eq true) and 
+                    (Editorials.expiresAt.isNull() or (Editorials.expiresAt greater now))
+                }
                     .orderBy(Editorials.sortOrder, SortOrder.ASC)
                     .map {
                         EditorialDto(
@@ -42,7 +50,8 @@ fun Route.editorialRoutes() {
                             label = it[Editorials.label],
                             imageUrl = it[Editorials.imageUrl],
                             queryTag = it[Editorials.queryTag],
-                            sortOrder = it[Editorials.sortOrder]
+                            sortOrder = it[Editorials.sortOrder],
+                            expiresAt = it[Editorials.expiresAt]?.toString()
                         )
                     }
             }
@@ -89,6 +98,7 @@ fun Route.editorialRoutes() {
                     it[queryTag] = body.queryTag
                     it[sortOrder] = body.sortOrder
                     it[isActive] = true
+                    it[expiresAt] = body.expiresAt?.let { ts -> java.time.LocalDateTime.parse(ts) }
                 }
             }
             call.respond(HttpStatusCode.Created, mapOf("id" to newId))

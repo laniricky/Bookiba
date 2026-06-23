@@ -78,3 +78,9 @@ $pdo->exec("
         is_active BOOLEAN DEFAULT true
     )
 ");
+
+// 6. editorials table auto-migration
+try {
+    $pdo->exec("ALTER TABLE editorials ADD COLUMN expires_at TIMESTAMP");
+} catch (\Exception $e) { /* Ignore if exists */ }
+
