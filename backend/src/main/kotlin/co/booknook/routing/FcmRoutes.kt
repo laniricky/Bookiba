@@ -126,7 +126,7 @@ fun Route.fcmRoutes() {
                 FirebaseMessaging.getInstance().send(message)
                 sentCount++
             }
-            call.respond(HttpStatusCode.OK, mapOf("status" to "success", "sent" to sentCount))
+            call.respond(HttpStatusCode.OK, mapOf("status" to "success", "sent" to sentCount.toString()))
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError, mapOf("error" to e.localizedMessage))
         }
@@ -153,9 +153,9 @@ fun Route.fcmRoutes() {
         } catch (e: Exception) { listOf(mapOf("error" to e.localizedMessage)) }
 
         call.respond(HttpStatusCode.OK, mapOf(
-            "firebaseInitialized" to firebaseInitialized,
-            "totalFcmTokens" to totalTokenCount,
-            "recentTokens" to recentTokens
+            "firebaseInitialized" to firebaseInitialized.toString(),
+            "totalFcmTokens" to totalTokenCount.toString(),
+            "recentTokens" to recentTokens.toString()
         ))
     }
 }
