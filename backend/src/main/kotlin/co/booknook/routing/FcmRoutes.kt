@@ -32,7 +32,7 @@ fun Route.fcmRoutes() {
     authenticate("auth-jwt") {
         post("/fcm-token") {
             val principal = call.principal<JWTPrincipal>()
-            val userId = principal?.payload?.getClaim("userId")?.asString()
+            val userId = principal?.payload?.getClaim("id")?.asString()
             if (userId == null) {
                 call.respond(HttpStatusCode.Unauthorized)
                 return@post
