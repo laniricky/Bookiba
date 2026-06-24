@@ -9,6 +9,8 @@ object Users : Table("users") {
     val name = varchar("name", 100)
     val email = varchar("email", 150).uniqueIndex()
     val passwordHash = varchar("password_hash", 255)
+    val bio = text("bio").nullable()
+    val avatarUrl = varchar("avatar_url", 500).nullable()
     val createdAt = datetime("created_at").default(LocalDateTime.now())
     
     override val primaryKey = PrimaryKey(id)

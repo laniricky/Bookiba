@@ -39,10 +39,74 @@ fun Route.userRoutes() {
                 call.respond(UserProfileResponse(
                     name = user[Users.name],
                     email = user[Users.email],
+                    bio = user[Users.bio],
+                    avatarUrl = user[Users.avatarUrl],
                     ordersCount = stats.first,
                     wishlistCount = stats.second,
                     reviewsCount = stats.third
                 ))
+            }
+
+            put("/profile") {
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal?.payload?.getClaim("id")?.asString()
+                    ?: return@put call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Invalid token"))
+                
+                val request = call.receive<UpdateProfileRequest>()
+                transaction {
+                    Users.update({ Users.id eq userId }) {
+                        it[name] = request.name
+                        it[bio] = request.bio
+                        it[avatarUrl] = request.avatarUrl
+                    }
+                }
+                call.respond(HttpStatusCode.OK, mapOf("message" to "Profile updated successfully"))
+            }
+
+            put("/email") {
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal?.payload?.getClaim("id")?.asString()
+                    ?: return@put call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Invalid token"))
+                
+                val request = call.receive<UpdateEmailRequest>()
+                
+                val user = transaction { Users.select { Users.id eq userId }.firstOrNull() }
+                if (user == null || !co.booknook.security.PasswordHash.checkPassword(request.currentPassword, user[Users.passwordHash])) {
+                    call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Incorrect current password"))
+                    return@put
+                }
+                
+                // Check if new email is already taken
+                val existingEmail = transaction { Users.select { Users.email eq request.newEmail }.firstOrNull() }
+                if (existingEmail != null) {
+                    call.respond(HttpStatusCode.Conflict, mapOf("error" to "Email already in use"))
+                    return@put
+                }
+                
+                transaction {
+                    Users.update({ Users.id eq userId }) { it[email] = request.newEmail }
+                }
+                call.respond(HttpStatusCode.OK, mapOf("message" to "Email updated successfully"))
+            }
+
+            put("/password") {
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal?.payload?.getClaim("id")?.asString()
+                    ?: return@put call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Invalid token"))
+                
+                val request = call.receive<UpdatePasswordRequest>()
+                
+                val user = transaction { Users.select { Users.id eq userId }.firstOrNull() }
+                if (user == null || !co.booknook.security.PasswordHash.checkPassword(request.currentPassword, user[Users.passwordHash])) {
+                    call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Incorrect current password"))
+                    return@put
+                }
+                
+                val newHash = co.booknook.security.PasswordHash.hashPassword(request.newPassword)
+                transaction {
+                    Users.update({ Users.id eq userId }) { it[passwordHash] = newHash }
+                }
+                call.respond(HttpStatusCode.OK, mapOf("message" to "Password updated successfully"))
             }
 
             // ── Account Deletion ──────────────────────────────────────────────
@@ -56,6 +120,7 @@ fun Route.userRoutes() {
                     Wishlists.deleteWhere { Wishlists.userId eq userId }
                     Reviews.deleteWhere { Reviews.userId eq userId }
                     Addresses.deleteWhere { Addresses.userId eq userId }
+                    co.booknook.database.models.UserTokens.deleteWhere { co.booknook.database.models.UserTokens.userId eq userId }
                     // Order items are linked to orders, skip for now (orders kept for records)
                     Users.deleteWhere { Users.id eq userId }
                 }
@@ -70,7 +135,28 @@ fun Route.userRoutes() {
 data class UserProfileResponse(
     val name: String,
     val email: String,
+    val bio: String? = null,
+    val avatarUrl: String? = null,
     val ordersCount: Long,
     val wishlistCount: Long,
     val reviewsCount: Long
+)
+
+@kotlinx.serialization.Serializable
+data class UpdateProfileRequest(
+    val name: String,
+    val bio: String? = null,
+    val avatarUrl: String? = null
+)
+
+@kotlinx.serialization.Serializable
+data class UpdateEmailRequest(
+    val currentPassword: String,
+    val newEmail: String
+)
+
+@kotlinx.serialization.Serializable
+data class UpdatePasswordRequest(
+    val currentPassword: String,
+    val newPassword: String
 )
